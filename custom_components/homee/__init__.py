@@ -17,7 +17,7 @@ from .const import (
     ATTR_ATTRIBUTE,
     ATTR_NODE,
     ATTR_VALUE,
-    CONF_ADD_HOME_DATA,
+    CONF_ADD_HOMEE_DATA,
     CONF_INITIAL_OPTIONS,
     DOMAIN,
     SERVICE_SET_VALUE,
@@ -199,7 +199,7 @@ class HomeeNodeEntity:
         if data is None:
             data = {}
 
-        if self._entry.options.get(CONF_ADD_HOME_DATA, False):
+        if self._entry.options.get(CONF_ADD_HOMEE_DATA, False):
             data["homee_data"] = self._homee_data
 
         return data if data != {} else None

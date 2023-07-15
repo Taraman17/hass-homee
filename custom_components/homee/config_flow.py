@@ -16,7 +16,8 @@ from pymee import (
 import voluptuous as vol
 
 from .const import (
-    CONF_ADD_HOME_DATA,
+    CONF_ADD_HOMEE_DATA,
+    CONF_ALL_DEVICES,
     CONF_DOOR_GROUPS,
     CONF_GROUPS,
     CONF_INITIAL_OPTIONS,
@@ -42,6 +43,10 @@ def get_options_schema(homee: Homee, default_options={}):
     return vol.Schema(
         {
             vol.Required(
+                CONF_ALL_DEVICES,
+                default=default_options.get(CONF_ALL_DEVICES, False),
+            ): bool,
+            vol.Required(
                 CONF_GROUPS,
                 default=default_options.get(CONF_GROUPS, groups),
             ): cv.multi_select(groups_selection),
@@ -54,8 +59,8 @@ def get_options_schema(homee: Homee, default_options={}):
                 default=default_options.get(CONF_DOOR_GROUPS, []),
             ): cv.multi_select(groups_selection),
             vol.Required(
-                CONF_ADD_HOME_DATA,
-                default=default_options.get(CONF_ADD_HOME_DATA, False),
+                CONF_ADD_HOMEE_DATA,
+                default=default_options.get(CONF_ADD_HOMEE_DATA, False),
             ): bool,
         }
     )
@@ -113,12 +118,13 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle the initial user step."""
         errors = {}
         if user_input is not None:
-
             try:
                 self.homee = await validate_and_connect(self.hass, user_input)
                 await self.async_set_unique_id(self.homee.settings.uid)
                 self._abort_if_unique_id_configured()
-                _LOGGER.info("created new homee entry with ID {}".format(self.homee.settings.uid))
+                _LOGGER.info(
+                    "created new homee entry with ID {}".format(self.homee.settings.uid)
+                )
                 return await self.async_step_config()
             except CannotConnect:
                 errors["base"] = "cannot_connect"

@@ -24,7 +24,8 @@
         "title": "Initial Configuration",
         "description": "Configure the homee integration. You can still change these settings later.",
         "data": {
-          "groups": "The groups that should be imported",
+          "import_all_devices": "Import all devices",
+          "groups": "Only Import devices in the following groups",
           "window_groups": "Groups that contain window sensors",
           "door_groups": "Groups that contain door sensors",
           "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
