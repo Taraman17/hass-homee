@@ -7,6 +7,7 @@ from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import AbortFlow
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig
 
 # import homeassistant.helpers.config_validation as cv
 from pymee import (
@@ -37,15 +38,12 @@ DATA_SCHEMA = schema = vol.Schema(
 
 
 def get_options_schema(homee: Homee, default_options={}):
+    """Returns the Schema for the options Dialog."""
     groups = [str(g.id) for g in homee.groups]
     groups_selection = {str(g.id): f"{g.name} ({len(g.nodes)})" for g in homee.groups}
 
     return vol.Schema(
         {
-            vol.Required(
-                CONF_ALL_DEVICES,
-                default=default_options.get(CONF_ALL_DEVICES, False),
-            ): bool,
             vol.Required(
                 CONF_GROUPS,
                 default=default_options.get(CONF_GROUPS, groups),
@@ -123,9 +121,9 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 await self.async_set_unique_id(self.homee.settings.uid)
                 self._abort_if_unique_id_configured()
                 _LOGGER.info(
-                    "created new homee entry with ID {}".format(self.homee.settings.uid)
+                    "Created new homee entry with ID %s", self.homee.settings.uid
                 )
-                return await self.async_step_config()
+                return await self.async_step_config1()
             except CannotConnect:
                 errors["base"] = "cannot_connect"
             except InvalidAuth:
@@ -142,8 +140,27 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors,
         )
 
-    async def async_step_config(self, user_input=None):
+    async def async_step_config1(self, user_input=None):
         """Configure initial options."""
+
+        if user_input is not None:
+            # self.init_info = user_input
+            return await self.async_step_config2()
+
+        config1_schema = vol.Schema(
+            {
+                vol.Required(CONF_ALL_DEVICES, default=True): SelectSelector(
+                    SelectSelectorConfig(
+                        translation_key="all_devices_or_groups", multiple=False
+                    )
+                )
+            }
+        )
+
+        return self.async_show_form(step_id="config1", data_schema=config1_schema)
+
+    async def async_step_config2(self, user_input=None):
+        """Configure groups options."""
 
         if user_input is not None:
             return self.async_create_entry(
@@ -157,17 +174,17 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         return self.async_show_form(
-            step_id="config", data_schema=get_options_schema(self.homee)
+            step_id="config2", data_schema=get_options_schema(self.homee)
         )
 
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Manage the options."""
+
     def __init__(self, entry: config_entries.ConfigEntry) -> None:
         self.entry = entry
 
     async def async_step_init(self, user_input=None):
-        """Manage the options."""
-
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
