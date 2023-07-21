@@ -17,51 +17,22 @@ from pymee import (
 import voluptuous as vol
 
 from .const import (
+    CONF_INITIAL_OPTIONS,
     CONF_ADD_HOMEE_DATA,
     CONF_ALL_DEVICES,
-    CONF_DOOR_GROUPS,
     CONF_GROUPS,
-    CONF_INITIAL_OPTIONS,
+    CONF_IMPORT_GROUPS,
     CONF_WINDOW_GROUPS,
+    CONF_DOOR_GROUPS,
     DOMAIN,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
-DATA_SCHEMA = schema = vol.Schema(
-    {
-        vol.Required(CONF_HOST): str,
-        vol.Required(CONF_USERNAME): str,
-        vol.Required(CONF_PASSWORD): str,
-    }
-)
-
-
-def get_options_schema(homee: Homee, default_options={}):
-    """Returns the Schema for the options Dialog."""
-    groups = [str(g.id) for g in homee.groups]
-    groups_selection = {str(g.id): f"{g.name} ({len(g.nodes)})" for g in homee.groups}
-
-    return vol.Schema(
-        {
-            vol.Required(
-                CONF_GROUPS,
-                default=default_options.get(CONF_GROUPS, groups),
-            ): cv.multi_select(groups_selection),
-            vol.Required(
-                CONF_WINDOW_GROUPS,
-                default=default_options.get(CONF_WINDOW_GROUPS, []),
-            ): cv.multi_select(groups_selection),
-            vol.Required(
-                CONF_DOOR_GROUPS,
-                default=default_options.get(CONF_DOOR_GROUPS, []),
-            ): cv.multi_select(groups_selection),
-            vol.Required(
-                CONF_ADD_HOMEE_DATA,
-                default=default_options.get(CONF_ADD_HOMEE_DATA, False),
-            ): bool,
-        }
-    )
+default_options = {
+    "import_all_devices": True,
+    "add_homee_data": False,
+}
 
 
 async def validate_and_connect(hass: core.HomeAssistant, data) -> Homee:
@@ -75,20 +46,20 @@ async def validate_and_connect(hass: core.HomeAssistant, data) -> Homee:
 
     try:
         await homee.get_access_token()
-        _LOGGER.info("got access token for homee")
+        _LOGGER.info("Got access token for homee")
     except HomeeAuthenticationFailedException as exc:
         raise InvalidAuth from exc
     except asyncio.TimeoutError as exc:
         raise CannotConnect from exc
 
     hass.loop.create_task(homee.run())
-    _LOGGER.info("homee task created")
+    _LOGGER.info("Homee task created")
     await homee.wait_until_connected()
-    _LOGGER.info("homee connected")
+    _LOGGER.info("Homee connected")
     homee.disconnect()
-    _LOGGER.info("homee disconnecting")
+    _LOGGER.info("Homee disconnecting")
     await homee.wait_until_disconnected()
-    _LOGGER.info("homee config successfully tested")
+    _LOGGER.info("Homee config successfully tested")
     # Return homee instance
     return homee
 
@@ -97,8 +68,6 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for homee."""
 
     VERSION = 1
-    # TODO pick one of the available connection classes in homeassistant/config_entries.py
-    # CONNECTION_CLASS = config_entries.CONN_CLASS_UNKNOWN
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
     @staticmethod
@@ -108,12 +77,33 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         """Initialize the config flow."""
-        self.homee_host: str = None
-        self.homee_id: str = None
+        # self.homee_host: str = None
+        # self.homee_id: str = None
         self.homee: Homee = None
+        self.all_devices: bool = True
+        self.debug_data: bool = False
 
     async def async_step_user(self, user_input=None):
         """Handle the initial user step."""
+        AUTH_SCHEMA = schema = vol.Schema(
+            {
+                vol.Required(CONF_HOST): str,
+                vol.Required(CONF_USERNAME): str,
+                vol.Required(CONF_PASSWORD): str,
+                vol.Required(CONF_ALL_DEVICES, default="all"): SelectSelector(
+                    SelectSelectorConfig(
+                        options=["all", "groups"],
+                        translation_key="all_devices_or_groups",
+                        multiple=False,
+                    )
+                ),
+                vol.Required(
+                    CONF_ADD_HOMEE_DATA,
+                    default=default_options.get(CONF_ADD_HOMEE_DATA),
+                ): bool,
+            }
+        )
+
         errors = {}
         if user_input is not None:
             try:
@@ -123,7 +113,9 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.info(
                     "Created new homee entry with ID %s", self.homee.settings.uid
                 )
-                return await self.async_step_config1()
+                self.all_devices = user_input[CONF_ALL_DEVICES] == "all"
+                self.debug_data = user_input[CONF_ADD_HOMEE_DATA]
+                return await self.async_step_groups()
             except CannotConnect:
                 errors["base"] = "cannot_connect"
             except InvalidAuth:
@@ -136,31 +128,48 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="user",
-            data_schema=DATA_SCHEMA,
+            data_schema=AUTH_SCHEMA,
             errors=errors,
         )
 
-    async def async_step_config1(self, user_input=None):
-        """Configure initial options."""
-
-        if user_input is not None:
-            # self.init_info = user_input
-            return await self.async_step_config2()
-
-        config1_schema = vol.Schema(
-            {
-                vol.Required(CONF_ALL_DEVICES, default=True): SelectSelector(
-                    SelectSelectorConfig(
-                        translation_key="all_devices_or_groups", multiple=False
-                    )
-                )
-            }
-        )
-
-        return self.async_show_form(step_id="config1", data_schema=config1_schema)
-
-    async def async_step_config2(self, user_input=None):
+    async def async_step_groups(self, user_input=None):
         """Configure groups options."""
+        groups = [str(g.id) for g in self.homee.groups]
+        groups_selection = {
+            str(g.id): f"{g.name} ({len(g.nodes)})" for g in self.homee.groups
+        }
+
+        if self.all_devices:
+            # Omit the first option if we import all devices.
+            GROUPS_SCHEMA = vol.Schema(
+                {
+                    vol.Required(
+                        CONF_WINDOW_GROUPS,
+                        default=[],
+                    ): cv.multi_select(groups_selection),
+                    vol.Required(
+                        CONF_DOOR_GROUPS,
+                        default=[],
+                    ): cv.multi_select(groups_selection),
+                }
+            )
+        else:
+            GROUPS_SCHEMA = vol.Schema(
+                {
+                    vol.Required(
+                        CONF_GROUPS,
+                        default=groups,
+                    ): cv.multi_select(groups_selection),
+                    vol.Required(
+                        CONF_WINDOW_GROUPS,
+                        default=[],
+                    ): cv.multi_select(groups_selection),
+                    vol.Required(
+                        CONF_DOOR_GROUPS,
+                        default=[],
+                    ): cv.multi_select(groups_selection),
+                }
+            )
 
         if user_input is not None:
             return self.async_create_entry(
@@ -169,13 +178,15 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     CONF_HOST: self.homee.host,
                     CONF_USERNAME: self.homee.user,
                     CONF_PASSWORD: self.homee.password,
-                    CONF_INITIAL_OPTIONS: user_input,
+                },
+                options={
+                    CONF_ALL_DEVICES: self.all_devices,
+                    CONF_ADD_HOMEE_DATA: self.debug_data,
+                    CONF_GROUPS: user_input,
                 },
             )
 
-        return self.async_show_form(
-            step_id="config2", data_schema=get_options_schema(self.homee)
-        )
+        return self.async_show_form(step_id="groups", data_schema=GROUPS_SCHEMA)
 
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
@@ -185,13 +196,50 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         self.entry = entry
 
     async def async_step_init(self, user_input=None):
+        homee: Homee = self.hass.data[DOMAIN][self.entry.entry_id]
+        groups_selection = {
+            str(g.id): f"{g.name} ({len(g.nodes)})" for g in homee.groups
+        }
+
+        CONFIG_SCHEMA = vol.Schema(
+            {
+                vol.Required(
+                    CONF_ALL_DEVICES,
+                    default="all" if self.entry.options[CONF_ALL_DEVICES] else "groups",
+                ): SelectSelector(
+                    SelectSelectorConfig(
+                        options=["all", "groups"],
+                        translation_key="all_devices_or_groups",
+                        multiple=False,
+                    )
+                ),
+                vol.Required(
+                    CONF_IMPORT_GROUPS,
+                    default=self.entry.options.get(CONF_GROUPS).get(
+                        CONF_IMPORT_GROUPS, []
+                    ),
+                ): cv.multi_select(groups_selection),
+                vol.Required(
+                    CONF_WINDOW_GROUPS,
+                    default=self.entry.options[CONF_GROUPS][CONF_WINDOW_GROUPS],
+                ): cv.multi_select(groups_selection),
+                vol.Required(
+                    CONF_DOOR_GROUPS,
+                    default=self.entry.options[CONF_GROUPS][CONF_DOOR_GROUPS],
+                ): cv.multi_select(groups_selection),
+                vol.Required(
+                    CONF_ADD_HOMEE_DATA,
+                    default=self.entry.options[CONF_ADD_HOMEE_DATA],
+                ): bool,
+            }
+        )
+
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        homee: Homee = self.hass.data[DOMAIN][self.entry.entry_id]
-
         return self.async_show_form(
-            step_id="init", data_schema=get_options_schema(homee, self.entry.options)
+            step_id="init",
+            data_schema=CONFIG_SCHEMA,
         )
 
 
