@@ -20,7 +20,7 @@
           "host": "[%key:common::config_flow::data::host%]",
           "username": "[%key:common::config_flow::data::username%]",
           "password": "[%key:common::config_flow::data::password%]",
-          "all_devices_or_groups": "Select which devices should be imported - can be changed later.",
+          "all_devices_or_groups": "Select which devices should be imported",
           "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
         }
       },
@@ -48,8 +48,6 @@
       "init": {
         "description": "Configure the homee integration. You may need to restart Home Assistant to apply the changes.",
         "data": {
-          "all_devices_or_groups": "Select which devices should be imported",
-          "import_groups": "The groups that should be imported - only evaluated if previous option is not \"all\".",
           "window_groups": "Groups that contain window sensors",
           "door_groups": "Groups that contain door sensors",
           "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"

@@ -157,7 +157,7 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             GROUPS_SCHEMA = vol.Schema(
                 {
                     vol.Required(
-                        CONF_GROUPS,
+                        CONF_IMPORT_GROUPS,
                         default=groups,
                     ): cv.multi_select(groups_selection),
                     vol.Required(
@@ -201,24 +201,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             str(g.id): f"{g.name} ({len(g.nodes)})" for g in homee.groups
         }
 
+        #TODO: Add support for changing imported devices.
         CONFIG_SCHEMA = vol.Schema(
             {
-                vol.Required(
-                    CONF_ALL_DEVICES,
-                    default="all" if self.entry.options[CONF_ALL_DEVICES] else "groups",
-                ): SelectSelector(
-                    SelectSelectorConfig(
-                        options=["all", "groups"],
-                        translation_key="all_devices_or_groups",
-                        multiple=False,
-                    )
-                ),
-                vol.Required(
-                    CONF_IMPORT_GROUPS,
-                    default=self.entry.options.get(CONF_GROUPS).get(
-                        CONF_IMPORT_GROUPS, []
-                    ),
-                ): cv.multi_select(groups_selection),
                 vol.Required(
                     CONF_WINDOW_GROUPS,
                     default=self.entry.options[CONF_GROUPS][CONF_WINDOW_GROUPS],
@@ -235,7 +220,14 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         )
 
         if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+            input_data = {}
+            input_data[CONF_ALL_DEVICES] = self.entry.options[CONF_ALL_DEVICES]
+            input_data[CONF_GROUPS] = {}
+            input_data[CONF_GROUPS][CONF_IMPORT_GROUPS] = self.entry.options[CONF_GROUPS].get(CONF_IMPORT_GROUPS, [])
+            input_data[CONF_GROUPS][CONF_WINDOW_GROUPS] = user_input[CONF_WINDOW_GROUPS]
+            input_data[CONF_GROUPS][CONF_DOOR_GROUPS] = user_input[CONF_DOOR_GROUPS]
+            input_data[CONF_ADD_HOMEE_DATA] = user_input[CONF_ADD_HOMEE_DATA]
+            return self.async_create_entry(title="", data=input_data)
 
         return self.async_show_form(
             step_id="init",
