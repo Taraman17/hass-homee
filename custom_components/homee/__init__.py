@@ -184,8 +184,8 @@ class HomeeNodeEntity:
                 (DOMAIN, self._node.id)
             },
             "name": self._node.name,
-            "default_manufacturer": "unknown",
-            "default_model": get_attribute_for_enum(
+            "manufacturer": "unknown",
+            "model": get_attribute_for_enum(
                 NodeProfile, self._homee_data["profile"]
             ),
             "sw_version": sw_version,
