@@ -134,7 +134,7 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
         new_data = {**config_entry.data}
         new_options = {**config_entry.options}
 
-        new_data['initial_options'][CONF_ALL_DEVICES] = "groups"
+        new_data[CONF_INITIAL_OPTIONS][CONF_ALL_DEVICES] = "groups"
         new_options[CONF_ALL_DEVICES] = "groups"
 
         config_entry.version = 2
