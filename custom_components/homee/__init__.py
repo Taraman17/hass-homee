@@ -138,14 +138,20 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     if config_entry.version == 1:
 
         new_data = {**config_entry.data}
-        new_options = {**config_entry.options}
 
-        del new_data[CONF_INITIAL_OPTIONS]
+        if config_entry.options.get(CONF_GROUPS) != None:
+           new_options = {**config_entry.options}
+        else:
+            new_options = {**config_entry.data[CONF_INITIAL_OPTIONS]}
+
         new_options[CONF_ALL_DEVICES] = False
+        import_groups = new_options.pop(CONF_GROUPS, [])
         new_options[CONF_GROUPS] = {}
-        new_options[CONF_GROUPS][CONF_IMPORT_GROUPS] = new_options.pop(CONF_IMPORT_GROUPS, [])
+        new_options[CONF_GROUPS][CONF_IMPORT_GROUPS] = import_groups
         new_options[CONF_GROUPS][CONF_WINDOW_GROUPS] = new_options.pop(CONF_WINDOW_GROUPS, [])
         new_options[CONF_GROUPS][CONF_DOOR_GROUPS] = new_options.pop(CONF_DOOR_GROUPS, [])
+
+        del new_data[CONF_INITIAL_OPTIONS]
 
         config_entry.version = 2
         hass.config_entries.async_update_entry(config_entry, data=new_data, options=new_options)
