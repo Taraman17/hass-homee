@@ -19,11 +19,11 @@ from .const import (
     ATTR_VALUE,
     CONF_ALL_DEVICES,
     CONF_ADD_HOMEE_DATA,
-    CONF_INITIAL_OPTIONS,
+    CONF_DOOR_GROUPS,
     CONF_GROUPS,
     CONF_IMPORT_GROUPS,
+    CONF_INITIAL_OPTIONS,
     CONF_WINDOW_GROUPS,
-    CONF_DOOR_GROUPS,
     DOMAIN,
     SERVICE_SET_VALUE,
 )
@@ -126,19 +126,18 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     return unload_ok
 
 async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Update a given config entry."""
+    """Reload homee integration after config change."""
     await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     """Migrate old entry."""
-    _LOGGER.debug("Migrating from version %s", config_entry.version)
-
-
     if config_entry.version == 1:
+        _LOGGER.debug("Migrating from version %s", config_entry.version)
 
         new_data = {**config_entry.data}
 
+        # If for any reason the options are not present, use the initial_options.
         if config_entry.options.get(CONF_GROUPS) != None:
            new_options = {**config_entry.options}
         else:
@@ -151,12 +150,13 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         new_options[CONF_GROUPS][CONF_WINDOW_GROUPS] = new_options.pop(CONF_WINDOW_GROUPS, [])
         new_options[CONF_GROUPS][CONF_DOOR_GROUPS] = new_options.pop(CONF_DOOR_GROUPS, [])
 
+        # initial options are dropped in v2 since the options can be changed later anyhow.
         del new_data[CONF_INITIAL_OPTIONS]
 
         config_entry.version = 2
         hass.config_entries.async_update_entry(config_entry, data=new_data, options=new_options)
 
-    _LOGGER.info("Migration to version %s successful", config_entry.version)
+        _LOGGER.info("Migration to version %s successful", config_entry.version)
 
     return True
 

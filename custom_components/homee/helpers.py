@@ -6,7 +6,7 @@ from homeassistant.core import HomeAssistant
 from pymee import Homee
 from pymee.model import HomeeNode
 
-from .const import CONF_GROUPS, CONF_IMPORT_GROUPS, CONF_ALL_DEVICES, DOMAIN
+from .const import CONF_ALL_DEVICES, CONF_GROUPS, CONF_IMPORT_GROUPS, DOMAIN
 
 
 def get_imported_nodes(
@@ -22,7 +22,7 @@ def get_imported_nodes(
     # Resolve the configured group ids to actual groups
     groups = [
         homee.get_group_by_id(int(g))
-        for g in config_entry.options[CONF_GROUPS][CONF_IMPORT_GROUPS]
+        for g in config_entry.options[CONF_GROUPS].get(CONF_IMPORT_GROUPS, all_groups)
     ]
 
     # Add all nodes from the groups in a list

@@ -17,13 +17,12 @@ from pymee import (
 import voluptuous as vol
 
 from .const import (
-    CONF_INITIAL_OPTIONS,
     CONF_ADD_HOMEE_DATA,
     CONF_ALL_DEVICES,
+    CONF_DOOR_GROUPS,
     CONF_GROUPS,
     CONF_IMPORT_GROUPS,
     CONF_WINDOW_GROUPS,
-    CONF_DOOR_GROUPS,
     DOMAIN,
 )
 
@@ -139,6 +138,7 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             str(g.id): f"{g.name} ({len(g.nodes)})" for g in self.homee.groups
         }
 
+        # There doesn't seem to be a way to disable a field - so we need 2 seperate versions.
         if self.all_devices:
             # Omit the first option if we import all devices.
             GROUPS_SCHEMA = vol.Schema(
@@ -229,10 +229,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             input_data[CONF_ADD_HOMEE_DATA] = user_input[CONF_ADD_HOMEE_DATA]
             return self.async_create_entry(title="", data=input_data)
 
-        return self.async_show_form(
-            step_id="init",
-            data_schema=CONFIG_SCHEMA,
-        )
+        return self.async_show_form(step_id="init", data_schema=CONFIG_SCHEMA)
 
 
 class CannotConnect(exceptions.HomeAssistantError):

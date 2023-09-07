@@ -26,7 +26,7 @@
       },
       "groups": {
         "title": "Group Configuration",
-        "description": "Configure the groups. You can still change these settings later.",
+        "description": "Configure the groups. You can still change window & door groups later.",
         "data": {
           "import_groups": "Import devices in the following groups",
           "window_groups": "Groups that contain window sensors",
