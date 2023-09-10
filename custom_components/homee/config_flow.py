@@ -198,7 +198,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         self.entry = entry
 
     async def async_step_init(self, user_input=None):
-        """The initial and only step of the options flow."""
+        """Init the first step of the options flow."""
         homee: Homee = self.hass.data[DOMAIN][self.entry.entry_id]
         groups_selection = {
             str(g.id): f"{g.name} ({len(g.nodes)})" for g in homee.groups
