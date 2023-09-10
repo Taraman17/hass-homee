@@ -1,14 +1,5 @@
 {
     "name": "homee",
     "hacs": "0.24.0",
-    "domains": [
-        "binary_sensor",
-        "climate",
-        "cover",
-        "light",
-        "sensor",
-        "switch"
-    ],
-    "iot_class": "Local Push",
     "homeassistant": "2023.3.0"
 }
