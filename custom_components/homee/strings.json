@@ -62,5 +62,25 @@
         "groups": "Only devices from groups selected in the next step"
       }
     }
+  },
+  "services": {
+    "set_value": {
+      "name": "Set Value",
+      "description": "Set an attribute value of a homee node.",
+      "fields": {
+        "node": {
+          "name": "Node",
+          "description": "The node id."
+        },
+        "attribute": {
+          "name": "Attribute",
+          "description": "The attribute id."
+        },
+        "value": {
+          "name": "Value",
+          "description": "The value to set."
+        }
+      }
+    }
   }
 }
