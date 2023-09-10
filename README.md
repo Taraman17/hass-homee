@@ -12,6 +12,8 @@
 
 _Component to integrate with [homee][homee]._
 
+Based on the intial work of [FreshlyBrewedCode]
+
 | :warning: This is a custom integration that is early in development and has so far only been tested in very specific environments and with a limited amount and variety of devices. Please backup your homee and Home Assistant instances before proceeding. |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 
@@ -102,7 +104,7 @@ Home Assistant encourages developers of integrations to use a separate python pa
 ---
 
 [homee]: https://hom.ee
-[buymecoffee]: https://ko-fi.com/freshlybrewed
+[buymecoffee]: https://ko-fi.com/taraman
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
 [commits-shield]: https://img.shields.io/github/last-commit/Taraman17/hacs-homee.svg?style=for-the-badge
 [commits]: https://github.com/Taraman17/hacs-homee/commits/master
@@ -115,3 +117,4 @@ Home Assistant encourages developers of integrations to use a separate python pa
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Taraman17-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/Taraman17/hacs-homee.svg?style=for-the-badge
 [releases]: https://github.com/Taraman17/hacs-homee/releases
+[FreshlyBrewedCode]: https://github.com/FreshlyBrewedCode
