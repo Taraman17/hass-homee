@@ -1,4 +1,4 @@
-"""Helper functions for the homee custom component"""
+"""Helper functions for the homee custom component."""
 import inspect
 
 from homeassistant.config_entries import ConfigEntry
@@ -37,6 +37,7 @@ def get_imported_nodes(
 
 
 def get_attribute_for_enum(att_class, att_id):
+    """Return the attribute label for a given integer."""
     attributes = [
         a
         for a in inspect.getmembers(att_class, lambda a: not inspect.isroutine(a))

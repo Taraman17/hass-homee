@@ -138,7 +138,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         new_data = {**config_entry.data}
 
         # If for any reason the options are not present, use the initial_options.
-        if config_entry.options.get(CONF_GROUPS) != None:
+        if config_entry.options.get(CONF_GROUPS) is not None:
            new_options = {**config_entry.options}
         else:
             new_options = {**config_entry.data[CONF_INITIAL_OPTIONS]}
@@ -230,6 +230,7 @@ class HomeeNodeEntity:
 
     @property
     def state_attributes(self):
+        """Get the state attributes for all devices."""
         data = self._entity.__class__.__bases__[1].state_attributes.fget(self)
         if data is None:
             data = {}

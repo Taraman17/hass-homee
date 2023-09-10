@@ -1,49 +1,66 @@
 name: Release
 
 on:
-  push:
+  pull_request:
     branches:
       - master
       - beta
-      - alpha
 
 jobs:
-  validate:
+  hassfest: # https://developers.home-assistant.io/blog/2020/04/16/hassfest
+    name: "Hassfest Validation"
     runs-on: "ubuntu-latest"
-    name: Validate
     steps:
-        - uses: "actions/checkout@v3"
+        - name: "Checkout the repository"
+          uses: "actions/checkout@v3.5.2"
 
-        - name: HACS validation
-          uses: "hacs/integration/action@master"
-          with:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            CATEGORY: "integration"
-
-        - name: Hassfest validation
+        - name: "Run hassfest validation"
           uses: "home-assistant/actions/hassfest@master"
 
-  style:
+  hacs: # https://github.com/hacs/action
+    name: "HACS Validation"
     runs-on: "ubuntu-latest"
-    name: Check style formatting
     steps:
-        - uses: "actions/checkout@v3"
-        - uses: "actions/setup-python@v1"
+        - name: "Checkout the repository"
+          uses: "actions/checkout@v3.5.2"
+
+        - name: "Run HACS validation"
+          uses: "hacs/action@main"
           with:
-            python-version: "3.x"
-        - run: python3 -m pip install black
-        - run: black .
+            category: "integration"
+            # Remove this 'ignore' key when you have added brand images for your integration to https://github.com/home-assistant/brands
+            ignore: "brands"
+
+  ruff:
+    name: "Ruff"
+    runs-on: "ubuntu-latest"
+    steps:
+        - name: "Checkout the repository"
+          uses: "actions/checkout@v3.5.2"
+
+        - name: "Set up Python"
+          uses: actions/setup-python@v4.6.1
+          with:
+            python-version: "3.10"
+            cache: "pip"
+
+        - name: "Install requirements"
+          run: python3 -m pip install -r requirements.txt
+
+        - name: "Run"
+          run: python3 -m ruff check .
+
   release:
-    needs: [validate, style]
+    needs: [hassfest, hacs, ruff]
     name: Release
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: "actions/checkout@v3.5.2"
         with:
           fetch-depth: 0
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v3.8.1
         with:
           node-version: 18
       - run: npm install @semantic-release/exec -D
