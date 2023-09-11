@@ -1,71 +1,35 @@
-name: Release
+name: "Release"
 
 on:
-  pull_request:
-    branches:
-      - master
-      - beta
+  release:
+    types:
+      - "published"
+
+permissions: {}
 
 jobs:
-  hassfest: # https://developers.home-assistant.io/blog/2020/04/16/hassfest
-    name: "Hassfest Validation"
-    runs-on: "ubuntu-latest"
-    steps:
-        - name: "Checkout the repository"
-          uses: "actions/checkout@v3.5.2"
-
-        - name: "Run hassfest validation"
-          uses: "home-assistant/actions/hassfest@master"
-
-  hacs: # https://github.com/hacs/action
-    name: "HACS Validation"
-    runs-on: "ubuntu-latest"
-    steps:
-        - name: "Checkout the repository"
-          uses: "actions/checkout@v3.5.2"
-
-        - name: "Run HACS validation"
-          uses: "hacs/action@main"
-          with:
-            category: "integration"
-            # Remove this 'ignore' key when you have added brand images for your integration to https://github.com/home-assistant/brands
-            ignore: "brands"
-
-  ruff:
-    name: "Ruff"
-    runs-on: "ubuntu-latest"
-    steps:
-        - name: "Checkout the repository"
-          uses: "actions/checkout@v3.5.2"
-
-        - name: "Set up Python"
-          uses: actions/setup-python@v4.6.1
-          with:
-            python-version: "3.10"
-            cache: "pip"
-
-        - name: "Install requirements"
-          run: python3 -m pip install -r requirements.txt
-
-        - name: "Run"
-          run: python3 -m ruff check .
-
   release:
-    needs: [hassfest, hacs, ruff]
-    name: Release
-    runs-on: ubuntu-22.04
+    name: "Release"
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
     steps:
-      - name: Checkout
+      - name: "Checkout the repository"
         uses: "actions/checkout@v3.5.2"
+
+      - name: "Adjust version number"
+        shell: "bash"
+        run: |
+          yq -i -o json '.version="${{ github.event.release.tag_name }}"' \
+            "${{ github.workspace }}/custom_components/hacs-homee/manifest.json"
+
+      - name: "ZIP the integration directory"
+        shell: "bash"
+        run: |
+          cd "${{ github.workspace }}/custom_components/hacs-homee"
+          zip hacs-homee.zip -r ./
+
+      - name: "Upload the ZIP file to the release"
+        uses: softprops/action-gh-release@v0.1.15
         with:
-          fetch-depth: 0
-      - name: Setup Node.js
-        uses: actions/setup-node@v3.8.1
-        with:
-          node-version: 18
-      - run: npm install @semantic-release/exec -D
-      - run: npm install @semantic-release/git -D
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+          files: ${{ github.workspace }}/custom_components/hacs-homee/hacs-homee.zip
