@@ -51,7 +51,7 @@ def get_light_features(node: HomeeNodeEntity, default=0) -> int:
 
 
 def get_light_attribute_sets(node: HomeeNodeEntity, index: int):
-    """Returns a list with the attributes for each light entity to be created"""
+    """Return a list with the attributes for each light entity to be created."""
     on_off_attributes = [
         i for i in node.attributes if i.type == AttributeType.ON_OFF and i.editable
     ]
@@ -162,6 +162,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
 
     @property
     def name(self):
+        """Return the name if set, else a generic name."""
         if self._light_index == 0:
             return None
         else:

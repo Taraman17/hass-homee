@@ -8,7 +8,9 @@
         "data": {
           "host": "[%key:common::config_flow::data::host%]",
           "username": "[%key:common::config_flow::data::username%]",
-          "password": "[%key:common::config_flow::data::password%]"
+          "password": "[%key:common::config_flow::data::password%]",
+          "all_devices_or_groups": "Select which devices should be imported",
+          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
         }
       },
       "zeroconf_confirm": {
@@ -17,17 +19,18 @@
         "data": {
           "host": "[%key:common::config_flow::data::host%]",
           "username": "[%key:common::config_flow::data::username%]",
-          "password": "[%key:common::config_flow::data::password%]"
+          "password": "[%key:common::config_flow::data::password%]",
+          "all_devices_or_groups": "Select which devices should be imported",
+          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
         }
       },
-      "config": {
-        "title": "Initial Configuration",
-        "description": "Configure the homee integration. You can still change these settings later.",
+      "groups": {
+        "title": "Group Configuration",
+        "description": "Configure the groups. You can still change window & door groups later.",
         "data": {
-          "groups": "The groups that should be imported",
+          "import_groups": "Import devices in the following groups",
           "window_groups": "Groups that contain window sensors",
-          "door_groups": "Groups that contain door sensors",
-          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
+          "door_groups": "Groups that contain door sensors"
         }
       }
     },
@@ -45,10 +48,37 @@
       "init": {
         "description": "Configure the homee integration. You may need to restart Home Assistant to apply the changes.",
         "data": {
-          "groups": "The groups that should be imported",
           "window_groups": "Groups that contain window sensors",
           "door_groups": "Groups that contain door sensors",
           "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
+        }
+      }
+    }
+  },
+  "selector": {
+    "all_devices_or_groups": {
+      "options": {
+        "all": "All devices",
+        "groups": "Only devices from groups selected in the next step"
+      }
+    }
+  },
+  "services": {
+    "set_value": {
+      "name": "Set Value",
+      "description": "Set an attribute value of a homee node.",
+      "fields": {
+        "node": {
+          "name": "Node",
+          "description": "The node id."
+        },
+        "attribute": {
+          "name": "Attribute",
+          "description": "The attribute id."
+        },
+        "value": {
+          "name": "Value",
+          "description": "The value to set."
         }
       }
     }

@@ -17,15 +17,19 @@ from .const import (
     ATTR_ATTRIBUTE,
     ATTR_NODE,
     ATTR_VALUE,
-    CONF_ADD_HOME_DATA,
+    CONF_ALL_DEVICES,
+    CONF_ADD_HOMEE_DATA,
+    CONF_DOOR_GROUPS,
+    CONF_GROUPS,
+    CONF_IMPORT_GROUPS,
     CONF_INITIAL_OPTIONS,
+    CONF_WINDOW_GROUPS,
     DOMAIN,
     SERVICE_SET_VALUE,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
-# TODO
 CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})}, extra=vol.ALLOW_EXTRA)
 
 PLATFORMS = ["light", "climate", "binary_sensor", "switch", "cover", "sensor"]
@@ -46,11 +50,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         entry.data[CONF_PASSWORD],
         "pymee_" + hass.config.location_name,
     )
-
-    # Migrate initial options
-    if entry.options is None or entry.options == {}:
-        options = entry.data.get(CONF_INITIAL_OPTIONS, {})
-        hass.config_entries.async_update_entry(entry, options=options)
 
     # Start the homee websocket connection as a new task and wait until we are connected
     hass.loop.create_task(homee.run())
@@ -97,6 +96,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
             hass.config_entries.async_forward_entry_setup(entry, component)
         )
 
+    entry.async_on_unload(entry.add_update_listener(async_update_entry))
+
     return True
 
 
@@ -124,6 +125,40 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     return unload_ok
 
+async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload homee integration after config change."""
+    await hass.config_entries.async_reload(entry.entry_id)
+
+
+async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
+    """Migrate old entry."""
+    if config_entry.version == 1:
+        _LOGGER.debug("Migrating from version %s", config_entry.version)
+
+        new_data = {**config_entry.data}
+
+        # If for any reason the options are not present, use the initial_options.
+        if config_entry.options.get(CONF_GROUPS) is not None:
+           new_options = {**config_entry.options}
+        else:
+            new_options = {**config_entry.data[CONF_INITIAL_OPTIONS]}
+
+        new_options[CONF_ALL_DEVICES] = False
+        import_groups = new_options.pop(CONF_GROUPS, [])
+        new_options[CONF_GROUPS] = {}
+        new_options[CONF_GROUPS][CONF_IMPORT_GROUPS] = import_groups
+        new_options[CONF_GROUPS][CONF_WINDOW_GROUPS] = new_options.pop(CONF_WINDOW_GROUPS, [])
+        new_options[CONF_GROUPS][CONF_DOOR_GROUPS] = new_options.pop(CONF_DOOR_GROUPS, [])
+
+        # initial options are dropped in v2 since the options can be changed later anyhow.
+        del new_data[CONF_INITIAL_OPTIONS]
+
+        config_entry.version = 2
+        hass.config_entries.async_update_entry(config_entry, data=new_data, options=new_options)
+
+        _LOGGER.info("Migration to version %s successful", config_entry.version)
+
+    return True
 
 class HomeeNodeEntity:
     """Representation of a Node in Homee."""
@@ -195,11 +230,12 @@ class HomeeNodeEntity:
 
     @property
     def state_attributes(self):
+        """Get the state attributes for all devices."""
         data = self._entity.__class__.__bases__[1].state_attributes.fget(self)
         if data is None:
             data = {}
 
-        if self._entry.options.get(CONF_ADD_HOME_DATA, False):
+        if self._entry.options.get(CONF_ADD_HOMEE_DATA, False):
             data["homee_data"] = self._homee_data
 
         return data if data != {} else None

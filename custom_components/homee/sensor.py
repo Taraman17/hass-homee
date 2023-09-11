@@ -114,14 +114,17 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
 
     @property
     def native_value(self):
+        """Return the native value of the sensor."""
         return self._measurement.current_value
 
     @property
     def native_unit_of_measurement(self):
+        """Return the native unit of the sensor."""
         return self._measurement.unit
 
     @property
     def state_class(self):
+        """Return the state class of the sensor."""
         return self._state_class
 
     @property

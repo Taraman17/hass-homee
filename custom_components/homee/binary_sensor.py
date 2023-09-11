@@ -77,7 +77,7 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
         self._unique_id = f"{self._node.id}-binary_sensor-{self._state_attr}"
 
     def _configure_device_class(self):
-        """Configure the device class of the sensor"""
+        """Configure the device class of the sensor."""
 
         # Get the initial device class and state attribute
         self._device_class, self._state_attr = get_device_class(self)

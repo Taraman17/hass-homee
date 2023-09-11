@@ -106,10 +106,11 @@ class HomeeCover(HomeeNodeEntity, CoverEntity):
             self._open_close_attribute = AttributeType.UP_DOWN
 
         # Set position can also be controlled with different attributes.
-        if self.has_attribute(AttributeType.SHUTTER_SLAT_POSITION):
-            self._position_attribute = AttributeType.SHUTTER_SLAT_POSITION
-        else:  # POSITION is default.
+        if self.has_attribute(AttributeType.POSITION):
+            # POSITION is default.
             self._position_attribute = AttributeType.POSITION
+        else:
+            self._position_attribute = AttributeType.SHUTTER_SLAT_POSITION
 
     @property
     def name(self):

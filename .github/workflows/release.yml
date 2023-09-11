@@ -1,54 +1,35 @@
-name: Release
+name: "Release"
 
 on:
-  push:
-    branches:
-      - master
-      - beta
-      - alpha
+  release:
+    types:
+      - "published"
+
+permissions: {}
 
 jobs:
-  validate:
-    runs-on: "ubuntu-latest"
-    name: Validate
-    steps:
-        - uses: "actions/checkout@v2"
-
-        - name: HACS validation
-          uses: "hacs/integration/action@master"
-          with:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            CATEGORY: "integration"
-
-        - name: Hassfest validation
-          uses: "home-assistant/actions/hassfest@master"
-
-  style:
-    runs-on: "ubuntu-latest"
-    name: Check style formatting
-    steps:
-        - uses: "actions/checkout@v2"
-        - uses: "actions/setup-python@v1"
-          with:
-            python-version: "3.x"
-        - run: python3 -m pip install black
-        - run: black .
   release:
-    needs: [validate, style]
-    name: Release
-    runs-on: ubuntu-22.04
+    name: "Release"
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: "Checkout the repository"
+        uses: "actions/checkout@v3.5.2"
+
+      - name: "Adjust version number"
+        shell: "bash"
+        run: |
+          yq -i -o json '.version="${{ github.event.release.tag_name }}"' \
+            "${{ github.workspace }}/custom_components/homee/manifest.json"
+
+      - name: "ZIP the integration directory"
+        shell: "bash"
+        run: |
+          cd "${{ github.workspace }}/custom_components/homee"
+          zip homee.zip -r ./
+
+      - name: "Upload the ZIP file to the release"
+        uses: softprops/action-gh-release@v0.1.15
         with:
-          fetch-depth: 0
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - run: npm install @semantic-release/exec -D
-      - run: npm install @semantic-release/git -D
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+          files: ${{ github.workspace }}/custom_components/homee/hacs-homee.zip

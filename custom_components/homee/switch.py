@@ -108,7 +108,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
 
     @property
     def name(self):
-        """Return the display name of this entity. Entity is the main feature of a device when the index == 0"""
+        """Return the display name of this entity. Entity is the main feature of a device when the index == 0."""
         for key, val in AttributeType.__dict__.items():
             if val == self._on_off.type:
                 attribute_name = key

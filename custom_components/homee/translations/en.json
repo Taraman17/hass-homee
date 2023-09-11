@@ -1,56 +1,86 @@
 {
-    "config": {
-        "flow_title": "homee {name} ({host})",
-        "abort": {
-            "already_configured": "Device is already configured"
-        },
-        "error": {
-            "cannot_connect": "Failed to connect",
-            "invalid_auth": "Invalid authentication",
-            "unknown": "Unexpected error"
-        },
-        "step": {
-            "user": {
-                "title": "Configure homee",
-                "description": "Manually enter the ip address of the homee you want to connect.",
-                "data": {
-                    "host": "Host",
-                    "password": "Password",
-                    "username": "Username"
-                }
-            },
-            "zeroconf_confirm": {
-              "title": "Configure homee",
-              "description": "Discovered homee {id} at {host}",
-              "data": {
-                "host": "Host",
-                "password": "Password",
-                "username": "Username"
-              }
-            },
-            "config": {
-              "title": "Initial Configuration",
-              "description": "Configure the homee integration. You can still change these settings later.",
-              "data": {
-                "groups": "The groups that should be imported",
-                "window_groups": "Groups that contain window sensors",
-                "door_groups": "Groups that contain door sensors",
-                "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
-              }
-            }
-        }
+  "config": {
+    "flow_title": "homee {name} ({host})",
+    "abort": {
+      "already_configured": "Device is already configured"
     },
-    "options": {
-        "step": {
-          "init": {
-            "description": "Configure the homee integration. You may need to restart Home Assistant to apply the changes.",
-            "data": {
-              "groups": "The groups that should be imported",
-              "window_groups": "Groups that contain window sensors",
-              "door_groups": "Groups that contain door sensors",
-              "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
-            }
-          }
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error"
+    },
+    "step": {
+      "user": {
+        "title": "Configure homee",
+        "description": "Manually enter the ip address of the homee you want to connect.",
+        "data": {
+          "host": "Host",
+          "password": "Password",
+          "username": "Username",
+          "all_devices_or_groups": "Select which devices should be imported",
+          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Configure homee",
+        "description": "Discovered homee {id} at {host}",
+        "data": {
+          "host": "Host",
+          "password": "Password",
+          "username": "Username",
+          "all_devices_or_groups": "Select which devices should be imported",
+          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
+        }
+      },
+      "groups": {
+        "title": "Group Configuration",
+        "description": "Configure the groups. You can still change window & door groups later.",
+        "data": {
+          "import_groups": "Import devices in the following groups",
+          "window_groups": "Groups that contain window sensors",
+          "door_groups": "Groups that contain door sensors"
         }
       }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "description": "Configure the homee integration. You may need to restart Home Assistant to apply the changes.",
+        "data": {
+          "window_groups": "Groups that contain window sensors",
+          "door_groups": "Groups that contain door sensors",
+          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
+        }
+      }
+    }
+  },
+  "selector": {
+    "all_devices_or_groups": {
+      "options": {
+        "all": "All devices",
+        "groups": "Only devices from groups selected in the next step"
+      }
+    }
+  },
+  "services": {
+    "set_value": {
+      "name": "Set Value",
+      "description": "Set an attribute value of a homee node.",
+      "fields": {
+        "node": {
+          "name": "Node",
+          "description": "The node id."
+        },
+        "attribute": {
+          "name": "Attribute",
+          "description": "The attribute id."
+        },
+        "value": {
+          "name": "Value",
+          "description": "The value to set."
+        }
+      }
+    }
+  }
 }
