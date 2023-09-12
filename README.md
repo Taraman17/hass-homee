@@ -30,6 +30,21 @@ Based on the intial work of [FreshlyBrewedCode]
 
 ![homee][homee_logo]
 
+## :information_source: Upgrade from previous Repository
+:warning: **Backup homee and Home Assistant!**
+
+1. In HACS click on the homee integration.
+2. In the top right menu click "remove"
+![grafik](https://github.com/FreshlyBrewedCode/hacs-homee/assets/4706817/af69b1da-6f81-4c31-b051-4a58fc264a54)
+
+4. click "ignore". This way, the integration will be deleted, but the config will stay.
+![grafik](https://github.com/FreshlyBrewedCode/hacs-homee/assets/4706817/29de90d1-2bf4-49ae-8ec4-b48eab737269)
+
+6. !WITHOUT RESTART! Add [this repository] to HACS and install.
+7. Now restart.
+
+If you want to use the new feature to import all devicess from homee, you have to remove the integration and reinstall.
+
 ## Installation
 
 > :warning: **Backup homee and Home Assistant!**
@@ -118,3 +133,4 @@ Home Assistant encourages developers of integrations to use a separate python pa
 [releases-shield]: https://img.shields.io/github/release/Taraman17/hacs-homee.svg?style=for-the-badge
 [releases]: https://github.com/Taraman17/hacs-homee/releases
 [FreshlyBrewedCode]: https://github.com/FreshlyBrewedCode
+[this repository]: https://github.com/Taraman17/hacs-homee
