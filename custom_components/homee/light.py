@@ -147,7 +147,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
 
     _attr_has_entity_name = True
 
-    def __init__(self, node: HomeeNode, light_set, light_index, entry: ConfigEntry):
+    def __init__(self, node: HomeeNode, light_set, light_index, entry: ConfigEntry) -> None:
         """Initialize a homee light."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._supported_features = get_light_features(self)

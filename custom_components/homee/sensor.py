@@ -21,12 +21,14 @@ VALID_ATTRIBUTES = [
     AttributeType.ACCUMULATED_ENERGY_USE,
     AttributeType.POSITION,
     AttributeType.UP_DOWN,
+    AttributeType.BATTERY_LEVEL
 ]
 
 MEASUREMENT_ATTRIBUTES = [
     AttributeType.CURRENT_ENERGY_USE,
     AttributeType.POSITION,
     AttributeType.UP_DOWN,
+    AttributeType.BATTERY_LEVEL,
 ]
 
 
@@ -37,6 +39,9 @@ def get_device_class(attribute: HomeeAttribute) -> int:
 
     if attribute.type == AttributeType.ACCUMULATED_ENERGY_USE:
         return SensorDeviceClass.ENERGY
+
+    if attribute.type == AttributeType.BATTERY_LEVEL:
+        return SensorDeviceClass.BATTERY
 
     return None
 

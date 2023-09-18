@@ -22,17 +22,6 @@ HOMEE_PLUG_PROFILES = [
     NodeProfile.IMPULSE_PLUG,
 ]
 
-HOMEE_SWITCH_PROFILES = [
-    NodeProfile.METERING_SWITCH,
-    NodeProfile.ON_OFF_SWITCH,
-    NodeProfile.DOUBLE_ON_OFF_SWITCH,
-    NodeProfile.ON_OFF_SWITCH_WITH_BINARY_INPUT,
-    NodeProfile.DOUBLE_METERING_SWITCH,
-    NodeProfile.IMPULSE_RELAY,
-    NodeProfile.GARAGE_DOOR_OPERATOR,
-    NodeProfile.GARAGE_DOOR_IMPULSE_OPERATOR,
-]
-
 HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.ON_OFF,
     AttributeType.IMPULSE,
@@ -43,6 +32,7 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
+    AttributeType.SIREN
 ]
 
 
@@ -54,26 +44,14 @@ def get_device_class(node: HomeeNode) -> int:
     return SwitchDeviceClass.SWITCH
 
 
-def is_switch_node(node: HomeeNode):
-    """Determine if a node contains switches based on attributes."""
-    for attribute in node.attributes:
-        if attribute.type in HOMEE_SWITCH_ATTRIBUTES:
-            return (
-                node.profile in HOMEE_PLUG_PROFILES
-                or node.profile in HOMEE_SWITCH_PROFILES
-            )
-    return False
-
-
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
     """Add the homee platform for the switch component."""
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
-        if not is_switch_node(node):
-            continue
         switch_count = 0
         for attribute in node.attributes:
+            # These conditions identify a switch.
             if attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable:
                 devices.append(HomeeSwitch(node, config_entry, attribute, switch_count))
                 switch_count += 1
@@ -108,7 +86,8 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
 
     @property
     def name(self):
-        """Return the display name of this entity. Entity is the main feature of a device when the index == 0."""
+        """Return the display name of this entity."""
+        # Entity is the main feature of a device when the index == 0.
         for key, val in AttributeType.__dict__.items():
             if val == self._on_off.type:
                 attribute_name = key
