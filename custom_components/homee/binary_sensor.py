@@ -9,12 +9,19 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from pymee.const import AttributeType, NodeProfile
-from pymee.model import HomeeNode
+from pymee.model import HomeeAttribute, HomeeNode
 
 from . import HomeeNodeEntity, helpers
-from .const import CONF_DOOR_GROUPS, CONF_WINDOW_GROUPS
+from .const import CONF_DOOR_GROUPS, CONF_GROUPS, CONF_WINDOW_GROUPS
 
 _LOGGER = logging.getLogger(__name__)
+
+HOMEE_BINARY_SENSOR_ATTRIBUTES = [
+    AttributeType.OPEN_CLOSE,
+    AttributeType.ON_OFF,
+    AttributeType.LOCK_STATE,
+    AttributeType.SMOKE_ALARM,
+]
 
 
 def get_device_class(node: HomeeNodeEntity) -> int:
@@ -22,13 +29,17 @@ def get_device_class(node: HomeeNodeEntity) -> int:
     device_class = BinarySensorDeviceClass.OPENING
     state_attr = AttributeType.OPEN_CLOSE
 
-    if node.has_attribute(AttributeType.ON_OFF):
+    if node._on_off.type == AttributeType.ON_OFF:
         state_attr = AttributeType.ON_OFF
         device_class = BinarySensorDeviceClass.PLUG
 
-    if node.has_attribute(AttributeType.LOCK_STATE):
+    if node._on_off.type == AttributeType.LOCK_STATE:
         state_attr = AttributeType.LOCK_STATE
         device_class = BinarySensorDeviceClass.LOCK
+
+    if node._on_off.type == AttributeType.SMOKE_ALARM:
+        state_attr = AttributeType.SMOKE_ALARM
+        device_class = BinarySensorDeviceClass.SMOKE
 
     return (device_class, state_attr)
 
@@ -40,6 +51,10 @@ def is_binary_sensor_node(node: HomeeNode):
         NodeProfile.OPEN_CLOSE_AND_TEMPERATURE_SENSOR,
         NodeProfile.OPEN_CLOSE_WITH_TEMPERATURE_AND_BRIGHTNESS_SENSOR,
         NodeProfile.LOCK,
+        NodeProfile.SMOKE_DETECTOR,
+        NodeProfile.SMOKE_DETECTOR_AND_CODETECTOR,
+        NodeProfile.SMOKE_DETECTOR_AND_SIREN,
+        NodeProfile.SMOKE_DETECTOR_WITH_TEMPERATURE_SENSOR,
     ]
 
 
@@ -48,9 +63,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
-        if not is_binary_sensor_node(node):
-            continue
-        devices.append(HomeeBinarySensor(node, config_entry))
+        for attribute in node.attributes:
+            if attribute.type in HOMEE_BINARY_SENSOR_ATTRIBUTES:
+                devices.append(HomeeBinarySensor(node, config_entry, attribute))
     if devices:
         async_add_devices(devices)
 
@@ -66,15 +81,18 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
     _attr_has_entity_name = True
     _attr_name = None
 
-    def __init__(self, node: HomeeNode, entry: ConfigEntry) -> None:
+    def __init__(
+        self,
+        node: HomeeNode,
+        entry: ConfigEntry,
+        binary_sensor_attribute: HomeeAttribute = None
+    ) -> None:
         """Initialize a homee binary sensor entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
 
-        self._device_class = BinarySensorDeviceClass.OPENING
-        self._state_attr = AttributeType.OPEN_CLOSE
-
+        self._on_off = binary_sensor_attribute
         self._configure_device_class()
-        self._unique_id = f"{self._node.id}-binary_sensor-{self._state_attr}"
+        self._unique_id = f"{self._node.id}-binary_sensor-{self._on_off.id}"
 
     def _configure_device_class(self):
         """Configure the device class of the sensor."""
@@ -84,12 +102,12 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
 
         # Set Window/Door device class based on configured groups
         if any(
-            str(group.id) in self._entry.options.get(CONF_WINDOW_GROUPS, [])
+            str(group.id) in self._entry.options[CONF_GROUPS].get(CONF_WINDOW_GROUPS, [])
             for group in self._node.groups
         ):
             self._device_class = BinarySensorDeviceClass.WINDOW
         elif any(
-            str(group.id) in self._entry.options.get(CONF_DOOR_GROUPS, [])
+            str(group.id) in self._entry.options[CONF_GROUPS].get(CONF_DOOR_GROUPS, [])
             for group in self._node.groups
         ):
             self._device_class = BinarySensorDeviceClass.DOOR
