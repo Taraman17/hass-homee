@@ -49,12 +49,10 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
-        switch_count = 0
         for attribute in node.attributes:
             # These conditions identify a switch.
             if attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable:
-                devices.append(HomeeSwitch(node, config_entry, attribute, switch_count))
-                switch_count += 1
+                devices.append(HomeeSwitch(node, config_entry, attribute))
     if devices:
         async_add_devices(devices)
 
@@ -73,13 +71,12 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         self,
         node: HomeeNode,
         entry: ConfigEntry,
-        on_off_attribute: HomeeAttribute = None,
-        switch_index=-1,
+        on_off_attribute: HomeeAttribute = None
     ) -> None:
         """Initialize a homee switch entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._on_off = on_off_attribute
-        self._switch_index = switch_index
+        self._switch_index = on_off_attribute.instance
         self._device_class = get_device_class(node)
 
         self._unique_id = f"{self._node.id}-switch-{self._on_off.id}"
@@ -100,7 +97,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
             return None
 
         if self._switch_index > 0:
-            return f"switch {self._switch_index + 1}"
+            return f"switch {self._switch_index}"
 
     @property
     def is_on(self) -> bool:

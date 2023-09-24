@@ -2,7 +2,7 @@
 
 import logging
 
-import homeassistant
+from homeassistant.core import HomeAssistant
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
     ATTR_COLOR_TEMP,
@@ -94,7 +94,7 @@ def decimal_to_rgb_list(color):
     return [(color & 0xFF0000) >> 16, (color & 0x00FF00) >> 8, (color & 0x0000FF)]
 
 
-async def async_setup_entry(hass, config_entry, async_add_devices):
+async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
     """Add the homee platform for the light integration."""
 
     devices = []
@@ -115,7 +115,7 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
         async_add_devices(devices)
 
 
-async def async_unload_entry(hass: homeassistant, entry: ConfigEntry):
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
     return True
 

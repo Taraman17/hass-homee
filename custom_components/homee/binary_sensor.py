@@ -21,25 +21,30 @@ HOMEE_BINARY_SENSOR_ATTRIBUTES = [
     AttributeType.ON_OFF,
     AttributeType.LOCK_STATE,
     AttributeType.SMOKE_ALARM,
+    AttributeType.HIGH_TEMPERATURE_ALARM,
 ]
 
 
-def get_device_class(node: HomeeNodeEntity) -> int:
+def get_device_class(attribute: HomeeAttribute) -> int:
     """Determine the device class a homee node based on the available attributes."""
     device_class = BinarySensorDeviceClass.OPENING
     state_attr = AttributeType.OPEN_CLOSE
 
-    if node._on_off.type == AttributeType.ON_OFF:
+    if attribute.type == AttributeType.ON_OFF:
         state_attr = AttributeType.ON_OFF
         device_class = BinarySensorDeviceClass.PLUG
 
-    if node._on_off.type == AttributeType.LOCK_STATE:
+    if attribute.type == AttributeType.LOCK_STATE:
         state_attr = AttributeType.LOCK_STATE
         device_class = BinarySensorDeviceClass.LOCK
 
-    if node._on_off.type == AttributeType.SMOKE_ALARM:
+    if attribute.type == AttributeType.SMOKE_ALARM:
         state_attr = AttributeType.SMOKE_ALARM
         device_class = BinarySensorDeviceClass.SMOKE
+
+    if attribute.type == AttributeType.HIGH_TEMPERATURE_ALARM:
+        state_attr = AttributeType.HIGH_TEMPERATURE_ALARM
+        device_class = BinarySensorDeviceClass.HEAT
 
     return (device_class, state_attr)
 
@@ -98,7 +103,7 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
         """Configure the device class of the sensor."""
 
         # Get the initial device class and state attribute
-        self._device_class, self._state_attr = get_device_class(self)
+        self._device_class, self._state_attr = get_device_class(self._on_off)
 
         # Set Window/Door device class based on configured groups
         if any(
