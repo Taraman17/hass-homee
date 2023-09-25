@@ -23,10 +23,10 @@ SENSOR_ATTRIBUTES = [
     AttributeType.CURRENT_ENERGY_USE,
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.POSITION,
-    AttributeType.TOTAL_VOLTAGE,
-    AttributeType.TOTAL_CURRENT_ENERGY_USE,
     AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
     AttributeType.TOTAL_CURRENT,
+    AttributeType.TOTAL_CURRENT_ENERGY_USE,
+    AttributeType.TOTAL_VOLTAGE,
     AttributeType.UP_DOWN,
     AttributeType.VOLTAGE,
 ]

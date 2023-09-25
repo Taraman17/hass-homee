@@ -30,6 +30,7 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.ON_OFF,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
+    AttributeType.RESET_METER,
     AttributeType.SIREN,
     AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
