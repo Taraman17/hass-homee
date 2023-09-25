@@ -8,7 +8,7 @@ from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from pymee.const import AttributeType, NodeProfile
+from pymee.const import AttributeType
 from pymee.model import HomeeAttribute, HomeeNode
 
 from . import HomeeNodeEntity, helpers
