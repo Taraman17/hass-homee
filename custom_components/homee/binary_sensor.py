@@ -17,11 +17,11 @@ from .const import CONF_DOOR_GROUPS, CONF_GROUPS, CONF_WINDOW_GROUPS
 _LOGGER = logging.getLogger(__name__)
 
 HOMEE_BINARY_SENSOR_ATTRIBUTES = [
-    AttributeType.OPEN_CLOSE,
-    AttributeType.ON_OFF,
-    AttributeType.LOCK_STATE,
-    AttributeType.SMOKE_ALARM,
     AttributeType.HIGH_TEMPERATURE_ALARM,
+    AttributeType.LOCK_STATE,
+    AttributeType.ON_OFF,
+    AttributeType.OPEN_CLOSE,
+    AttributeType.SMOKE_ALARM,
 ]
 
 
@@ -52,10 +52,10 @@ def get_device_class(attribute: HomeeAttribute) -> int:
 def is_binary_sensor_node(node: HomeeNode):
     """Determine if a node is a binary sensor based on profile and attributes."""
     return node.profile in [
+        NodeProfile.LOCK,
         NodeProfile.OPEN_CLOSE_SENSOR,
         NodeProfile.OPEN_CLOSE_AND_TEMPERATURE_SENSOR,
         NodeProfile.OPEN_CLOSE_WITH_TEMPERATURE_AND_BRIGHTNESS_SENSOR,
-        NodeProfile.LOCK,
         NodeProfile.SMOKE_DETECTOR,
         NodeProfile.SMOKE_DETECTOR_AND_CODETECTOR,
         NodeProfile.SMOKE_DETECTOR_AND_SIREN,

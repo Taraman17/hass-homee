@@ -17,30 +17,30 @@ from . import HomeeNodeEntity, helpers
 _LOGGER = logging.getLogger(__name__)
 
 SENSOR_ATTRIBUTES = [
-    AttributeType.CURRENT_ENERGY_USE,
     AttributeType.ACCUMULATED_ENERGY_USE,
-    AttributeType.POSITION,
-    AttributeType.UP_DOWN,
     AttributeType.BATTERY_LEVEL,
     AttributeType.CURRENT,
-    AttributeType.VOLTAGE,
+    AttributeType.CURRENT_ENERGY_USE,
+    AttributeType.DEVICE_TEMPERATURE,
+    AttributeType.POSITION,
     AttributeType.TOTAL_VOLTAGE,
     AttributeType.TOTAL_CURRENT_ENERGY_USE,
     AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
     AttributeType.TOTAL_CURRENT,
-    AttributeType.DEVICE_TEMPERATURE,
+    AttributeType.UP_DOWN,
+    AttributeType.VOLTAGE,
 ]
 
 MEASUREMENT_ATTRIBUTES = [
-    AttributeType.CURRENT_ENERGY_USE,
-    AttributeType.POSITION,
-    AttributeType.UP_DOWN,
     AttributeType.BATTERY_LEVEL,
     AttributeType.CURRENT,
+    AttributeType.CURRENT_ENERGY_USE,
+    AttributeType.DEVICE_TEMPERATURE,
+    AttributeType.POSITION,
+    AttributeType.UP_DOWN,
     AttributeType.VOLTAGE,
     AttributeType.TOTAL_CURRENT_ENERGY_USE,
     AttributeType.TOTAL_CURRENT,
-    AttributeType.DEVICE_TEMPERATURE,
 ]
 
 TOTAL_INCREASING_ATTRIBUTES = [
@@ -56,7 +56,10 @@ def get_device_class(attribute: HomeeAttribute) -> int:
     if attribute.type == AttributeType.CURRENT_ENERGY_USE:
         device_class = SensorDeviceClass.POWER
 
-    if attribute.type in [AttributeType.ACCUMULATED_ENERGY_USE, AttributeType.TOTAL_ACCUMULATED_ENERGY_USE]:
+    if attribute.type in [
+        AttributeType.ACCUMULATED_ENERGY_USE,
+        AttributeType.TOTAL_ACCUMULATED_ENERGY_USE
+    ]:
         device_class = SensorDeviceClass.ENERGY
 
     if attribute.type == AttributeType.BATTERY_LEVEL:

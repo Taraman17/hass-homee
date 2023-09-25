@@ -23,16 +23,16 @@ HOMEE_PLUG_PROFILES = [
 ]
 
 HOMEE_SWITCH_ATTRIBUTES = [
-    AttributeType.ON_OFF,
+    AttributeType.AUTOMATIC_MODE_IMPULSE,
+    AttributeType.BRIEFLY_OPEN_IMPULSE,
     AttributeType.IMPULSE,
     AttributeType.LIGHT_IMPULSE,
     AttributeType.OPEN_PARTIAL_IMPULSE,
-    AttributeType.AUTOMATIC_MODE_IMPULSE,
-    AttributeType.BRIEFLY_OPEN_IMPULSE,
+    AttributeType.ON_OFF,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
+    AttributeType.SIREN,
     AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
-    AttributeType.SIREN
 ]
 
 
