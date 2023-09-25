@@ -8,7 +8,7 @@ from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from pymee.const import AttributeType, NodeProfile
+from pymee.const import AttributeType
 from pymee.model import HomeeAttribute, HomeeNode
 
 from . import HomeeNodeEntity, helpers
@@ -17,45 +17,36 @@ from .const import CONF_DOOR_GROUPS, CONF_GROUPS, CONF_WINDOW_GROUPS
 _LOGGER = logging.getLogger(__name__)
 
 HOMEE_BINARY_SENSOR_ATTRIBUTES = [
-    AttributeType.OPEN_CLOSE,
-    AttributeType.ON_OFF,
+    AttributeType.HIGH_TEMPERATURE_ALARM,
     AttributeType.LOCK_STATE,
+    AttributeType.ON_OFF,
+    AttributeType.OPEN_CLOSE,
     AttributeType.SMOKE_ALARM,
 ]
 
 
-def get_device_class(node: HomeeNodeEntity) -> int:
+def get_device_class(attribute: HomeeAttribute) -> int:
     """Determine the device class a homee node based on the available attributes."""
     device_class = BinarySensorDeviceClass.OPENING
     state_attr = AttributeType.OPEN_CLOSE
 
-    if node._on_off.type == AttributeType.ON_OFF:
+    if attribute.type == AttributeType.ON_OFF:
         state_attr = AttributeType.ON_OFF
         device_class = BinarySensorDeviceClass.PLUG
 
-    if node._on_off.type == AttributeType.LOCK_STATE:
+    if attribute.type == AttributeType.LOCK_STATE:
         state_attr = AttributeType.LOCK_STATE
         device_class = BinarySensorDeviceClass.LOCK
 
-    if node._on_off.type == AttributeType.SMOKE_ALARM:
+    if attribute.type == AttributeType.SMOKE_ALARM:
         state_attr = AttributeType.SMOKE_ALARM
         device_class = BinarySensorDeviceClass.SMOKE
 
+    if attribute.type == AttributeType.HIGH_TEMPERATURE_ALARM:
+        state_attr = AttributeType.HIGH_TEMPERATURE_ALARM
+        device_class = BinarySensorDeviceClass.HEAT
+
     return (device_class, state_attr)
-
-
-def is_binary_sensor_node(node: HomeeNode):
-    """Determine if a node is a binary sensor based on profile and attributes."""
-    return node.profile in [
-        NodeProfile.OPEN_CLOSE_SENSOR,
-        NodeProfile.OPEN_CLOSE_AND_TEMPERATURE_SENSOR,
-        NodeProfile.OPEN_CLOSE_WITH_TEMPERATURE_AND_BRIGHTNESS_SENSOR,
-        NodeProfile.LOCK,
-        NodeProfile.SMOKE_DETECTOR,
-        NodeProfile.SMOKE_DETECTOR_AND_CODETECTOR,
-        NodeProfile.SMOKE_DETECTOR_AND_SIREN,
-        NodeProfile.SMOKE_DETECTOR_WITH_TEMPERATURE_SENSOR,
-    ]
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
@@ -64,7 +55,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
         for attribute in node.attributes:
-            if attribute.type in HOMEE_BINARY_SENSOR_ATTRIBUTES:
+            if attribute.type in HOMEE_BINARY_SENSOR_ATTRIBUTES and not attribute.editable:
                 devices.append(HomeeBinarySensor(node, config_entry, attribute))
     if devices:
         async_add_devices(devices)
@@ -98,7 +89,7 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
         """Configure the device class of the sensor."""
 
         # Get the initial device class and state attribute
-        self._device_class, self._state_attr = get_device_class(self)
+        self._device_class, self._state_attr = get_device_class(self._on_off)
 
         # Set Window/Door device class based on configured groups
         if any(

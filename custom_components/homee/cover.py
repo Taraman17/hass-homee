@@ -19,9 +19,9 @@ from . import HomeeNodeEntity, helpers
 _LOGGER = logging.getLogger(__name__)
 
 OPEN_CLOSE_ATTRIBUTES = [
-    AttributeType.UP_DOWN,
     AttributeType.OPEN_CLOSE,
     AttributeType.SLAT_ROTATION_IMPULSE,
+    AttributeType.UP_DOWN,
 ]
 POSITION_ATTRIBUTES = [AttributeType.POSITION, AttributeType.SHUTTER_SLAT_POSITION]
 
