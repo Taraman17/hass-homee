@@ -49,27 +49,13 @@ def get_device_class(attribute: HomeeAttribute) -> int:
     return (device_class, state_attr)
 
 
-def is_binary_sensor_node(node: HomeeNode):
-    """Determine if a node is a binary sensor based on profile and attributes."""
-    return node.profile in [
-        NodeProfile.LOCK,
-        NodeProfile.OPEN_CLOSE_SENSOR,
-        NodeProfile.OPEN_CLOSE_AND_TEMPERATURE_SENSOR,
-        NodeProfile.OPEN_CLOSE_WITH_TEMPERATURE_AND_BRIGHTNESS_SENSOR,
-        NodeProfile.SMOKE_DETECTOR,
-        NodeProfile.SMOKE_DETECTOR_AND_CODETECTOR,
-        NodeProfile.SMOKE_DETECTOR_AND_SIREN,
-        NodeProfile.SMOKE_DETECTOR_WITH_TEMPERATURE_SENSOR,
-    ]
-
-
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
     """Add the homee platform for the binary sensor integration."""
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
         for attribute in node.attributes:
-            if attribute.type in HOMEE_BINARY_SENSOR_ATTRIBUTES:
+            if attribute.type in HOMEE_BINARY_SENSOR_ATTRIBUTES and not attribute.editable:
                 devices.append(HomeeBinarySensor(node, config_entry, attribute))
     if devices:
         async_add_devices(devices)
