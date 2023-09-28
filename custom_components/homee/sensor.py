@@ -116,7 +116,6 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
     """Representation of a homee sensor."""
 
     _attr_has_entity_name = True
-    _attr_name = None
 
     def __init__(
         self,
@@ -132,27 +131,6 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         self._sensor_index = measurement_attribute.instance
 
         self._unique_id = f"{self._node.id}-sensor-{self._measurement.id}"
-
-    @property
-    def translation_key(self) -> str | None:
-        return self._attr_translation_key
-
-    @property
-    def name(self):
-        """Return the display name of this entity."""
-        if self._measurement.name not in ["", "None"]:
-            name = f"{self._measurement.name}"
-        elif self._device_class:
-            name = f"{self._device_class}"
-        else:
-            for key, val in AttributeType.__dict__.items():
-                if val == self._measurement.type:
-                    name = f"{key}"
-
-        if self._sensor_index > 0:
-            name = f"{name} {self._sensor_index}"
-
-        return name
 
     @property
     def native_value(self):

@@ -86,22 +86,22 @@
   "entity": {
     "sensor": {
       "voltage_sensor": {
-        "name": "[%key:component::sensor::entity_component::voltage::name%]"
+        "name": "Voltage"
       },
       "power_sensor": {
-        "name": "[%key:component::sensor::entity_component::power::name%]"
+        "name": "Power"
       },
       "battery_sensor": {
-        "name": "[%key:component::sensor::entity_component::battery::name%]"
+        "name": "Battery"
       },
       "current_sensor": {
-        "name": "[%key:component::sensor::entity_component::current::name%]"
+        "name": "Current"
       },
       "temperature_sensor": {
-        "name": "[%key:component::sensor::entity_component::temperature::name%]"
+        "name": "Temperature"
       },
       "energy_sensor": {
-        "name": "[%key:component::sensor::entity_component::energy::name%]"
+        "name": "Energy"
       }
     }
   }
