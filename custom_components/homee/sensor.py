@@ -52,32 +52,36 @@ TOTAL_INCREASING_ATTRIBUTES = [
 def get_device_class(attribute: HomeeAttribute) -> int:
     """Determine the device class a homee node based on the node profile."""
     device_class = None
-
-    if attribute.type == AttributeType.CURRENT_ENERGY_USE:
-        device_class = SensorDeviceClass.POWER
+    translation_key = None
 
     if attribute.type in [
         AttributeType.ACCUMULATED_ENERGY_USE,
         AttributeType.TOTAL_ACCUMULATED_ENERGY_USE
     ]:
         device_class = SensorDeviceClass.ENERGY
+        translation_key = "energy_sensor"
 
     if attribute.type == AttributeType.BATTERY_LEVEL:
         device_class = SensorDeviceClass.BATTERY
+        translation_key = "battery_sensor"
 
     if attribute.type in [AttributeType.VOLTAGE, AttributeType.TOTAL_VOLTAGE]:
         device_class = SensorDeviceClass.VOLTAGE
+        translation_key = "voltage_sensor"
 
     if attribute.type in [AttributeType.CURRENT, AttributeType.TOTAL_CURRENT]:
         device_class = SensorDeviceClass.CURRENT
+        translation_key = "current_sensor"
 
     if attribute.type in [AttributeType.DEVICE_TEMPERATURE, AttributeType.TEMPERATURE]:
         device_class = SensorDeviceClass.TEMPERATURE
+        translation_key = "temperature_sensor"
 
     if attribute.type in [AttributeType.CURRENT_ENERGY_USE, AttributeType.TOTAL_CURRENT_ENERGY_USE]:
         device_class = SensorDeviceClass.POWER
+        translation_key = "power_sensor"
 
-    return device_class
+    return device_class, translation_key
 
 
 def get_state_class(attribute: HomeeAttribute) -> int:
@@ -123,11 +127,15 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         """Initialize a homee sensor entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._measurement = measurement_attribute
-        self._device_class = get_device_class(measurement_attribute)
+        self._device_class, self._attr_translation_key = get_device_class(measurement_attribute)
         self._state_class = get_state_class(measurement_attribute)
         self._sensor_index = measurement_attribute.instance
 
         self._unique_id = f"{self._node.id}-sensor-{self._measurement.id}"
+
+    @property
+    def translation_key(self) -> str | None:
+        return self._attr_translation_key
 
     @property
     def name(self):

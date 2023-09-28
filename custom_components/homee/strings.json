@@ -82,5 +82,27 @@
         }
       }
     }
+  },
+  "entity": {
+    "sensor": {
+      "voltage_sensor": {
+        "name": "[%key:component::sensor::entity_component::voltage::name%]"
+      },
+      "power_sensor": {
+        "name": "[%key:component::sensor::entity_component::power::name%]"
+      },
+      "battery_sensor": {
+        "name": "[%key:component::sensor::entity_component::battery::name%]"
+      },
+      "current_sensor": {
+        "name": "[%key:component::sensor::entity_component::current::name%]"
+      },
+      "temperature_sensor": {
+        "name": "[%key:component::sensor::entity_component::temperature::name%]"
+      },
+      "energy_sensor": {
+        "name": "[%key:component::sensor::entity_component::energy::name%]"
+      }
+    }
   }
 }
