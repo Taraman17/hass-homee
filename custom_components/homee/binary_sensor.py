@@ -29,24 +29,29 @@ def get_device_class(attribute: HomeeAttribute) -> int:
     """Determine the device class a homee node based on the available attributes."""
     device_class = BinarySensorDeviceClass.OPENING
     state_attr = AttributeType.OPEN_CLOSE
+    translation_key = "opening_sensor"
 
     if attribute.type == AttributeType.ON_OFF:
         state_attr = AttributeType.ON_OFF
         device_class = BinarySensorDeviceClass.PLUG
+        translation_key = "plug_sensor"
 
     if attribute.type == AttributeType.LOCK_STATE:
         state_attr = AttributeType.LOCK_STATE
         device_class = BinarySensorDeviceClass.LOCK
+        translation_key = "lock_sensor"
 
     if attribute.type == AttributeType.SMOKE_ALARM:
         state_attr = AttributeType.SMOKE_ALARM
         device_class = BinarySensorDeviceClass.SMOKE
+        translation_key = "smoke_sensor"
 
     if attribute.type == AttributeType.HIGH_TEMPERATURE_ALARM:
         state_attr = AttributeType.HIGH_TEMPERATURE_ALARM
         device_class = BinarySensorDeviceClass.HEAT
+        translation_key = "heat_sensor"
 
-    return (device_class, state_attr)
+    return (device_class, state_attr, translation_key)
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
@@ -70,7 +75,6 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
     """Representation of a homee binary sensor device."""
 
     _attr_has_entity_name = True
-    _attr_name = None
 
     def __init__(
         self,
@@ -89,7 +93,7 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
         """Configure the device class of the sensor."""
 
         # Get the initial device class and state attribute
-        self._device_class, self._state_attr = get_device_class(self._on_off)
+        self._device_class, self._state_attr, self._attr_translation_key = get_device_class(self._on_off)
 
         # Set Window/Door device class based on configured groups
         if any(
@@ -97,11 +101,13 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
             for group in self._node.groups
         ):
             self._device_class = BinarySensorDeviceClass.WINDOW
+            self._attr_translation_key = "window_sensor"
         elif any(
             str(group.id) in self._entry.options[CONF_GROUPS].get(CONF_DOOR_GROUPS, [])
             for group in self._node.groups
         ):
             self._device_class = BinarySensorDeviceClass.DOOR
+            self._attr_translation_key = "door_sensor"
 
     @property
     def is_on(self):

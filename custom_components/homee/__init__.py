@@ -219,11 +219,6 @@ class HomeeNodeEntity:
         return self._unique_id
 
     @property
-    def name(self):
-        """Return the display name of this entity."""
-        return None
-
-    @property
     def raw_data(self):
         """Return the raw data of the node."""
         return self._node._data
