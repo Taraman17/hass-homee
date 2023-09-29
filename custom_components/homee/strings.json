@@ -97,7 +97,7 @@
       "voltage_sensor_3": {
         "name": "Voltage 3"
       },
-      "total_voltage_sensor_": {
+      "total_voltage_sensor": {
         "name": "Total Voltage"
       },
       "power_sensor": {
