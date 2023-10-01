@@ -97,6 +97,9 @@
       "voltage_sensor_3": {
         "name": "Voltage 3"
       },
+      "voltage_sensor_4": {
+        "name": "Voltage 4"
+      },
       "total_voltage_sensor": {
         "name": "Total Voltage"
       },
@@ -111,6 +114,9 @@
       },
       "power_sensor_3": {
         "name": "Power 3"
+      },
+      "power_sensor_4": {
+        "name": "Power 4"
       },
       "total_power_sensor": {
         "name": "Total Power"
@@ -130,6 +136,9 @@
       "current_sensor_3": {
         "name": "Current 3"
       },
+      "current_sensor_4": {
+        "name": "Current 4"
+      },
       "total_current_sensor": {
         "name": "Total Current"
       },
@@ -147,6 +156,9 @@
       },
       "energy_sensor_3": {
         "name": "Energy 3"
+      },
+      "energy_sensor_4": {
+        "name": "Energy 4"
       },
       "total_energy_sensor": {
         "name": "Total Energy"
@@ -215,7 +227,7 @@
       "automatic_mode_impulse": {
         "name": "Automatic Mode Impulse"
       },
-      "briefly_open_Impulse": {
+      "briefly_open_impulse": {
         "name": "Briefly Open Impulse"
       },
       "open_partial_impulse": {
