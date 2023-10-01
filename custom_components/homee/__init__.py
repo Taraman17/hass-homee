@@ -125,6 +125,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     return unload_ok
 
+
 async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload homee integration after config change."""
     await hass.config_entries.async_reload(entry.entry_id)
@@ -139,7 +140,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
 
         # If for any reason the options are not present, use the initial_options.
         if config_entry.options.get(CONF_GROUPS) is not None:
-           new_options = {**config_entry.options}
+            new_options = {**config_entry.options}
         else:
             new_options = {**config_entry.data[CONF_INITIAL_OPTIONS]}
 
@@ -159,6 +160,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         _LOGGER.info("Migration to version %s successful", config_entry.version)
 
     return True
+
 
 class HomeeNodeEntity:
     """Representation of a Node in Homee."""

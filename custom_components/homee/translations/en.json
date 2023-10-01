@@ -180,6 +180,71 @@
       "door_sensor": {
         "name": "Door"
       }
+    },
+    "switch": {
+      "impulse": {
+        "name": "Impulse"
+      },
+      "impulse_1": {
+        "name": "Impulse 1"
+      },
+      "impulse_2": {
+        "name": "Impulse 2"
+      },
+      "impulse_3": {
+        "name": "Impulse 3"
+      },
+      "impulse_4": {
+        "name": "Impulse 4"
+      },
+      "light_impulse":{
+        "name": "Light Impulse"
+      },
+      "light_impulse_1":{
+        "name": "Light Impulse 1"
+      },
+      "light_impulse_2":{
+        "name": "Light Impulse 2"
+      },
+      "light_impulse_3":{
+        "name": "Light Impulse 3"
+      },
+      "light_impulse_4":{
+        "name": "Light Impulse 4"
+      },
+      "automatic_mode_impulse": {
+        "name": "Automatic Mode Impulse"
+      },
+      "briefly_open_Impulse": {
+        "name": "Briefly Open Impulse"
+      },
+      "open_partial_impulse": {
+        "name": "Open Partial Impulse"
+      },
+      "permanently_open_impulse": {
+        "name": "Permanently Open Impulse"
+      },
+      "slat_rotation_impulse": {
+        "name": "Slat Rotation Impulse"
+      },
+      "ventilate_ipulse": {
+        "name": "Ventilate Impulse"
+      },
+      "reset_meter": {
+        "name": "Reset Meter"
+      },
+      "reset_meter_1": {
+        "name": "Reset Meter 1"
+      },
+      "reset_meter_2": {
+        "name": "Reset Meter 2"
+      },
+      "reset_meter_3": {
+        "name": "Reset Meter 3"
+      },
+      "reset_meter_4": {
+        "name": "Reset Meter 4"
+      }
     }
   }
 }

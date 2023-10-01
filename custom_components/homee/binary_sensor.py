@@ -93,7 +93,11 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
         """Configure the device class of the sensor."""
 
         # Get the initial device class and state attribute
-        self._device_class, self._state_attr, self._attr_translation_key = get_device_class(self._on_off)
+        (
+            self._device_class,
+            self._state_attr,
+            self._attr_translation_key
+        ) = get_device_class(self._on_off)
 
         # Set Window/Door device class based on configured groups
         if any(
@@ -108,6 +112,9 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
         ):
             self._device_class = BinarySensorDeviceClass.DOOR
             self._attr_translation_key = "door_sensor"
+
+        if self.translation_key is None:
+            self._attr_name = None
 
     @property
     def is_on(self):

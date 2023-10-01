@@ -36,6 +36,17 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.VENTILATE_IMPULSE,
 ]
 
+DESCRIPTIVE_ATTRIBUTES = [
+    AttributeType.AUTOMATIC_MODE_IMPULSE,
+    AttributeType.BRIEFLY_OPEN_IMPULSE,
+    AttributeType.LIGHT_IMPULSE,
+    AttributeType.OPEN_PARTIAL_IMPULSE,
+    AttributeType.PERMANENTLY_OPEN_IMPULSE,
+    AttributeType.RESET_METER,
+    AttributeType.SLAT_ROTATION_IMPULSE,
+    AttributeType.VENTILATE_IMPULSE,
+]
+
 
 def get_device_class(node: HomeeNode) -> int:
     """Determine the device class a homee node based on the node profile."""
@@ -83,22 +94,28 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         self._unique_id = f"{self._node.id}-switch-{self._on_off.id}"
 
     @property
-    def name(self):
-        """Return the display name of this entity."""
-        # Entity is the main feature of a device when the index == 0.
-        for key, val in AttributeType.__dict__.items():
-            if val == self._on_off.type:
-                attribute_name = key
+    def translation_key(self) -> str | None:
+        """Return the translation key for the switch."""
+        # If a switch is the main feature of a device it will get its name.
+        translation_key = None
 
-        # special impulses should always be named descriptive
-        if attribute_name.find("_IMPULSE") > -1:
-            return attribute_name[0 : attribute_name.find("_IMPULSE")]
+        attribute_name = helpers.get_attribute_name(self._on_off.type)
 
-        if self._switch_index <= 0:
-            return None
+        # If a switch type has more than one Instance, it will be named and numbered.
+        if self._on_off.instance > 0:
+            translation_key = f"{attribute_name.lower()}_{self._on_off.instance}"
+        # Some switches should always be named descriptive.
+        elif self._on_off.type in DESCRIPTIVE_ATTRIBUTES:
+            translation_key = attribute_name.lower()
 
-        if self._switch_index > 0:
-            return f"switch {self._switch_index}"
+        if self._on_off.instance > 4:
+            _LOGGER.error("Did get more than 4 switches of a type,"
+                          "please report at https://github.com/Taraman17/hacs-homee/issues")
+
+        if translation_key is None:
+            self._attr_name = None
+
+        return translation_key
 
     @property
     def is_on(self) -> bool:
