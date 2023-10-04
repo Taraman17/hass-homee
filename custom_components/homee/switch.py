@@ -56,14 +56,19 @@ def get_device_class(node: HomeeNode) -> int:
     return SwitchDeviceClass.SWITCH
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry, async_add_devices
+):
     """Add the homee platform for the switch component."""
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
         for attribute in node.attributes:
             # These conditions identify a switch.
-            if attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable:
+            if (
+                attribute.type in HOMEE_SWITCH_ATTRIBUTES
+                and attribute.editable
+            ):
                 devices.append(HomeeSwitch(node, config_entry, attribute))
     if devices:
         async_add_devices(devices)
@@ -101,16 +106,19 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
 
         attribute_name = helpers.get_attribute_name(self._on_off.type)
 
-        # If a switch type has more than one Instance, it will be named and numbered.
+        # If a switch type has more than one instance,
+        # it will be named and numbered.
         if self._on_off.instance > 0:
-            translation_key = f"{attribute_name.lower()}_{self._on_off.instance}"
+            translation_key = (f"{attribute_name.lower()}_"
+                               f"{self._on_off.instance}")
         # Some switches should always be named descriptive.
         elif self._on_off.type in DESCRIPTIVE_ATTRIBUTES:
             translation_key = attribute_name.lower()
 
         if self._on_off.instance > 4:
             _LOGGER.error("Did get more than 4 switches of a type,"
-                          "please report at https://github.com/Taraman17/hacs-homee/issues")
+                          "please report at"
+                          "https://github.com/Taraman17/hacs-homee/issues")
 
         if translation_key is None:
             self._attr_name = None

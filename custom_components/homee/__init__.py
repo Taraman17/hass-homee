@@ -32,7 +32,15 @@ _LOGGER = logging.getLogger(__name__)
 
 CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})}, extra=vol.ALLOW_EXTRA)
 
-PLATFORMS = ["light", "climate", "binary_sensor", "switch", "cover", "sensor"]
+PLATFORMS = [
+    "light",
+    "climate",
+    "binary_sensor",
+    "switch",
+    "cover",
+    "sensor",
+    "alarm_control_panel"
+]
 
 
 async def async_setup(hass: HomeAssistant, config: dict):
@@ -198,14 +206,14 @@ class HomeeNodeEntity:
 
         return {
             "identifiers": {
-                # Serial numbers are unique identifiers within a specific domain
+                # Serialnumbers are unique identifiers within a specific domain
                 (DOMAIN, self._node.id)
             },
             "name": self._node.name,
             "manufacturer": "unknown",
             "model": get_attribute_for_enum(
                 NodeProfile, self._homee_data["profile"]
-            ),
+            ).lower(),
             "sw_version": sw_version,
             "via_device": (DOMAIN, self._entry.entry_id),
         }
@@ -252,20 +260,20 @@ class HomeeNodeEntity:
         if self._clear_node_listener is not None:
             self._clear_node_listener()
 
-    def attribute(self, attributeType):
+    def attribute(self, attribute_type):
         """Try to get the current value of the attribute of the given type."""
         try:
-            return self._node.get_attribute_by_type(attributeType).current_value
+            return self._node.get_attribute_by_type(attribute_type).current_value
         except Exception:
-            raise AttributeNotFoundException(attributeType)
+            raise AttributeNotFoundException(attribute_type)
 
-    def get_attribute(self, attributeType):
+    def get_attribute(self, attribute_type):
         """Get the attribute object of the given type."""
-        return self._node.get_attribute_by_type(attributeType)
+        return self._node.get_attribute_by_type(attribute_type)
 
-    def has_attribute(self, attributeType):
+    def has_attribute(self, attribute_type):
         """Check if an attribute of the given type exists."""
-        return attributeType in self._node._attribute_map
+        return attribute_type in self._node._attribute_map
 
     async def async_set_value(self, attribute_type: int, value: float):
         """Set an attribute value on the homee node."""

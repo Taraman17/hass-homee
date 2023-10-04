@@ -257,6 +257,17 @@
       "reset_meter_4": {
         "name": "Reset Meter 4"
       }
+    },
+    "alarm_control_panel": {
+      "homee_status": {
+        "name": "Status",
+        "state": {
+          "0.0": "Home",
+          "1.0": "Sleeping",
+          "2.0": "Away",
+          "3.0": "Vacation"
+        }
+      }
     }
   }
 }
