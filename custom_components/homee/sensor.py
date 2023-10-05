@@ -57,7 +57,7 @@ TOTAL_INCREASING_ATTRIBUTES = [
 
 
 def get_device_class(attribute: HomeeAttribute) -> int:
-    """Determine the device class a homee node based on the node profile."""
+    """Determine the device class of a homee entity based on it's attribute type."""
     device_class = None
     translation_key = None
 
@@ -106,13 +106,14 @@ def get_device_class(attribute: HomeeAttribute) -> int:
     if attribute.instance > 0:
         translation_key = f"{translation_key}_{attribute.instance}"
         if attribute.instance > 4:
-            _LOGGER.error("Did get more than 4 sensors, please report at https://github.com/Taraman17/hacs-homee/issues")
+            _LOGGER.error("Did get more than 4 sensors of a type,"
+                          "please report at https://github.com/Taraman17/hacs-homee/issues")
 
     return (device_class, translation_key)
 
 
 def get_state_class(attribute: HomeeAttribute) -> int:
-    """Determine the device class a homee node based on the node profile."""
+    """Determine the state class of a homee entity based on it's attribute type."""
     if attribute.type in MEASUREMENT_ATTRIBUTES:
         return SensorStateClass.MEASUREMENT
 
@@ -156,6 +157,8 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         self._device_class, self._attr_translation_key = get_device_class(measurement_attribute)
         self._state_class = get_state_class(measurement_attribute)
         self._sensor_index = measurement_attribute.instance
+        if self.translation_key is None:
+            self._attr_name = None
 
         self._unique_id = f"{self._node.id}-sensor-{self._measurement.id}"
 

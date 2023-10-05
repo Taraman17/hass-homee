@@ -60,6 +60,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
         for attribute in node.attributes:
+            # Determine if the entity is a binary sensor.
             if attribute.type in HOMEE_BINARY_SENSOR_ATTRIBUTES and not attribute.editable:
                 devices.append(HomeeBinarySensor(node, config_entry, attribute))
     if devices:
@@ -93,7 +94,11 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
         """Configure the device class of the sensor."""
 
         # Get the initial device class and state attribute
-        self._device_class, self._state_attr, self._attr_translation_key = get_device_class(self._on_off)
+        (
+            self._device_class,
+            self._state_attr,
+            self._attr_translation_key
+        ) = get_device_class(self._on_off)
 
         # Set Window/Door device class based on configured groups
         if any(
@@ -108,6 +113,9 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
         ):
             self._device_class = BinarySensorDeviceClass.DOOR
             self._attr_translation_key = "door_sensor"
+
+        if self.translation_key is None:
+            self._attr_name = None
 
     @property
     def is_on(self):
