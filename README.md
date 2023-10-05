@@ -19,14 +19,15 @@ Based on the intial work of [FreshlyBrewedCode]
 
 **This component will set up the following platforms.**
 
-| Platform        | Description                                                                                                                       |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `binary_sensor` | Integrate homee devices that provide binary state information like `on`/`off` or `open`/`close`.                                  |
-| `sensor`        | Integrate homee devices that provide readings - currently power and energy are supported                                          |
-| `cover`         | Integrate homee devices that provide motor and position functions such as blinds and shutter actuators                            |
-| `climate`       | Integrate homee devices that provide temperature and can set a target temperature.                                                |
-| `light`         | Integrate lights from homee.                                                                                                      |
-| `switch`        | Integrate homee devices that can be turned `on`/`off` and can optionally provide information about the current power consumption. |
+| Platform              | Description                                                                                                                       |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `binary_sensor`       | Integrate homee devices that provide binary state information like `on`/`off` or `open`/`close`.                                  |
+| `sensor`              | Integrate homee devices that provide readings.                                                                                    |
+| `cover`               | Integrate homee devices that provide motor and position functions such as blinds and shutter actuators                            |
+| `climate`             | Integrate homee devices that provide temperature and can set a target temperature.                                                |
+| `light`               | Integrate lights from homee.                                                                                                      |
+| `switch`              | Integrate homee devices that can be turned `on`/`off` and can optionally provide information about the current power consumption. |
+| `alarm-control-panel` | Integrate the homee status.                                                                                                       |
 
 ![homee][homee_logo]
 
