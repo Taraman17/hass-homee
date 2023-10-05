@@ -60,6 +60,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
         for attribute in node.attributes:
+            # Determine if the entity is a binary sensor.
             if attribute.type in HOMEE_BINARY_SENSOR_ATTRIBUTES and not attribute.editable:
                 devices.append(HomeeBinarySensor(node, config_entry, attribute))
     if devices:

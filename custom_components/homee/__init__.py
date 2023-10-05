@@ -43,7 +43,8 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up homee from a config entry."""
-    # Create the Homee api object using host, user, password & pymee instance from the config
+    # Create the Homee api object using host, user,
+    # password & pymee instance from the config
     homee = Homee(
         entry.data[CONF_HOST],
         entry.data[CONF_USERNAME],
@@ -51,7 +52,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         "pymee_" + hass.config.location_name,
     )
 
-    # Start the homee websocket connection as a new task and wait until we are connected
+    # Start the homee websocket connection as a new task
+    # and wait until we are connected
     hass.loop.create_task(homee.run())
     await homee.wait_until_connected()
 
@@ -65,7 +67,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     hass.data[DOMAIN][entry.entry_id] = homee
 
-    # Register the set_value service that can be used for debugging and custom automations
+    # Register the set_value service that can be used
+    # for debugging and custom automations.
     def handle_set_value(call: ServiceCall):
         """Handle the service call."""
         node = int(call.data.get(ATTR_NODE, 0))
@@ -80,7 +83,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     device_registry = dr.async_get(hass)
     device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
-        # TODO: figure out how to derive the MAC address - will need to update pymee?
+        # TODO: figure out how to derive the MAC address -
+        # will need to update pymee?
         # connections={(dr.CONNECTION_NETWORK_MAC, entry.mac)},
         identifiers={(DOMAIN, homee.deviceId)},
         manufacturer="homee",
@@ -107,7 +111,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     unload_ok = all(
         await asyncio.gather(
             *[
-                hass.config_entries.async_forward_entry_unload(entry, component)
+                hass.config_entries.async_forward_entry_unload(
+                    entry,
+                    component
+                )
                 for component in PLATFORMS
             ]
         )
@@ -138,7 +145,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
 
         new_data = {**config_entry.data}
 
-        # If for any reason the options are not present, use the initial_options.
+        # If for any reason the options are not set, use the initial_options.
         if config_entry.options.get(CONF_GROUPS) is not None:
             new_options = {**config_entry.options}
         else:
@@ -146,18 +153,25 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
 
         new_options[CONF_ALL_DEVICES] = False
         import_groups = new_options.pop(CONF_GROUPS, [])
-        new_options[CONF_GROUPS] = {}
-        new_options[CONF_GROUPS][CONF_IMPORT_GROUPS] = import_groups
-        new_options[CONF_GROUPS][CONF_WINDOW_GROUPS] = new_options.pop(CONF_WINDOW_GROUPS, [])
-        new_options[CONF_GROUPS][CONF_DOOR_GROUPS] = new_options.pop(CONF_DOOR_GROUPS, [])
+        conf_groups = new_options[CONF_GROUPS] = {}
+        conf_groups[CONF_IMPORT_GROUPS] = import_groups
+        conf_groups[CONF_WINDOW_GROUPS] = new_options.pop(
+            CONF_WINDOW_GROUPS, []
+        )
+        conf_groups[CONF_DOOR_GROUPS] = new_options.pop(CONF_DOOR_GROUPS, [])
 
-        # initial options are dropped in v2 since the options can be changed later anyhow.
+        # initial options are dropped in v2 since the options
+        # can be changed later anyhow.
         del new_data[CONF_INITIAL_OPTIONS]
 
         config_entry.version = 2
-        hass.config_entries.async_update_entry(config_entry, data=new_data, options=new_options)
+        hass.config_entries.async_update_entry(
+            config_entry,
+            data=new_data,
+            options=new_options
+        )
 
-        _LOGGER.info("Migration to version %s successful", config_entry.version)
+        _LOGGER.info("Migration to v%s successful", config_entry.version)
 
     return True
 
@@ -165,7 +179,12 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
 class HomeeNodeEntity:
     """Representation of a Node in Homee."""
 
-    def __init__(self, node: HomeeNode, entity: Entity, entry: ConfigEntry) -> None:
+    def __init__(
+            self,
+            node: HomeeNode,
+            entity: Entity,
+            entry: ConfigEntry
+    ) -> None:
         """Initialize the wrapper using a HomeeNode and target entity."""
         self._node = node
         self._entity = entity
@@ -177,7 +196,9 @@ class HomeeNodeEntity:
             "id": node.id,
             "name": node.name,
             "profile": node.profile,
-            "attributes": [{"id": a.id, "type": a.type} for a in node.attributes],
+            "attributes": [
+                {"id": a.id, "type": a.type} for a in node.attributes
+            ],
         }
 
     async def async_added_to_hass(self) -> None:
@@ -198,7 +219,7 @@ class HomeeNodeEntity:
 
         return {
             "identifiers": {
-                # Serial numbers are unique identifiers within a specific domain
+                # Serial numbers are unique IDs within a specific domain
                 (DOMAIN, self._node.id)
             },
             "name": self._node.name,
@@ -269,7 +290,9 @@ class HomeeNodeEntity:
 
     async def async_set_value(self, attribute_type: int, value: float):
         """Set an attribute value on the homee node."""
-        await self.async_set_value_by_id(self.get_attribute(attribute_type).id, value)
+        await self.async_set_value_by_id(
+            self.get_attribute(attribute_type).id, value
+        )
 
     async def async_set_value_by_id(self, attribute_id: int, value: float):
         """Set an attribute value on the homee node."""
