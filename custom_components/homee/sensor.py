@@ -57,7 +57,7 @@ TOTAL_INCREASING_ATTRIBUTES = [
 
 
 def get_device_class(attribute: HomeeAttribute) -> int:
-    """Determine the device class a homee node based on the node profile."""
+    """Determine the device class of a homee entity based on it's attribute type."""
     device_class = None
     translation_key = None
 
@@ -113,7 +113,7 @@ def get_device_class(attribute: HomeeAttribute) -> int:
 
 
 def get_state_class(attribute: HomeeAttribute) -> int:
-    """Determine the device class a homee node based on the node profile."""
+    """Determine the state class of a homee entity based on it's attribute type."""
     if attribute.type in MEASUREMENT_ATTRIBUTES:
         return SensorStateClass.MEASUREMENT
 
