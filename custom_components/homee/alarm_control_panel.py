@@ -91,8 +91,9 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
         )
 
     @property
-    def state(self) -> float:
-        return self._alarm_panel_attribute.current_value
+    def state(self) -> int:
+        """Return current state."""
+        return int(self._alarm_panel_attribute.current_value)
 
     async def async_alarm_disarm(self, code=None) -> None:
         """Send disarm command."""
