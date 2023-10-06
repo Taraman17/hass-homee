@@ -82,5 +82,181 @@
         }
       }
     }
+  },
+  "entity": {
+    "sensor": {
+      "voltage_sensor": {
+        "name": "Voltage"
+      },
+      "voltage_sensor_1": {
+        "name": "Voltage 1"
+      },
+      "voltage_sensor_2": {
+        "name": "Voltage 2"
+      },
+      "voltage_sensor_3": {
+        "name": "Voltage 3"
+      },
+      "voltage_sensor_4": {
+        "name": "Voltage 4"
+      },
+      "total_voltage_sensor": {
+        "name": "Total Voltage"
+      },
+      "power_sensor": {
+        "name": "Power"
+      },
+      "power_sensor_1": {
+        "name": "Power 1"
+      },
+      "power_sensor_2": {
+        "name": "Power 2"
+      },
+      "power_sensor_3": {
+        "name": "Power 3"
+      },
+      "power_sensor_4": {
+        "name": "Power 4"
+      },
+      "total_power_sensor": {
+        "name": "Total Power"
+      },
+      "battery_sensor": {
+        "name": "Battery"
+      },
+      "current_sensor": {
+        "name": "Current"
+      },
+      "current_sensor_1": {
+        "name": "Current 1"
+      },
+      "current_sensor_2": {
+        "name": "Current 2"
+      },
+      "current_sensor_3": {
+        "name": "Current 3"
+      },
+      "current_sensor_4": {
+        "name": "Current 4"
+      },
+      "total_current_sensor": {
+        "name": "Total Current"
+      },
+      "temperature_sensor": {
+        "name": "Temperature"
+      },
+      "energy_sensor": {
+        "name": "Energy"
+      },
+      "energy_sensor_1": {
+        "name": "Energy 1"
+      },
+      "energy_sensor_2": {
+        "name": "Energy 2"
+      },
+      "energy_sensor_3": {
+        "name": "Energy 3"
+      },
+      "energy_sensor_4": {
+        "name": "Energy 4"
+      },
+      "total_energy_sensor": {
+        "name": "Total Energy"
+      },
+      "up_down_sensor": {
+        "name": "State"
+      },
+      "position_sensor": {
+        "name": "Position"
+      }
+    },
+    "binary_sensor": {
+      "opening_sensor": {
+        "name": "Opening"
+      },
+      "plug_sensor": {
+        "name": "Plug"
+      },
+      "lock_sensor": {
+        "name": "Lock"
+      },
+      "smoke_sensor": {
+        "name": "Smoke"
+      },
+      "heat_sensor": {
+        "name": "Temperature Alarm"
+      },
+      "window_sensor":{
+        "name": "Window"
+      },
+      "door_sensor": {
+        "name": "Door"
+      }
+    },
+    "switch": {
+      "impulse": {
+        "name": "Impulse"
+      },
+      "impulse_1": {
+        "name": "Impulse 1"
+      },
+      "impulse_2": {
+        "name": "Impulse 2"
+      },
+      "impulse_3": {
+        "name": "Impulse 3"
+      },
+      "impulse_4": {
+        "name": "Impulse 4"
+      },
+      "light_impulse":{
+        "name": "Light Impulse"
+      },
+      "light_impulse_1":{
+        "name": "Light Impulse 1"
+      },
+      "light_impulse_2":{
+        "name": "Light Impulse 2"
+      },
+      "light_impulse_3":{
+        "name": "Light Impulse 3"
+      },
+      "light_impulse_4":{
+        "name": "Light Impulse 4"
+      },
+      "automatic_mode_impulse": {
+        "name": "Automatic Mode Impulse"
+      },
+      "briefly_open_impulse": {
+        "name": "Briefly Open Impulse"
+      },
+      "open_partial_impulse": {
+        "name": "Open Partial Impulse"
+      },
+      "permanently_open_impulse": {
+        "name": "Permanently Open Impulse"
+      },
+      "slat_rotation_impulse": {
+        "name": "Slat Rotation Impulse"
+      },
+      "ventilate_ipulse": {
+        "name": "Ventilate Impulse"
+      },
+      "reset_meter": {
+        "name": "Reset Meter"
+      },
+      "reset_meter_1": {
+        "name": "Reset Meter 1"
+      },
+      "reset_meter_2": {
+        "name": "Reset Meter 2"
+      },
+      "reset_meter_3": {
+        "name": "Reset Meter 3"
+      },
+      "reset_meter_4": {
+        "name": "Reset Meter 4"
+      }
+    }
   }
 }

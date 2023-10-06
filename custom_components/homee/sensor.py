@@ -16,37 +16,108 @@ from . import HomeeNodeEntity, helpers
 
 _LOGGER = logging.getLogger(__name__)
 
-VALID_ATTRIBUTES = [
-    AttributeType.CURRENT_ENERGY_USE,
+SENSOR_ATTRIBUTES = [
     AttributeType.ACCUMULATED_ENERGY_USE,
+    AttributeType.BATTERY_LEVEL,
+    AttributeType.CURRENT,
+    AttributeType.CURRENT_ENERGY_USE,
+    AttributeType.DEVICE_TEMPERATURE,
     AttributeType.POSITION,
+    AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
+    AttributeType.TOTAL_CURRENT,
+    AttributeType.TOTAL_CURRENT_ENERGY_USE,
+    AttributeType.TOTAL_VOLTAGE,
     AttributeType.UP_DOWN,
+    AttributeType.VOLTAGE,
+]
+
+TOTAL_VALUES = [
+    AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
+    AttributeType.TOTAL_CURRENT,
+    AttributeType.TOTAL_CURRENT_ENERGY_USE,
+    AttributeType.TOTAL_VOLTAGE
 ]
 
 MEASUREMENT_ATTRIBUTES = [
+    AttributeType.BATTERY_LEVEL,
+    AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
+    AttributeType.DEVICE_TEMPERATURE,
     AttributeType.POSITION,
+    AttributeType.TOTAL_CURRENT_ENERGY_USE,
+    AttributeType.TOTAL_CURRENT,
     AttributeType.UP_DOWN,
+    AttributeType.VOLTAGE,
+]
+
+TOTAL_INCREASING_ATTRIBUTES = [
+    AttributeType.ACCUMULATED_ENERGY_USE,
+    AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
 ]
 
 
 def get_device_class(attribute: HomeeAttribute) -> int:
-    """Determine the device class a homee node based on the node profile."""
-    if attribute.type == AttributeType.CURRENT_ENERGY_USE:
-        return SensorDeviceClass.POWER
+    """Determine the device class of a homee entity based on it's attribute type."""
+    device_class = None
+    translation_key = None
 
-    if attribute.type == AttributeType.ACCUMULATED_ENERGY_USE:
-        return SensorDeviceClass.ENERGY
+    if attribute.type in [
+        AttributeType.ACCUMULATED_ENERGY_USE,
+        AttributeType.TOTAL_ACCUMULATED_ENERGY_USE
+    ]:
+        device_class = SensorDeviceClass.ENERGY
+        translation_key = "energy_sensor"
 
-    return None
+    if attribute.type == AttributeType.BATTERY_LEVEL:
+        device_class = SensorDeviceClass.BATTERY
+        translation_key = "battery_sensor"
+
+    if attribute.type in [AttributeType.VOLTAGE, AttributeType.TOTAL_VOLTAGE]:
+        device_class = SensorDeviceClass.VOLTAGE
+        translation_key = "voltage_sensor"
+
+    if attribute.type in [AttributeType.CURRENT, AttributeType.TOTAL_CURRENT]:
+        device_class = SensorDeviceClass.CURRENT
+        translation_key = "current_sensor"
+
+    if attribute.type in [
+        AttributeType.DEVICE_TEMPERATURE,
+        AttributeType.TEMPERATURE
+    ]:
+        device_class = SensorDeviceClass.TEMPERATURE
+        translation_key = "temperature_sensor"
+
+    if attribute.type in [
+        AttributeType.CURRENT_ENERGY_USE,
+        AttributeType.TOTAL_CURRENT_ENERGY_USE
+    ]:
+        device_class = SensorDeviceClass.POWER
+        translation_key = "power_sensor"
+
+    if attribute.type == AttributeType.UP_DOWN:
+        translation_key = "up_down_sensor"
+
+    if attribute.type == AttributeType.POSITION:
+        translation_key = "position_sensor"
+
+    if attribute.type in TOTAL_VALUES:
+        translation_key = f"total_{translation_key}"
+
+    if attribute.instance > 0:
+        translation_key = f"{translation_key}_{attribute.instance}"
+        if attribute.instance > 4:
+            _LOGGER.error("Did get more than 4 sensors of a type,"
+                          "please report at https://github.com/Taraman17/hacs-homee/issues")
+
+    return (device_class, translation_key)
 
 
 def get_state_class(attribute: HomeeAttribute) -> int:
-    """Determine the device class a homee node based on the node profile."""
+    """Determine the state class of a homee entity based on it's attribute type."""
     if attribute.type in MEASUREMENT_ATTRIBUTES:
         return SensorStateClass.MEASUREMENT
 
-    if attribute.type == AttributeType.ACCUMULATED_ENERGY_USE:
+    if attribute.type in TOTAL_INCREASING_ATTRIBUTES:
         return SensorStateClass.TOTAL_INCREASING
 
     return None
@@ -57,14 +128,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
-        sensor_type_counts = {}
         for attribute in node.attributes:
-            if attribute.type not in sensor_type_counts:
-                sensor_type_counts[attribute.type] = 0
-            if attribute.type in VALID_ATTRIBUTES:
-                sensor_index = sensor_type_counts[attribute.type]
-                devices.append(HomeeSensor(node, config_entry, attribute, sensor_index))
-                sensor_type_counts[attribute.type] += 1
+            if attribute.type in SENSOR_ATTRIBUTES:
+                devices.append(HomeeSensor(node, config_entry, attribute))
     if devices:
         async_add_devices(devices)
 
@@ -83,34 +149,18 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         self,
         node: HomeeNode,
         entry: ConfigEntry,
-        measurement_attribute: HomeeAttribute = None,
-        sensor_index=0,
+        measurement_attribute: HomeeAttribute = None
     ) -> None:
         """Initialize a homee sensor entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._measurement = measurement_attribute
-        self._device_class = get_device_class(measurement_attribute)
+        self._device_class, self._attr_translation_key = get_device_class(measurement_attribute)
         self._state_class = get_state_class(measurement_attribute)
-        self._sensor_index = sensor_index
+        self._sensor_index = measurement_attribute.instance
+        if self.translation_key is None:
+            self._attr_name = None
 
         self._unique_id = f"{self._node.id}-sensor-{self._measurement.id}"
-
-    @property
-    def name(self):
-        """Return the display name of this entity."""
-        if self._measurement.name not in ["", "None"]:
-            name = f"{self._measurement.name}"
-        elif self._device_class:
-            name = f"{self._device_class}"
-        else:
-            for key, val in AttributeType.__dict__.items():
-                if val == self._measurement.type:
-                    name = f"{key}"
-
-        if self._sensor_index > 0:
-            name = f"{name} {self._sensor_index + 1}"
-
-        return name
 
     @property
     def native_value(self):

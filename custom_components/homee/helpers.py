@@ -5,6 +5,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from pymee import Homee
 from pymee.model import HomeeNode
+from pymee.const import AttributeType
 
 from .const import CONF_ALL_DEVICES, CONF_GROUPS, CONF_IMPORT_GROUPS, DOMAIN
 
@@ -22,16 +23,18 @@ def get_imported_nodes(
     # Resolve the configured group ids to actual groups
     groups = [
         homee.get_group_by_id(int(g))
-        for g in config_entry.options[CONF_GROUPS].get(CONF_IMPORT_GROUPS, all_groups)
+        for g in config_entry.options[CONF_GROUPS].get(
+            CONF_IMPORT_GROUPS, all_groups
+        )
     ]
 
     # Add all nodes from the groups in a list
     # Make sure each node is only added once
     nodes: list[HomeeNode] = []
-    for g in groups:
-        for n in g.nodes:
-            if n not in nodes:
-                nodes.append(n)
+    for group in groups:
+        for node in group.nodes:
+            if node not in nodes:
+                nodes.append(node)
 
     return nodes
 
@@ -40,10 +43,21 @@ def get_attribute_for_enum(att_class, att_id):
     """Return the attribute label for a given integer."""
     attributes = [
         a
-        for a in inspect.getmembers(att_class, lambda a: not inspect.isroutine(a))
+        for a in inspect.getmembers(
+            att_class, lambda a: not inspect.isroutine(a)
+        )
         if not (a[0].startswith("__") and a[0].endswith("__"))
     ]
     attribute_label = [a[0] for a in attributes if a[1] == att_id]
     if not attribute_label:
         return None
     return attribute_label[0]
+
+
+def get_attribute_name(attribute_type) -> str:
+    """Return the Name of an attribute type as string."""
+    for key, val in AttributeType.__dict__.items():
+        if val == attribute_type:
+            return key
+
+    return ""

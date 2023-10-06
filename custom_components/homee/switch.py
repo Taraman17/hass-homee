@@ -22,25 +22,27 @@ HOMEE_PLUG_PROFILES = [
     NodeProfile.IMPULSE_PLUG,
 ]
 
-HOMEE_SWITCH_PROFILES = [
-    NodeProfile.METERING_SWITCH,
-    NodeProfile.ON_OFF_SWITCH,
-    NodeProfile.DOUBLE_ON_OFF_SWITCH,
-    NodeProfile.ON_OFF_SWITCH_WITH_BINARY_INPUT,
-    NodeProfile.DOUBLE_METERING_SWITCH,
-    NodeProfile.IMPULSE_RELAY,
-    NodeProfile.GARAGE_DOOR_OPERATOR,
-    NodeProfile.GARAGE_DOOR_IMPULSE_OPERATOR,
-]
-
 HOMEE_SWITCH_ATTRIBUTES = [
-    AttributeType.ON_OFF,
+    AttributeType.AUTOMATIC_MODE_IMPULSE,
+    AttributeType.BRIEFLY_OPEN_IMPULSE,
     AttributeType.IMPULSE,
     AttributeType.LIGHT_IMPULSE,
     AttributeType.OPEN_PARTIAL_IMPULSE,
+    AttributeType.ON_OFF,
+    AttributeType.PERMANENTLY_OPEN_IMPULSE,
+    AttributeType.RESET_METER,
+    AttributeType.SIREN,
+    AttributeType.SLAT_ROTATION_IMPULSE,
+    AttributeType.VENTILATE_IMPULSE,
+]
+
+DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.AUTOMATIC_MODE_IMPULSE,
     AttributeType.BRIEFLY_OPEN_IMPULSE,
+    AttributeType.LIGHT_IMPULSE,
+    AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
+    AttributeType.RESET_METER,
     AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
 ]
@@ -54,29 +56,15 @@ def get_device_class(node: HomeeNode) -> int:
     return SwitchDeviceClass.SWITCH
 
 
-def is_switch_node(node: HomeeNode):
-    """Determine if a node contains switches based on attributes."""
-    for attribute in node.attributes:
-        if attribute.type in HOMEE_SWITCH_ATTRIBUTES:
-            return (
-                node.profile in HOMEE_PLUG_PROFILES
-                or node.profile in HOMEE_SWITCH_PROFILES
-            )
-    return False
-
-
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
     """Add the homee platform for the switch component."""
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
-        if not is_switch_node(node):
-            continue
-        switch_count = 0
         for attribute in node.attributes:
+            # These conditions identify a switch.
             if attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable:
-                devices.append(HomeeSwitch(node, config_entry, attribute, switch_count))
-                switch_count += 1
+                devices.append(HomeeSwitch(node, config_entry, attribute))
     if devices:
         async_add_devices(devices)
 
@@ -95,33 +83,39 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         self,
         node: HomeeNode,
         entry: ConfigEntry,
-        on_off_attribute: HomeeAttribute = None,
-        switch_index=-1,
+        on_off_attribute: HomeeAttribute = None
     ) -> None:
         """Initialize a homee switch entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._on_off = on_off_attribute
-        self._switch_index = switch_index
+        self._switch_index = on_off_attribute.instance
         self._device_class = get_device_class(node)
 
         self._unique_id = f"{self._node.id}-switch-{self._on_off.id}"
 
     @property
-    def name(self):
-        """Return the display name of this entity. Entity is the main feature of a device when the index == 0."""
-        for key, val in AttributeType.__dict__.items():
-            if val == self._on_off.type:
-                attribute_name = key
+    def translation_key(self) -> str | None:
+        """Return the translation key for the switch."""
+        # If a switch is the main feature of a device it will get its name.
+        translation_key = None
 
-        # special impulses should always be named descriptive
-        if attribute_name.find("_IMPULSE") > -1:
-            return attribute_name[0 : attribute_name.find("_IMPULSE")]
+        attribute_name = helpers.get_attribute_name(self._on_off.type)
 
-        if self._switch_index <= 0:
-            return None
+        # If a switch type has more than one Instance, it will be named and numbered.
+        if self._on_off.instance > 0:
+            translation_key = f"{attribute_name.lower()}_{self._on_off.instance}"
+        # Some switches should always be named descriptive.
+        elif self._on_off.type in DESCRIPTIVE_ATTRIBUTES:
+            translation_key = attribute_name.lower()
 
-        if self._switch_index > 0:
-            return f"switch {self._switch_index + 1}"
+        if self._on_off.instance > 4:
+            _LOGGER.error("Did get more than 4 switches of a type,"
+                          "please report at https://github.com/Taraman17/hacs-homee/issues")
+
+        if translation_key is None:
+            self._attr_name = None
+
+        return translation_key
 
     @property
     def is_on(self) -> bool:
