@@ -34,6 +34,7 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.SIREN,
     AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
+    AttributeType.WATCHDOG_ON_OFF,
 ]
 
 DESCRIPTIVE_ATTRIBUTES = [
@@ -45,6 +46,7 @@ DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.RESET_METER,
     AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
+    AttributeType.WATCHDOG_ON_OFF
 ]
 
 
@@ -129,6 +131,13 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
     def is_on(self) -> bool:
         """Return True if entity is on."""
         return bool(self._on_off.current_value)
+
+    @property
+    def icon(self) -> str | None:
+        if self._on_off.type == AttributeType.WATCHDOG_ON_OFF:
+            return "mdi:dog"
+
+        return None
 
     async def async_turn_on(self, **kwargs):
         """Turn the entity on."""
