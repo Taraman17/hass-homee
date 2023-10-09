@@ -24,7 +24,8 @@ def get_imported_nodes(
     groups = [
         homee.get_group_by_id(int(g))
         for g in config_entry.options[CONF_GROUPS].get(
-            CONF_IMPORT_GROUPS, all_groups
+            CONF_IMPORT_GROUPS,
+            all_groups
         )
     ]
 
@@ -36,6 +37,9 @@ def get_imported_nodes(
             if node not in nodes:
                 nodes.append(node)
 
+    # Always add homee itself to the nodes.
+    nodes.append(homee.get_node_by_id(-1))
+
     return nodes
 
 
@@ -44,7 +48,8 @@ def get_attribute_for_enum(att_class, att_id):
     attributes = [
         a
         for a in inspect.getmembers(
-            att_class, lambda a: not inspect.isroutine(a)
+            att_class,
+            lambda a: not inspect.isroutine(a)
         )
         if not (a[0].startswith("__") and a[0].endswith("__"))
     ]
