@@ -256,6 +256,9 @@
       },
       "reset_meter_4": {
         "name": "Reset Meter 4"
+      },
+      "watchdog_on_off": {
+        "name": "Watchdog"
       }
     },
     "alarm_control_panel": {

@@ -134,6 +134,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
 
     @property
     def icon(self) -> str | None:
+        """Return icon if different from main feature."""
         if self._on_off.type == AttributeType.WATCHDOG_ON_OFF:
             return "mdi:dog"
 
