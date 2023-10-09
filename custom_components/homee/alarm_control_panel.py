@@ -6,7 +6,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.components.alarm_control_panel import (
     AlarmControlPanelEntity,
-    AlarmControlPanelEntityFeature
+    AlarmControlPanelEntityFeature,
 )
 from homeassistant.config_entries import ConfigEntry
 
@@ -42,10 +42,8 @@ async def async_setup_entry(
     for node in helpers.get_imported_nodes(hass, config_entry):
         for attribute in node.attributes:
             # These conditions identify a switch.
-            if (
-                attribute.type == AttributeType.HOMEE_MODE and
-                attribute.editable
-            ):
+            if attribute.type == AttributeType.HOMEE_MODE and\
+               attribute.editable:
                 devices.append(HomeeAlarmPanel(node, config_entry, attribute))
     if devices:
         async_add_devices(devices)
@@ -65,7 +63,7 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
         self,
         node: HomeeNode,
         entry: ConfigEntry,
-        alarm_panel_attribute: HomeeAttribute = None
+        alarm_panel_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee alarm Control panel entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
@@ -74,8 +72,9 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
         self._attr_supported_features = get_features(alarm_panel_attribute)
         self._attr_translation_key = "homee_status"
 
-        self._unique_id = (f"{self._node.id}-alarm_panel-"
-                           f"{self._alarm_panel_attribute.id}")
+        self._unique_id = (
+            f"{self._node.id}-alarm_panel-" f"{self._alarm_panel_attribute.id}"
+        )
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -87,7 +86,7 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
             manufacturer="homee",
             model="homee",
             sw_version=homee.settings.version,
-            hw_version="TBD"
+            hw_version="TBD",
         )
 
     @property
