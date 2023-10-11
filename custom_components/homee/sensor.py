@@ -19,6 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 SENSOR_ATTRIBUTES = [
     AttributeType.ACCUMULATED_ENERGY_USE,
     AttributeType.BATTERY_LEVEL,
+    AttributeType.BRIGHTNESS,
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
     AttributeType.DEVICE_TEMPERATURE,
@@ -40,6 +41,7 @@ TOTAL_VALUES = [
 
 MEASUREMENT_ATTRIBUTES = [
     AttributeType.BATTERY_LEVEL,
+    AttributeType.BRIGHTNESS,
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
     AttributeType.DEVICE_TEMPERATURE,
@@ -71,6 +73,10 @@ def get_device_class(attribute: HomeeAttribute) -> int:
     if attribute.type == AttributeType.BATTERY_LEVEL:
         device_class = SensorDeviceClass.BATTERY
         translation_key = "battery_sensor"
+
+    if attribute.type == AttributeType.BRIGHTNESS:
+        device_class = SensorDeviceClass.ILLUMINANCE
+        translation_key = "brightness_sensor"
 
     if attribute.type in [AttributeType.VOLTAGE, AttributeType.TOTAL_VOLTAGE]:
         device_class = SensorDeviceClass.VOLTAGE

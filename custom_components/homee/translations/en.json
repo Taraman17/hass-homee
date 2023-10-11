@@ -85,6 +85,9 @@
   },
   "entity": {
     "sensor": {
+      "brightness_sensor": {
+        "name": "Illuminance"
+      },
       "voltage_sensor": {
         "name": "Voltage"
       },
