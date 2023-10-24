@@ -36,7 +36,7 @@ TOTAL_VALUES = [
     AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
     AttributeType.TOTAL_CURRENT,
     AttributeType.TOTAL_CURRENT_ENERGY_USE,
-    AttributeType.TOTAL_VOLTAGE
+    AttributeType.TOTAL_VOLTAGE,
 ]
 
 MEASUREMENT_ATTRIBUTES = [
@@ -65,7 +65,7 @@ def get_device_class(attribute: HomeeAttribute) -> int:
 
     if attribute.type in [
         AttributeType.ACCUMULATED_ENERGY_USE,
-        AttributeType.TOTAL_ACCUMULATED_ENERGY_USE
+        AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
     ]:
         device_class = SensorDeviceClass.ENERGY
         translation_key = "energy_sensor"
@@ -86,16 +86,13 @@ def get_device_class(attribute: HomeeAttribute) -> int:
         device_class = SensorDeviceClass.CURRENT
         translation_key = "current_sensor"
 
-    if attribute.type in [
-        AttributeType.DEVICE_TEMPERATURE,
-        AttributeType.TEMPERATURE
-    ]:
+    if attribute.type in [AttributeType.DEVICE_TEMPERATURE, AttributeType.TEMPERATURE]:
         device_class = SensorDeviceClass.TEMPERATURE
         translation_key = "temperature_sensor"
 
     if attribute.type in [
         AttributeType.CURRENT_ENERGY_USE,
-        AttributeType.TOTAL_CURRENT_ENERGY_USE
+        AttributeType.TOTAL_CURRENT_ENERGY_USE,
     ]:
         device_class = SensorDeviceClass.POWER
         translation_key = "power_sensor"
@@ -112,8 +109,10 @@ def get_device_class(attribute: HomeeAttribute) -> int:
     if attribute.instance > 0:
         translation_key = f"{translation_key}_{attribute.instance}"
         if attribute.instance > 4:
-            _LOGGER.error("Did get more than 4 sensors of a type,"
-                          "please report at https://github.com/Taraman17/hacs-homee/issues")
+            _LOGGER.error(
+                "Did get more than 4 sensors of a type,"
+                "please report at https://github.com/Taraman17/hacs-homee/issues"
+            )
 
     return (device_class, translation_key)
 
@@ -155,12 +154,14 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         self,
         node: HomeeNode,
         entry: ConfigEntry,
-        measurement_attribute: HomeeAttribute = None
+        measurement_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee sensor entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._measurement = measurement_attribute
-        self._device_class, self._attr_translation_key = get_device_class(measurement_attribute)
+        self._device_class, self._attr_translation_key = get_device_class(
+            measurement_attribute
+        )
         self._state_class = get_state_class(measurement_attribute)
         self._sensor_index = measurement_attribute.instance
         if self.translation_key is None:
