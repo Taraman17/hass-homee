@@ -98,14 +98,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
             entity_registry = er.async_get(hass)
             for entity in call.data["entity_id"]:
                 this_entity = entity_registry.async_get(entity)
-                matches = re.search("^(\d+)-\w+-(\d+)$", this_entity.unique_id)
+                matches = re.search(r"^(\d+)-\w+-(\d+)$", this_entity.unique_id)
                 if matches is not None:
                     node_id, attribute_id = matches.group(1, 2)
                     hass.async_create_task(
                         homee.update_attribute(node_id, attribute_id)
                     )
                 else:
-                    node_id = re.search("^(\d{1,4})-\w{1,20}").groups(1)
+                    node_id = re.search(r"^(\d{1,4})-\w{1,20}").groups(1)
                     hass.async_create_task(homee.update_node(node_id))
 
         if "device_id" in call.data:
