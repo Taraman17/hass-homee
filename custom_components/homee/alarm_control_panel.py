@@ -31,19 +31,14 @@ def get_features(attribute) -> int:
         )
 
 
-async def async_setup_entry(
-    hass: HomeAssistant,
-    config_entry,
-    async_add_devices
-):
+async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
     """Add the homee platform for the switch component."""
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
         for attribute in node.attributes:
             # These conditions identify a switch.
-            if attribute.type == AttributeType.HOMEE_MODE and\
-               attribute.editable:
+            if attribute.type == AttributeType.HOMEE_MODE and attribute.editable:
                 devices.append(HomeeAlarmPanel(node, config_entry, attribute))
     if devices:
         async_add_devices(devices)
@@ -73,7 +68,7 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
         self._attr_translation_key = "homee_status"
 
         self._unique_id = (
-            f"{self._node.id}-alarm_panel-" f"{self._alarm_panel_attribute.id}"
+            f"{self._node.id}-alarm_panel-{self._alarm_panel_attribute.id}"
         )
 
     @property
@@ -82,11 +77,6 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
         homee: Homee = self.hass.data[DOMAIN][self._entry.entry_id]
         return DeviceInfo(
             identifiers={(DOMAIN, homee.deviceId)},
-            name=homee.settings.homee_name,
-            manufacturer="homee",
-            model="homee",
-            sw_version=homee.settings.version,
-            hw_version="TBD",
         )
 
     @property
