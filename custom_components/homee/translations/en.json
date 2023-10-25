@@ -81,6 +81,10 @@
           "description": "The value to set."
         }
       }
+    },
+    "update_entity": {
+      "name": "Update Entity",
+      "description": "Request an update of the values of an entity"
     }
   },
   "entity": {

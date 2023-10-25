@@ -68,7 +68,7 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
         self._attr_translation_key = "homee_status"
 
         self._unique_id = (
-            f"{self._node.id}-alarm_panel-" f"{self._alarm_panel_attribute.id}"
+            f"{self._node.id}-alarm_panel-{self._alarm_panel_attribute.id}"
         )
 
     @property
