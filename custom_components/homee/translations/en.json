@@ -175,6 +175,9 @@
       },
       "position_sensor": {
         "name": "Position"
+      },
+      "link_quality_sensor": {
+        "name": "Link Quality"
       }
     },
     "binary_sensor": {
