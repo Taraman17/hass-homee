@@ -1,5 +1,4 @@
 set_value:
-  description: Set an attribute value of a homee node
   fields:
     node:
       required: true
@@ -10,3 +9,7 @@ set_value:
     value:
       required: true
       example: 1
+update_entity:
+  target:
+    entity:
+      integration: homee

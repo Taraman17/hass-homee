@@ -34,6 +34,7 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.SIREN,
     AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
+    AttributeType.WATCHDOG_ON_OFF,
 ]
 
 DESCRIPTIVE_ATTRIBUTES = [
@@ -45,6 +46,7 @@ DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.RESET_METER,
     AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
+    AttributeType.WATCHDOG_ON_OFF,
 ]
 
 
@@ -83,7 +85,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         self,
         node: HomeeNode,
         entry: ConfigEntry,
-        on_off_attribute: HomeeAttribute = None
+        on_off_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee switch entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
@@ -101,16 +103,20 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
 
         attribute_name = helpers.get_attribute_name(self._on_off.type)
 
-        # If a switch type has more than one Instance, it will be named and numbered.
+        # If a switch type has more than one instance,
+        # it will be named and numbered.
         if self._on_off.instance > 0:
-            translation_key = f"{attribute_name.lower()}_{self._on_off.instance}"
+            translation_key = f"{attribute_name.lower()}_" f"{self._on_off.instance}"
         # Some switches should always be named descriptive.
         elif self._on_off.type in DESCRIPTIVE_ATTRIBUTES:
             translation_key = attribute_name.lower()
 
         if self._on_off.instance > 4:
-            _LOGGER.error("Did get more than 4 switches of a type,"
-                          "please report at https://github.com/Taraman17/hacs-homee/issues")
+            _LOGGER.error(
+                "Did get more than 4 switches of a type,"
+                "please report at"
+                "https://github.com/Taraman17/hacs-homee/issues"
+            )
 
         if translation_key is None:
             self._attr_name = None
@@ -121,6 +127,14 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
     def is_on(self) -> bool:
         """Return True if entity is on."""
         return bool(self._on_off.current_value)
+
+    @property
+    def icon(self) -> str | None:
+        """Return icon if different from main feature."""
+        if self._on_off.type == AttributeType.WATCHDOG_ON_OFF:
+            return "mdi:dog"
+
+        return None
 
     async def async_turn_on(self, **kwargs):
         """Turn the entity on."""

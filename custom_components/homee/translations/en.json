@@ -17,7 +17,7 @@
           "host": "Host",
           "password": "Password",
           "username": "Username",
-          "all_devices_or_groups": "Select which devices should be imported",
+          "all_devices_or_groups": "Select which devices should be imported:",
           "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
         }
       },
@@ -28,17 +28,17 @@
           "host": "Host",
           "password": "Password",
           "username": "Username",
-          "all_devices_or_groups": "Select which devices should be imported",
-          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
+          "all_devices_or_groups": "Select which devices should be imported:",
+          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity."
         }
       },
       "groups": {
         "title": "Group Configuration",
         "description": "Configure the groups. You can still change window & door groups later.",
         "data": {
-          "import_groups": "Import devices in the following groups",
-          "window_groups": "Groups that contain window sensors",
-          "door_groups": "Groups that contain door sensors"
+          "import_groups": "Import devices in the following groups:",
+          "window_groups": "Groups that contain window sensors:",
+          "door_groups": "Groups that contain door sensors:"
         }
       }
     }
@@ -48,9 +48,9 @@
       "init": {
         "description": "Configure the homee integration. You may need to restart Home Assistant to apply the changes.",
         "data": {
-          "window_groups": "Groups that contain window sensors",
-          "door_groups": "Groups that contain door sensors",
-          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
+          "window_groups": "Groups that contain window sensors:",
+          "door_groups": "Groups that contain door sensors:",
+          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity."
         }
       }
     }
@@ -59,7 +59,7 @@
     "all_devices_or_groups": {
       "options": {
         "all": "All devices",
-        "groups": "Only devices from groups selected in the next step"
+        "groups": "Only devices from groups selected in the next step."
       }
     }
   },
@@ -81,10 +81,17 @@
           "description": "The value to set."
         }
       }
+    },
+    "update_entity": {
+      "name": "Update Entity",
+      "description": "Request an update of the values of an entity"
     }
   },
   "entity": {
     "sensor": {
+      "brightness_sensor": {
+        "name": "Illuminance"
+      },
       "voltage_sensor": {
         "name": "Voltage"
       },
@@ -168,11 +175,17 @@
       },
       "position_sensor": {
         "name": "Position"
+      },
+      "link_quality_sensor": {
+        "name": "Link Quality"
       }
     },
     "binary_sensor": {
       "opening_sensor": {
         "name": "Opening"
+      },
+      "battery_low_sensor": {
+        "name": "Battery Low"
       },
       "plug_sensor": {
         "name": "Plug"
@@ -185,6 +198,9 @@
       },
       "heat_sensor": {
         "name": "Temperature Alarm"
+      },
+      "flood_sensor": {
+        "name": "Flood Alarm"
       },
       "window_sensor":{
         "name": "Window"
@@ -256,6 +272,20 @@
       },
       "reset_meter_4": {
         "name": "Reset Meter 4"
+      },
+      "watchdog_on_off": {
+        "name": "Watchdog"
+      }
+    },
+    "alarm_control_panel": {
+      "homee_status": {
+        "name": "Status",
+        "state": {
+          "0": "Home",
+          "1": "Sleeping",
+          "2": "Away",
+          "3": "Vacation"
+        }
       }
     }
   }

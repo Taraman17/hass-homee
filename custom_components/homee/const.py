@@ -5,6 +5,7 @@ DOMAIN = "homee"
 
 # Services
 SERVICE_SET_VALUE = "set_value"
+SERVICE_UPDATE_ENTITY = "update_entity"
 
 # Attributes
 ATTR_NODE = "node"

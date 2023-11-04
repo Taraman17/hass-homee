@@ -1,0 +1,292 @@
+{
+  "config": {
+    "flow_title": "homee {name} ({host})",
+    "abort": {
+      "already_configured": "Gerät ist bereits konfiguriert"
+    },
+    "error": {
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "invalid_auth": "Ungültige Anmeldedaten",
+      "unknown": "Unerwarteter Fehler"
+    },
+    "step": {
+      "user": {
+        "title": "homee konfigurieren",
+        "description": "Geben Sie manuell die IP-Adresse des homee ein, mit dem Sie eine Verbindung herstellen möchten.",
+        "data": {
+          "host": "Host",
+          "password": "Kennwort",
+          "username": "Benutzer",
+          "all_devices_or_groups": "Wählen Sie aus, welche Geräte importiert werden sollen:",
+          "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "homee konfigurieren",
+        "description": "Entdeckt homee {id} unter {host}",
+        "data": {
+          "host": "Host",
+          "password": "Kennwort",
+          "username": "Benutzer",
+          "all_devices_or_groups": "Wählen Sie aus, welche Geräte importiert werden sollen:",
+          "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
+        }
+      },
+      "groups": {
+        "title": "Gruppen-Konfiguration",
+        "description": "Konfigurieren Sie die Gruppen. Sie können Fenster- und Türgruppen auch später noch ändern.",
+        "data": {
+          "import_groups": "Importieren Sie Geräte in die folgenden Gruppen:",
+          "window_groups": "Gruppen, die Fenstersensoren enthalten:",
+          "door_groups": "Gruppen, die Türsensoren enthalten:"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "description": "Konfigurieren Sie die Homee-Integration. Möglicherweise müssen Sie Home Assistant neu starten, um die Änderungen zu übernehmen.",
+        "data": {
+          "window_groups": "Gruppen, die Fenstersensoren enthalten:",
+          "door_groups": "Gruppen, die Türsensoren enthalten:",
+          "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
+        }
+      }
+    }
+  },
+  "selector": {
+    "all_devices_or_groups": {
+      "options": {
+        "all": "Alle Geräte",
+        "groups": "Nur Geräte aus den im nächsten Schritt ausgewählten Gruppen."
+      }
+    }
+  },
+  "services": {
+    "set_value": {
+      "name": "Wert einstellen",
+      "description": "Attributwert eines homee-Knotens setzen.",
+      "fields": {
+        "node": {
+          "name": "Node",
+          "description": "node id."
+        },
+        "attribute": {
+          "name": "Attribut",
+          "description": "Attribut id."
+        },
+        "value": {
+          "name": "Wert",
+          "description": "Der einzustellende Wert."
+        }
+      }
+    },
+    "update_entity": {
+      "name": "Entität aktualisieren",
+      "description": "Anforderung zur Aktualisierung der Werte einer Entität."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "brightness_sensor": {
+        "name": "Beleuchtungsstärke"
+      },
+      "voltage_sensor": {
+        "name": "Spannung"
+      },
+      "voltage_sensor_1": {
+        "name": "Spannung 1"
+      },
+      "voltage_sensor_2": {
+        "name": "Spannung 2"
+      },
+      "voltage_sensor_3": {
+        "name": "Spannung 3"
+      },
+      "voltage_sensor_4": {
+        "name": "Spannung 4"
+      },
+      "total_voltage_sensor": {
+        "name": "Gesamt Spannung"
+      },
+      "power_sensor": {
+        "name": "Leistung"
+      },
+      "power_sensor_1": {
+        "name": "Leistung 1"
+      },
+      "power_sensor_2": {
+        "name": "Leistung 2"
+      },
+      "power_sensor_3": {
+        "name": "Leistung 3"
+      },
+      "power_sensor_4": {
+        "name": "Leistung 4"
+      },
+      "total_power_sensor": {
+        "name": "Gesamt Leistung"
+      },
+      "battery_sensor": {
+        "name": "Batterie"
+      },
+      "current_sensor": {
+        "name": "Stromstärke"
+      },
+      "current_sensor_1": {
+        "name": "Stromstärke 1"
+      },
+      "current_sensor_2": {
+        "name": "Stromstärke 2"
+      },
+      "current_sensor_3": {
+        "name": "Stromstärke 3"
+      },
+      "current_sensor_4": {
+        "name": "Stromstärke 4"
+      },
+      "total_current_sensor": {
+        "name": "Gesamt Stromstärke"
+      },
+      "temperature_sensor": {
+        "name": "Temperatur"
+      },
+      "energy_sensor": {
+        "name": "Energie"
+      },
+      "energy_sensor_1": {
+        "name": "Energie 1"
+      },
+      "energy_sensor_2": {
+        "name": "Energie 2"
+      },
+      "energy_sensor_3": {
+        "name": "Energie 3"
+      },
+      "energy_sensor_4": {
+        "name": "Energie 4"
+      },
+      "total_energy_sensor": {
+        "name": "Gesamt Energie"
+      },
+      "up_down_sensor": {
+        "name": "Zustand"
+      },
+      "position_sensor": {
+        "name": "Position"
+      },
+      "link_quality_sensor": {
+        "name": "Signalstärke"
+      }
+    },
+    "binary_sensor": {
+      "opening_sensor": {
+        "name": "Opening"
+      },
+      "battery_low_sensor": {
+        "name": "Batterie schwach"
+      },
+      "plug_sensor": {
+        "name": "Steckdose"
+      },
+      "lock_sensor": {
+        "name": "Schloss"
+      },
+      "smoke_sensor": {
+        "name": "Rauchalarm"
+      },
+      "heat_sensor": {
+        "name": "Temperaturalarm"
+      },
+      "flood_sensor": {
+        "name": "Überflutungsalarm"
+      },
+      "window_sensor":{
+        "name": "Fenster"
+      },
+      "door_sensor": {
+        "name": "Tür"
+      }
+    },
+    "switch": {
+      "impulse": {
+        "name": "Impuls"
+      },
+      "impulse_1": {
+        "name": "Impuls 1"
+      },
+      "impulse_2": {
+        "name": "Impuls 2"
+      },
+      "impulse_3": {
+        "name": "Impuls 3"
+      },
+      "impulse_4": {
+        "name": "Impuls 4"
+      },
+      "light_impulse":{
+        "name": "Licht Impuls"
+      },
+      "light_impulse_1":{
+        "name": "Licht Impuls 1"
+      },
+      "light_impulse_2":{
+        "name": "Licht Impuls 2"
+      },
+      "light_impulse_3":{
+        "name": "Licht Impuls 3"
+      },
+      "light_impulse_4":{
+        "name": "Licht Impuls 4"
+      },
+      "automatic_mode_impulse": {
+        "name": "Automatikmodus Impuls"
+      },
+      "briefly_open_impulse": {
+        "name": "Kurzzeitig öffnen Impuls"
+      },
+      "open_partial_impulse": {
+        "name": "Teilweise öffnen Impuls"
+      },
+      "permanently_open_impulse": {
+        "name": "Dauerhaft geöffnet Impuls"
+      },
+      "slat_rotation_impulse": {
+        "name": "Lamellendrehung Impuls"
+      },
+      "ventilate_ipulse": {
+        "name": "Belüften Impuls"
+      },
+      "reset_meter": {
+        "name": "Messwerte zurücksetzen"
+      },
+      "reset_meter_1": {
+        "name": "Messwerte zurücksetzen 1"
+      },
+      "reset_meter_2": {
+        "name": "Messwerte zurücksetzen 2"
+      },
+      "reset_meter_3": {
+        "name": "Messwerte zurücksetzen 3"
+      },
+      "reset_meter_4": {
+        "name": "Messwerte zurücksetzen 4"
+      },
+      "watchdog_on_off": {
+        "name": "Watchdog"
+      }
+    },
+    "alarm_control_panel": {
+      "homee_status": {
+        "name": "Status",
+        "state": {
+          "0": "Zuhause",
+          "1": "Nacht",
+          "2": "Abwesend",
+          "3": "Urlaub"
+        }
+      }
+    }
+  }
+}
