@@ -19,6 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 HOMEE_BINARY_SENSOR_ATTRIBUTES = [
     AttributeType.BATTERY_LOW_ALARM,
     AttributeType.HIGH_TEMPERATURE_ALARM,
+    AttributeType.FLOOD_ALARM,
     AttributeType.LOCK_STATE,
     AttributeType.ON_OFF,
     AttributeType.OPEN_CLOSE,
@@ -41,6 +42,11 @@ def get_device_class(attribute: HomeeAttribute) -> int:
         state_attr = AttributeType.HIGH_TEMPERATURE_ALARM
         device_class = BinarySensorDeviceClass.HEAT
         translation_key = "heat_sensor"
+
+    if attribute.type == AttributeType.FLOOD_ALARM:
+        state_attr == AttributeType.FLOOD_ALARM
+        device_class == BinarySensorDeviceClass.MOISTURE
+        translation_key == "flood_sensor"
 
     if attribute.type == AttributeType.ON_OFF:
         state_attr = AttributeType.ON_OFF

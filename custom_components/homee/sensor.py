@@ -23,6 +23,7 @@ SENSOR_ATTRIBUTES = [
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
     AttributeType.DEVICE_TEMPERATURE,
+    AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
     AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
     AttributeType.TOTAL_CURRENT,
@@ -45,6 +46,7 @@ MEASUREMENT_ATTRIBUTES = [
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
     AttributeType.DEVICE_TEMPERATURE,
+    AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
     AttributeType.TOTAL_CURRENT_ENERGY_USE,
     AttributeType.TOTAL_CURRENT,
@@ -102,6 +104,9 @@ def get_device_class(attribute: HomeeAttribute) -> int:
 
     if attribute.type == AttributeType.POSITION:
         translation_key = "position_sensor"
+
+    if attribute.type == AttributeType.LINK_QUALITY:
+        translation_key = "link_quality_sensor"
 
     if attribute.type in TOTAL_VALUES:
         translation_key = f"total_{translation_key}"
