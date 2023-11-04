@@ -44,9 +44,9 @@ def get_device_class(attribute: HomeeAttribute) -> int:
         translation_key = "heat_sensor"
 
     if attribute.type == AttributeType.FLOOD_ALARM:
-        state_attr == AttributeType.FLOOD_ALARM
-        device_class == BinarySensorDeviceClass.MOISTURE
-        translation_key == "flood_sensor"
+        state_attr = AttributeType.FLOOD_ALARM
+        device_class = BinarySensorDeviceClass.MOISTURE
+        translation_key = "flood_sensor"
 
     if attribute.type == AttributeType.ON_OFF:
         state_attr = AttributeType.ON_OFF
