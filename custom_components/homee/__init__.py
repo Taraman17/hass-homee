@@ -140,6 +140,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hw_version="TBD",
     )
 
+    # async_setup_devices(hass, homee, entry)
+
     # Forward entry setup to the platforms
     for component in PLATFORMS:
         hass.async_create_task(

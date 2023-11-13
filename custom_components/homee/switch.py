@@ -11,7 +11,8 @@ from homeassistant.config_entries import ConfigEntry
 from pymee.const import AttributeType, NodeProfile
 from pymee.model import HomeeAttribute, HomeeNode
 
-from . import HomeeNodeEntity, helpers
+from . import HomeeNodeEntity
+from .helpers import get_attribute_for_enum, get_imported_nodes
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,7 +63,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     """Add the homee platform for the switch component."""
 
     devices = []
-    for node in helpers.get_imported_nodes(hass, config_entry):
+    for node in get_imported_nodes(hass, config_entry):
         for attribute in node.attributes:
             # These conditions identify a switch.
             if attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable:
@@ -101,7 +102,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         # If a switch is the main feature of a device it will get its name.
         translation_key = None
 
-        attribute_name = helpers.get_attribute_name(self._on_off.type)
+        attribute_name = get_attribute_for_enum(AttributeType, self._on_off.type)
 
         # If a switch type has more than one instance,
         # it will be named and numbered.

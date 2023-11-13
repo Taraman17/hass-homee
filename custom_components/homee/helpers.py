@@ -42,21 +42,9 @@ def get_imported_nodes(
 
 def get_attribute_for_enum(att_class, att_id):
     """Return the attribute label for a given integer."""
-    attributes = [
-        a
-        for a in inspect.getmembers(att_class, lambda a: not inspect.isroutine(a))
-        if not (a[0].startswith("__") and a[0].endswith("__"))
-    ]
-    attribute_label = [a[0] for a in attributes if a[1] == att_id]
-    if not attribute_label:
-        return None
-    return attribute_label[0]
+    values = [member.value for member in AttributeType]
 
+    if att_id in values:
+        return att_class(att_id)
 
-def get_attribute_name(attribute_type) -> str:
-    """Return the Name of an attribute type as string."""
-    for key, val in AttributeType.__dict__.items():
-        if val == attribute_type:
-            return key
-
-    return ""
+    return None
