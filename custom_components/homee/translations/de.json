@@ -171,13 +171,42 @@
         "name": "Gesamt Energie"
       },
       "up_down_sensor": {
-        "name": "Zustand"
+        "name": "Zustand",
+        "state": {
+          "0.0": "Offen",
+          "1.0": "Geschlossen",
+          "2.0": "Öffnet",
+          "3.0": "Schließt"
+        }
       },
       "position_sensor": {
         "name": "Position"
       },
       "link_quality_sensor": {
         "name": "Signalstärke"
+      },
+      "button_state_sensor": {
+        "name": "Schalterstellung"
+      },
+      "button_state_sensor_1": {
+        "name": "Schalterstellung 1"
+      },
+      "button_state_sensor_2": {
+        "name": "Schalterstellung 2"
+      },
+      "button_state_sensor_3": {
+        "name": "Schalterstellung 3"
+      },
+      "button_state_sensor_4": {
+        "name": "Schalterstellung 4"
+      },
+      "window_position_sensor": {
+        "name": "Window Position",
+        "state": {
+          "0.0": "Geschlossen",
+          "1.0": "Gekippt",
+          "2.0": "Offen"
+        }
       }
     },
     "binary_sensor": {

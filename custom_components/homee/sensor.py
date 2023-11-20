@@ -2,15 +2,16 @@
 
 import logging
 
-from homeassistant.core import HomeAssistant
+from pymee.const import AttributeType
+from pymee.model import HomeeAttribute, HomeeNode
+
 from homeassistant.components.sensor import (
-    SensorEntity,
     SensorDeviceClass,
+    SensorEntity,
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from pymee.const import AttributeType
-from pymee.model import HomeeAttribute, HomeeNode
+from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity, helpers
 
@@ -25,12 +26,14 @@ SENSOR_ATTRIBUTES = [
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
+    AttributeType.TEMPERATURE,
     AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
     AttributeType.TOTAL_CURRENT,
     AttributeType.TOTAL_CURRENT_ENERGY_USE,
     AttributeType.TOTAL_VOLTAGE,
     AttributeType.UP_DOWN,
     AttributeType.VOLTAGE,
+    AttributeType.WINDOW_POSITION,
 ]
 
 TOTAL_VALUES = [
@@ -48,10 +51,11 @@ MEASUREMENT_ATTRIBUTES = [
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
+    AttributeType.TEMPERATURE,
     AttributeType.TOTAL_CURRENT_ENERGY_USE,
     AttributeType.TOTAL_CURRENT,
-    AttributeType.UP_DOWN,
     AttributeType.VOLTAGE,
+    AttributeType.WINDOW_POSITION,
 ]
 
 TOTAL_INCREASING_ATTRIBUTES = [
@@ -64,6 +68,7 @@ def get_device_class(attribute: HomeeAttribute) -> int:
     """Determine the device class of a homee entity based on it's attribute type."""
     device_class = None
     translation_key = None
+    options = None
 
     if attribute.type in [
         AttributeType.ACCUMULATED_ENERGY_USE,
@@ -100,13 +105,23 @@ def get_device_class(attribute: HomeeAttribute) -> int:
         translation_key = "power_sensor"
 
     if attribute.type == AttributeType.UP_DOWN:
+        device_class = SensorDeviceClass.ENUM
         translation_key = "up_down_sensor"
+        options = [0.0, 1.0, 2.0, 3.0]
 
     if attribute.type == AttributeType.POSITION:
         translation_key = "position_sensor"
 
     if attribute.type == AttributeType.LINK_QUALITY:
         translation_key = "link_quality_sensor"
+
+    if attribute.type == AttributeType.BUTTON_STATE:
+        translation_key = "button_state_sensor"
+
+    if attribute.type == AttributeType.WINDOW_POSITION:
+        device_class = SensorDeviceClass.ENUM
+        translation_key = "window_position_sensor"
+        options = [0.0, 1.0, 2.0]
 
     if attribute.type in TOTAL_VALUES:
         translation_key = f"total_{translation_key}"
@@ -119,7 +134,7 @@ def get_device_class(attribute: HomeeAttribute) -> int:
                 "please report at https://github.com/Taraman17/hacs-homee/issues"
             )
 
-    return (device_class, translation_key)
+    return (device_class, translation_key, options)
 
 
 def get_state_class(attribute: HomeeAttribute) -> int:
@@ -164,7 +179,7 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         """Initialize a homee sensor entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._measurement = measurement_attribute
-        self._device_class, self._attr_translation_key = get_device_class(
+        self._device_class, self._attr_translation_key, self._attr_options = get_device_class(
             measurement_attribute
         )
         self._state_class = get_state_class(measurement_attribute)
@@ -182,6 +197,8 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
     @property
     def native_unit_of_measurement(self):
         """Return the native unit of the sensor."""
+        if self._measurement.unit == "n/a":
+            return None
         return self._measurement.unit
 
     @property

@@ -171,13 +171,42 @@
         "name": "Total Energy"
       },
       "up_down_sensor": {
-        "name": "State"
+        "name": "State",
+        "state": {
+          "0.0": "Open",
+          "1.0": "Closed",
+          "2.0": "Opening",
+          "3.0": "Closing"
+        }
       },
       "position_sensor": {
         "name": "Position"
       },
       "link_quality_sensor": {
         "name": "Link Quality"
+      },
+      "button_state_sensor": {
+        "name": "Button State"
+      },
+      "button_state_sensor_1": {
+        "name": "Button State 1"
+      },
+      "button_state_sensor_2": {
+        "name": "Button State 2"
+      },
+      "button_state_sensor_3": {
+        "name": "Button State 3"
+      },
+      "button_state_sensor_4": {
+        "name": "Button State 4"
+      },
+      "window_position_sensor": {
+        "name": "Window Position",
+        "state": {
+          "0.0": "Closed",
+          "1.0": "Tilted",
+          "2.0": "Open"
+        }
       }
     },
     "binary_sensor": {
