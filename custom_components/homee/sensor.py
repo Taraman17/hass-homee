@@ -107,7 +107,7 @@ def get_device_class(attribute: HomeeAttribute) -> int:
     if attribute.type == AttributeType.UP_DOWN:
         device_class = SensorDeviceClass.ENUM
         translation_key = "up_down_sensor"
-        options = [0.0, 1.0, 2.0, 3.0]
+        options = [0, 1, 2, 3]
 
     if attribute.type == AttributeType.POSITION:
         translation_key = "position_sensor"
@@ -121,7 +121,7 @@ def get_device_class(attribute: HomeeAttribute) -> int:
     if attribute.type == AttributeType.WINDOW_POSITION:
         device_class = SensorDeviceClass.ENUM
         translation_key = "window_position_sensor"
-        options = [0.0, 1.0, 2.0]
+        options = [0, 1, 2]
 
     if attribute.type in TOTAL_VALUES:
         translation_key = f"total_{translation_key}"
@@ -192,6 +192,9 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
     @property
     def native_value(self):
         """Return the native value of the sensor."""
+        if self._device_class == SensorDeviceClass.ENUM:
+            return int(self._measurement.current_value)
+
         return self._measurement.current_value
 
     @property
@@ -199,6 +202,7 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         """Return the native unit of the sensor."""
         if self._measurement.unit == "n/a":
             return None
+
         return self._measurement.unit
 
     @property

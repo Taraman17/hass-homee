@@ -173,10 +173,10 @@
       "up_down_sensor": {
         "name": "State",
         "state": {
-          "0.0": "Open",
-          "1.0": "Closed",
-          "2.0": "Opening",
-          "3.0": "Closing"
+          "0": "Open",
+          "1": "Closed",
+          "2": "Opening",
+          "3": "Closing"
         }
       },
       "position_sensor": {
@@ -203,9 +203,9 @@
       "window_position_sensor": {
         "name": "Window Position",
         "state": {
-          "0.0": "Closed",
-          "1.0": "Tilted",
-          "2.0": "Open"
+          "0": "Closed",
+          "1": "Tilted",
+          "2": "Open"
         }
       }
     },
