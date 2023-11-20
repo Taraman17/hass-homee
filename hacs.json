@@ -1,5 +1,5 @@
 {
     "name": "homee",
     "hacs": "0.24.0",
-    "homeassistant": "2023.3.0"
+    "homeassistant": "2023.9.0"
 }
