@@ -287,6 +287,9 @@
       "ventilate_ipulse": {
         "name": "Ventilate Impulse"
       },
+      "manual_operation": {
+        "name": "Manual Operation"
+      },
       "reset_meter": {
         "name": "Reset Meter"
       },
@@ -315,6 +318,14 @@
           "2": "Away",
           "3": "Vacation"
         }
+      }
+    },
+    "number": {
+      "number_target_temperature": {
+        "name": "Target Temperature"
+      },
+      "number_wake_up_interval": {
+        "name": "Wake-Up Interval"
       }
     }
   }

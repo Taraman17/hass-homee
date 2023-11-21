@@ -36,13 +36,14 @@ _LOGGER = logging.getLogger(__name__)
 CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})}, extra=vol.ALLOW_EXTRA)
 
 PLATFORMS = [
-    "light",
-    "climate",
-    "binary_sensor",
-    "switch",
-    "cover",
-    "sensor",
     "alarm_control_panel",
+    "binary_sensor",
+    "climate",
+    "cover",
+    "light",
+    "number",
+    "sensor",
+    "switch",
 ]
 
 
