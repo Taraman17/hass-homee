@@ -21,6 +21,7 @@ SENSOR_ATTRIBUTES = [
     AttributeType.ACCUMULATED_ENERGY_USE,
     AttributeType.BATTERY_LEVEL,
     AttributeType.BRIGHTNESS,
+    AttributeType.BUTTON_STATE,
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
     AttributeType.DEVICE_TEMPERATURE,
@@ -46,6 +47,7 @@ TOTAL_VALUES = [
 MEASUREMENT_ATTRIBUTES = [
     AttributeType.BATTERY_LEVEL,
     AttributeType.BRIGHTNESS,
+    AttributeType.BUTTON_STATE,
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
     AttributeType.DEVICE_TEMPERATURE,
@@ -55,7 +57,6 @@ MEASUREMENT_ATTRIBUTES = [
     AttributeType.TOTAL_CURRENT_ENERGY_USE,
     AttributeType.TOTAL_CURRENT,
     AttributeType.VOLTAGE,
-    AttributeType.WINDOW_POSITION,
 ]
 
 TOTAL_INCREASING_ATTRIBUTES = [
@@ -64,11 +65,12 @@ TOTAL_INCREASING_ATTRIBUTES = [
 ]
 
 
-def get_device_class(attribute: HomeeAttribute) -> int:
+def get_device_properties(attribute: HomeeAttribute):
     """Determine the device class of a homee entity based on it's attribute type."""
     device_class = None
     translation_key = None
     options = None
+    icon = None
 
     if attribute.type in [
         AttributeType.ACCUMULATED_ENERGY_USE,
@@ -84,6 +86,9 @@ def get_device_class(attribute: HomeeAttribute) -> int:
     if attribute.type == AttributeType.BRIGHTNESS:
         device_class = SensorDeviceClass.ILLUMINANCE
         translation_key = "brightness_sensor"
+
+    if attribute.type == AttributeType.BUTTON_STATE:
+        translation_key = "button_state_sensor"
 
     if attribute.type in [AttributeType.VOLTAGE, AttributeType.TOTAL_VOLTAGE]:
         device_class = SensorDeviceClass.VOLTAGE
@@ -114,14 +119,13 @@ def get_device_class(attribute: HomeeAttribute) -> int:
 
     if attribute.type == AttributeType.LINK_QUALITY:
         translation_key = "link_quality_sensor"
-
-    if attribute.type == AttributeType.BUTTON_STATE:
-        translation_key = "button_state_sensor"
+        icon = "mdi:signal"
 
     if attribute.type == AttributeType.WINDOW_POSITION:
         device_class = SensorDeviceClass.ENUM
         translation_key = "window_position_sensor"
         options = [0, 1, 2]
+        icon = "mdi:window-closed"
 
     if attribute.type in TOTAL_VALUES:
         translation_key = f"total_{translation_key}"
@@ -134,7 +138,7 @@ def get_device_class(attribute: HomeeAttribute) -> int:
                 "please report at https://github.com/Taraman17/hacs-homee/issues"
             )
 
-    return (device_class, translation_key, options)
+    return (device_class, translation_key, options, icon)
 
 
 def get_state_class(attribute: HomeeAttribute) -> int:
@@ -179,9 +183,12 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         """Initialize a homee sensor entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._measurement = measurement_attribute
-        self._device_class, self._attr_translation_key, self._attr_options = get_device_class(
-            measurement_attribute
-        )
+        (
+            self._device_class,
+            self._attr_translation_key,
+            self._attr_options,
+            self._attr_icon
+        ) = get_device_properties(measurement_attribute)
         self._state_class = get_state_class(measurement_attribute)
         self._sensor_index = measurement_attribute.instance
         if self.translation_key is None:

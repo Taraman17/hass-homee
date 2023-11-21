@@ -28,6 +28,7 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.BRIEFLY_OPEN_IMPULSE,
     AttributeType.IMPULSE,
     AttributeType.LIGHT_IMPULSE,
+    AttributeType.MANUAL_OPERATION,
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.ON_OFF,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
@@ -42,6 +43,7 @@ DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.AUTOMATIC_MODE_IMPULSE,
     AttributeType.BRIEFLY_OPEN_IMPULSE,
     AttributeType.LIGHT_IMPULSE,
+    AttributeType.MANUAL_OPERATION,
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
@@ -107,8 +109,8 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         # If a switch type has more than one instance,
         # it will be named and numbered.
         if self._on_off.instance > 0:
-            translation_key = f"{attribute_name.lower()}_" f"{self._on_off.instance}"
-        # Some switches should always be named descriptive.
+            translation_key = f"{attribute_name.lower()}_{self._on_off.instance}"
+        # Some switches should be named descriptive without an instance number..
         elif self._on_off.type in DESCRIPTIVE_ATTRIBUTES:
             translation_key = attribute_name.lower()
 
@@ -134,6 +136,8 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         """Return icon if different from main feature."""
         if self._on_off.type == AttributeType.WATCHDOG_ON_OFF:
             return "mdi:dog"
+        elif self._on_off.type == AttributeType.MANUAL_OPERATION:
+            return "mdi:hand-back-left"
 
         return None
 

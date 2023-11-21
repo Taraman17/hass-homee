@@ -287,6 +287,9 @@
       "ventilate_ipulse": {
         "name": "Belüften Impuls"
       },
+      "manual_operation": {
+        "name": "Handbetrieb"
+      },
       "reset_meter": {
         "name": "Messwerte zurücksetzen"
       },
@@ -315,6 +318,14 @@
           "2": "Abwesend",
           "3": "Urlaub"
         }
+      }
+    },
+    "number": {
+      "number_target_temperature": {
+        "name": "Zieltemperatur"
+      },
+      "number_wake_up_interval": {
+        "name": "Aufwachintervall"
       }
     }
   }
