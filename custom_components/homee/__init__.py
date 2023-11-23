@@ -248,7 +248,9 @@ class HomeeNodeEntity:
     @property
     def device_info(self):
         """Holds the available information about the device."""
-        if self.has_attribute(AttributeType.SOFTWARE_REVISION):
+        if self.has_attribute(AttributeType.FIRMWARE_REVISION):
+            sw_version = self.attribute(AttributeType.FIRMWARE_REVISION)
+        elif self.has_attribute(AttributeType.SOFTWARE_REVISION):
             sw_version = self.attribute(AttributeType.SOFTWARE_REVISION)
         else:
             sw_version = "undefined"
@@ -312,9 +314,15 @@ class HomeeNodeEntity:
     def attribute(self, attribute_type):
         """Try to get the current value of the attribute of the given type."""
         try:
-            return self._node.get_attribute_by_type(attribute_type).current_value
+            attribute = self._node.get_attribute_by_type(attribute_type)
         except Exception:
             raise AttributeNotFoundException(attribute_type)
+
+        # If the unit of the attribute is 'text', it is stored in .data
+        if attribute.unit == 'text':
+            return self._node.get_attribute_by_type(attribute_type).data
+        else:
+            return self._node.get_attribute_by_type(attribute_type).current_value
 
     def get_attribute(self, attribute_type):
         """Get the attribute object of the given type."""
