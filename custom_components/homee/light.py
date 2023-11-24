@@ -158,7 +158,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
         self._temp_attr = light_set.get(AttributeType.COLOR_TEMPERATURE, None)
         self._mode_attr = light_set.get(AttributeType.COLOR_MODE, None)
         self._light_index = light_index
-        self._unique_id = f"{self._node.id}-light-{self._on_off_attr.id}"
+        self._attr_unique_id = f"{self._node.id}-light-{self._on_off_attr.id}"
 
     @property
     def name(self):

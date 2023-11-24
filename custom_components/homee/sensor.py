@@ -2,7 +2,8 @@
 
 import logging
 
-from pymee.const import AttributeType
+from pymee import Homee
+from pymee.const import AttributeType, NodeProtocol, NodeState
 from pymee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.sensor import (
@@ -11,9 +12,11 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity, helpers
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -157,6 +160,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
+        props = ['state', 'protocol']
+        for item in props:
+            devices.append(HomeeNodeSensor(node, config_entry, item))
         for attribute in node.attributes:
             if attribute.type in SENSOR_ATTRIBUTES:
                 devices.append(HomeeSensor(node, config_entry, attribute))
@@ -193,7 +199,7 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         if self.translation_key is None:
             self._attr_name = None
 
-        self._unique_id = f"{self._node.id}-sensor-{self._measurement.id}"
+        self._attr_unique_id = f"{self._node.id}-sensor-{self._measurement.id}"
 
     @property
     def native_value(self):
@@ -229,20 +235,46 @@ class HomeeNodeSensor(SensorEntity):
     def __init__(
         self,
         node: HomeeNode,
+        entry: ConfigEntry,
         prop_name: str,
     ) -> None:
         """Initialize a homee node sensor entity."""
+        self._node = node
+        self._entry = entry
+        self._prop_name = prop_name
+        self._attr_available = True
         self._attr_translation_key = f"node_sensor_{prop_name}"
 
-        self.unique_id = f"{node.id}-sensor-{prop_name}"
+        self._attr_unique_id = f"{node.id}-sensor-{prop_name}"
 
-    def get_properties(self, prop_name):
+    @property
+    def native_value(self) -> str:
+        value = getattr(self._node, self._prop_name)
+        att_class = {
+            "state": NodeState,
+            "protocol": NodeProtocol
+        }
+
+        state = helpers.get_attribute_for_enum(att_class[self._prop_name], value)
+        return state.lower()
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device info."""
+        homee: Homee = self.hass.data[DOMAIN][self._entry.entry_id]
+        if self._node.id == -1:
+            return DeviceInfo(
+                identifiers={(DOMAIN, homee.deviceId)},
+            )
+        else:
+            return DeviceInfo(
+                identifiers={(DOMAIN, self._node.id)},
+            )
+
+    def get_properties(self):
         """Get the properties for the sensor."""
         device_class = None
         state_class = None
         options = None
-
-        if prop_name == 'state':
-            device_class = SensorDeviceClass.ENUM
 
         return (device_class, state_class, options)

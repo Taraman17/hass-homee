@@ -103,7 +103,7 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
 
         self._on_off = binary_sensor_attribute
         self._configure_device_class()
-        self._unique_id = f"{self._node.id}-binary_sensor-{self._on_off.id}"
+        self._attr_unique_id = f"{self._node.id}-binary_sensor-{self._on_off.id}"
 
     def _configure_device_class(self):
         """Configure the device class of the sensor."""

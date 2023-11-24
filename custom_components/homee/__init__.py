@@ -227,7 +227,7 @@ class HomeeNodeEntity:
         self._node = node
         self._entity = entity
         self._clear_node_listener = None
-        self._unique_id = node.id
+        self._attr_unique_id = node.id
         self._entry = entry
 
         self._homee_data = {
@@ -270,14 +270,14 @@ class HomeeNodeEntity:
         }
 
     @property
+    def available(self) -> bool:
+        """Return the availablity of the underlying node."""
+        return (self._node.state <= 1)
+
+    @property
     def should_poll(self) -> bool:
         """Return if the entity should poll."""
         return False
-
-    @property
-    def unique_id(self):
-        """Return the unique ID of the entity."""
-        return self._unique_id
 
     @property
     def raw_data(self):
