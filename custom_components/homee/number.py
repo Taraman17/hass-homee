@@ -71,7 +71,7 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
         if self.translation_key is None:
             self._attr_name = None
 
-        self._unique_id = f"{self._node.id}-number-{self._number.id}"
+        self._attr_unique_id = f"{self._node.id}-number-{self._number.id}"
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""

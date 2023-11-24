@@ -96,7 +96,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         self._switch_index = on_off_attribute.instance
         self._device_class = get_device_class(node)
 
-        self._unique_id = f"{self._node.id}-switch-{self._on_off.id}"
+        self._attr_unique_id = f"{self._node.id}-switch-{self._on_off.id}"
 
     @property
     def translation_key(self) -> str | None:

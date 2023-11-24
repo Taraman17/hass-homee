@@ -94,7 +94,7 @@ class HomeeCover(HomeeNodeEntity, CoverEntity):
         self._supported_features = get_cover_features(node)
         self._device_class = get_device_class(node)
 
-        self._unique_id = f"{self._node.id}-cover"
+        self._attr_unique_id = f"{self._node.id}-cover"
 
         # TODO needs to be changed, when covers with tilt should be supported
         # For now there should only be one of these.

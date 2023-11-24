@@ -2,7 +2,8 @@
 
 import logging
 
-from pymee.const import AttributeType
+from pymee import Homee
+from pymee.const import AttributeType, NodeProtocol, NodeState
 from pymee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.sensor import (
@@ -11,9 +12,11 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity, helpers
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,12 +67,16 @@ TOTAL_INCREASING_ATTRIBUTES = [
     AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
 ]
 
+TEXT_STATUS_ATTRIBUTES = [
+    AttributeType.UP_DOWN,
+    AttributeType.WINDOW_POSITION,
+]
+
 
 def get_device_properties(attribute: HomeeAttribute):
     """Determine the device class of a homee entity based on it's attribute type."""
     device_class = None
     translation_key = None
-    options = None
     icon = None
 
     if attribute.type in [
@@ -110,9 +117,7 @@ def get_device_properties(attribute: HomeeAttribute):
         translation_key = "power_sensor"
 
     if attribute.type == AttributeType.UP_DOWN:
-        device_class = SensorDeviceClass.ENUM
         translation_key = "up_down_sensor"
-        options = [0, 1, 2, 3]
 
     if attribute.type == AttributeType.POSITION:
         translation_key = "position_sensor"
@@ -122,9 +127,7 @@ def get_device_properties(attribute: HomeeAttribute):
         icon = "mdi:signal"
 
     if attribute.type == AttributeType.WINDOW_POSITION:
-        device_class = SensorDeviceClass.ENUM
         translation_key = "window_position_sensor"
-        options = [0, 1, 2]
         icon = "mdi:window-closed"
 
     if attribute.type in TOTAL_VALUES:
@@ -138,7 +141,7 @@ def get_device_properties(attribute: HomeeAttribute):
                 "please report at https://github.com/Taraman17/hacs-homee/issues"
             )
 
-    return (device_class, translation_key, options, icon)
+    return (device_class, translation_key, icon)
 
 
 def get_state_class(attribute: HomeeAttribute) -> int:
@@ -157,6 +160,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
+        props = ['state', 'protocol']
+        for item in props:
+            devices.append(HomeeNodeSensor(node, config_entry, item))
         for attribute in node.attributes:
             if attribute.type in SENSOR_ATTRIBUTES:
                 devices.append(HomeeSensor(node, config_entry, attribute))
@@ -186,7 +192,6 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         (
             self._device_class,
             self._attr_translation_key,
-            self._attr_options,
             self._attr_icon
         ) = get_device_properties(measurement_attribute)
         self._state_class = get_state_class(measurement_attribute)
@@ -194,12 +199,12 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         if self.translation_key is None:
             self._attr_name = None
 
-        self._unique_id = f"{self._node.id}-sensor-{self._measurement.id}"
+        self._attr_unique_id = f"{self._node.id}-sensor-{self._measurement.id}"
 
     @property
     def native_value(self):
         """Return the native value of the sensor."""
-        if self._device_class == SensorDeviceClass.ENUM:
+        if self._measurement.type in TEXT_STATUS_ATTRIBUTES:
             return int(self._measurement.current_value)
 
         return self._measurement.current_value
@@ -221,3 +226,53 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
     def device_class(self):
         """Return the class of this node."""
         return self._device_class
+
+class HomeeNodeSensor(SensorEntity):
+    """Represents a sensor based on a node's property."""
+
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        node: HomeeNode,
+        entry: ConfigEntry,
+        prop_name: str,
+    ) -> None:
+        """Initialize a homee node sensor entity."""
+        self._node = node
+        self._entry = entry
+        self._prop_name = prop_name
+        self._attr_available = True
+        self._attr_translation_key = f"node_sensor_{prop_name}"
+
+        self._attr_unique_id = f"{node.id}-sensor-{prop_name}"
+
+    @property
+    def native_value(self) -> str:
+        """Return the sensors value."""
+        value = getattr(self._node, self._prop_name)
+        att_class = {
+            "state": NodeState,
+            "protocol": NodeProtocol
+        }
+
+        state = helpers.get_attribute_for_enum(att_class[self._prop_name], value)
+        return state.lower()
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device info."""
+        homee: Homee = self.hass.data[DOMAIN][self._entry.entry_id]
+        if self._node.id == -1:
+            return DeviceInfo(
+                identifiers={(DOMAIN, homee.deviceId)},
+            )
+        else:
+            return DeviceInfo(
+                identifiers={(DOMAIN, self._node.id)},
+            )
+
+    @property
+    def entity_registry_enabled_default(self) -> bool:
+        """Return the default enabled state."""
+        return False

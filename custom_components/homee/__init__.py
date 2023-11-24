@@ -1,26 +1,25 @@
 """The homee integration."""
 import asyncio
 import logging
+import re
+
+from pymee import Homee
+from pymee.const import AttributeType, NodeProfile
+from pymee.model import HomeeAttribute, HomeeNode
+import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, ServiceCall
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import Entity
-from pymee import Homee
-from pymee.model import HomeeAttribute, HomeeNode
-from pymee.const import AttributeType, NodeProfile
-import voluptuous as vol
-import re
 
-from .helpers import get_attribute_for_enum
 from .const import (
     ATTR_ATTRIBUTE,
     ATTR_NODE,
     ATTR_VALUE,
-    CONF_ALL_DEVICES,
     CONF_ADD_HOMEE_DATA,
+    CONF_ALL_DEVICES,
     CONF_DOOR_GROUPS,
     CONF_GROUPS,
     CONF_IMPORT_GROUPS,
@@ -30,6 +29,7 @@ from .const import (
     SERVICE_SET_VALUE,
     SERVICE_UPDATE_ENTITY,
 )
+from .helpers import get_attribute_for_enum
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -227,7 +227,7 @@ class HomeeNodeEntity:
         self._node = node
         self._entity = entity
         self._clear_node_listener = None
-        self._unique_id = node.id
+        self._attr_unique_id = node.id
         self._entry = entry
 
         self._homee_data = {
@@ -248,7 +248,9 @@ class HomeeNodeEntity:
     @property
     def device_info(self):
         """Holds the available information about the device."""
-        if self.has_attribute(AttributeType.SOFTWARE_REVISION):
+        if self.has_attribute(AttributeType.FIRMWARE_REVISION):
+            sw_version = self.attribute(AttributeType.FIRMWARE_REVISION)
+        elif self.has_attribute(AttributeType.SOFTWARE_REVISION):
             sw_version = self.attribute(AttributeType.SOFTWARE_REVISION)
         else:
             sw_version = "undefined"
@@ -268,14 +270,14 @@ class HomeeNodeEntity:
         }
 
     @property
+    def available(self) -> bool:
+        """Return the availablity of the underlying node."""
+        return self._node.state <= 1
+
+    @property
     def should_poll(self) -> bool:
         """Return if the entity should poll."""
         return False
-
-    @property
-    def unique_id(self):
-        """Return the unique ID of the entity."""
-        return self._unique_id
 
     @property
     def raw_data(self):
@@ -312,9 +314,15 @@ class HomeeNodeEntity:
     def attribute(self, attribute_type):
         """Try to get the current value of the attribute of the given type."""
         try:
-            return self._node.get_attribute_by_type(attribute_type).current_value
+            attribute = self._node.get_attribute_by_type(attribute_type)
         except Exception:
             raise AttributeNotFoundException(attribute_type)
+
+        # If the unit of the attribute is 'text', it is stored in .data
+        if attribute.unit == "text":
+            return self._node.get_attribute_by_type(attribute_type).data
+        else:
+            return self._node.get_attribute_by_type(attribute_type).current_value
 
     def get_attribute(self, attribute_type):
         """Get the attribute object of the given type."""

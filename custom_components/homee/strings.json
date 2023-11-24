@@ -89,6 +89,12 @@
   },
   "entity": {
     "sensor": {
+      "node_sensor_state": {
+        "name": "Node State"
+      },
+      "node_sensor_protocol": {
+        "name": "Node Protocol"
+      },
       "brightness_sensor": {
         "name": "Illuminance"
       },
