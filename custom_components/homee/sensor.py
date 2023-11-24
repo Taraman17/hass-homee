@@ -271,3 +271,7 @@ class HomeeNodeSensor(SensorEntity):
             return DeviceInfo(
                 identifiers={(DOMAIN, self._node.id)},
             )
+
+    @property
+    def entity_registry_enabled_default(self) -> bool:
+        return False
