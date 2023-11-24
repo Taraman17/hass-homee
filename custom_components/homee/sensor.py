@@ -274,4 +274,5 @@ class HomeeNodeSensor(SensorEntity):
 
     @property
     def entity_registry_enabled_default(self) -> bool:
+        """Return the default enabled state."""
         return False
