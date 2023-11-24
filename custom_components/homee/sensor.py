@@ -249,6 +249,7 @@ class HomeeNodeSensor(SensorEntity):
 
     @property
     def native_value(self) -> str:
+        """Return the sensors value."""
         value = getattr(self._node, self._prop_name)
         att_class = {
             "state": NodeState,
@@ -270,11 +271,3 @@ class HomeeNodeSensor(SensorEntity):
             return DeviceInfo(
                 identifiers={(DOMAIN, self._node.id)},
             )
-
-    def get_properties(self):
-        """Get the properties for the sensor."""
-        device_class = None
-        state_class = None
-        options = None
-
-        return (device_class, state_class, options)
