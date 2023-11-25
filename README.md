@@ -55,7 +55,7 @@ If you want to use the new feature to import all devicess from homee, you have t
 
 1. Make sure the [HACS integration](https://hacs.xyz/) is properly installed for your instance of home assistant.
 2. In the HACS UI go to "Integrations", click on three small dots in the top right and select "Custom repositories".
-3. Paste `https://github.com/Taraman17/hacs-homee` into the field that says "Add custom repository URL", select "Integration" from "Category" dropdown and click "Add".
+3. Paste `https://github.com/Taraman17/hass-homee` into the field that says "Add custom repository URL", select "Integration" from "Category" dropdown and click "Add".
 4. You should now see a card with the homee integration in the HACS -> "Integrations" section. Click "Install".
 5. Select the latest version from the dropdown and click "Install".
 6. Restart Home Assistant.
@@ -98,7 +98,7 @@ The following table shows the available options that can be configured in the "I
 
 As of now this integration has support for a few devices only. If you have Homee devices, that are not discovered or not working correctly, open an issue and do the following to provide a log:
 
-1. Add following lines to configuration.yaml to enable info logging for hacs-homee:
+1. Add following lines to configuration.yaml to enable info logging for hass-homee:
 
 ```
 logger:
@@ -123,8 +123,8 @@ Home Assistant encourages developers of integrations to use a separate python pa
 [homee]: https://hom.ee
 [buymecoffee]: https://ko-fi.com/taraman
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
-[commits-shield]: https://img.shields.io/github/last-commit/Taraman17/hacs-homee.svg?style=for-the-badge
-[commits]: https://github.com/Taraman17/hacs-homee/commits/master
+[commits-shield]: https://img.shields.io/github/last-commit/Taraman17/hass-homee.svg?style=for-the-badge
+[commits]: https://github.com/Taraman17/hass-homee/commits/master
 [hacs]: https://github.com/custom-components/hacs
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 [homee_logo]: https://raw.githubusercontent.com/Taraman17/brands/master/custom_integrations/homee/logo.png
@@ -132,7 +132,7 @@ Home Assistant encourages developers of integrations to use a separate python pa
 [forum]: https://community.home-assistant.io/
 [license-shield]: https://img.shields.io/github/license/custom-components/blueprint.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Taraman17-blue.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/Taraman17/hacs-homee.svg?style=for-the-badge
-[releases]: https://github.com/Taraman17/hacs-homee/releases
+[releases-shield]: https://img.shields.io/github/release/Taraman17/hass-homee.svg?style=for-the-badge
+[releases]: https://github.com/Taraman17/hass-homee/releases
 [FreshlyBrewedCode]: https://github.com/FreshlyBrewedCode
-[this repository]: https://github.com/Taraman17/hacs-homee
+[this repository]: https://github.com/Taraman17/hass-homee

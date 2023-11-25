@@ -6,15 +6,15 @@
     ],
     "config_flow": true,
     "dependencies": [],
-    "documentation": "https://github.com/Taraman17/hacs-homee",
+    "documentation": "https://github.com/Taraman17/hass-homee",
     "homekit": {},
     "integration_type": "hub",
     "iot_class": "local_push",
-    "issue_tracker": "https://github.com/Taraman17/hacs-homee/issues",
+    "issue_tracker": "https://github.com/Taraman17/hass-homee/issues",
     "requirements": [
         "pymee==1.10.3",
         "websockets==11.0.1"
     ],
     "ssdp": [],
-    "version": "2.8.0"
+    "version": "2.7.0"
 }
