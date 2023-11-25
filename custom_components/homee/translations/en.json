@@ -89,6 +89,12 @@
   },
   "entity": {
     "sensor": {
+      "node_sensor_state": {
+        "name": "Node State"
+      },
+      "node_sensor_protocol": {
+        "name": "Node Protocol"
+      },
       "brightness_sensor": {
         "name": "Illuminance"
       },
@@ -171,13 +177,42 @@
         "name": "Total Energy"
       },
       "up_down_sensor": {
-        "name": "State"
+        "name": "State",
+        "state": {
+          "0": "Open",
+          "1": "Closed",
+          "2": "Opening",
+          "3": "Closing"
+        }
       },
       "position_sensor": {
         "name": "Position"
       },
       "link_quality_sensor": {
         "name": "Link Quality"
+      },
+      "button_state_sensor": {
+        "name": "Button State"
+      },
+      "button_state_sensor_1": {
+        "name": "Button State 1"
+      },
+      "button_state_sensor_2": {
+        "name": "Button State 2"
+      },
+      "button_state_sensor_3": {
+        "name": "Button State 3"
+      },
+      "button_state_sensor_4": {
+        "name": "Button State 4"
+      },
+      "window_position_sensor": {
+        "name": "Window Position",
+        "state": {
+          "0": "Closed",
+          "1": "Tilted",
+          "2": "Open"
+        }
       }
     },
     "binary_sensor": {
@@ -258,6 +293,9 @@
       "ventilate_ipulse": {
         "name": "Ventilate Impulse"
       },
+      "manual_operation": {
+        "name": "Manual Operation"
+      },
       "reset_meter": {
         "name": "Reset Meter"
       },
@@ -286,6 +324,14 @@
           "2": "Away",
           "3": "Vacation"
         }
+      }
+    },
+    "number": {
+      "number_target_temperature": {
+        "name": "Target Temperature"
+      },
+      "number_wake_up_interval": {
+        "name": "Wake-Up Interval"
       }
     }
   }

@@ -11,7 +11,8 @@ from homeassistant.config_entries import ConfigEntry
 from pymee.const import AttributeType, NodeProfile
 from pymee.model import HomeeAttribute, HomeeNode
 
-from . import HomeeNodeEntity, helpers
+from . import HomeeNodeEntity
+from .helpers import get_attribute_for_enum, get_imported_nodes
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.BRIEFLY_OPEN_IMPULSE,
     AttributeType.IMPULSE,
     AttributeType.LIGHT_IMPULSE,
+    AttributeType.MANUAL_OPERATION,
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.ON_OFF,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
@@ -41,6 +43,7 @@ DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.AUTOMATIC_MODE_IMPULSE,
     AttributeType.BRIEFLY_OPEN_IMPULSE,
     AttributeType.LIGHT_IMPULSE,
+    AttributeType.MANUAL_OPERATION,
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
@@ -62,7 +65,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     """Add the homee platform for the switch component."""
 
     devices = []
-    for node in helpers.get_imported_nodes(hass, config_entry):
+    for node in get_imported_nodes(hass, config_entry):
         for attribute in node.attributes:
             # These conditions identify a switch.
             if attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable:
@@ -93,7 +96,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         self._switch_index = on_off_attribute.instance
         self._device_class = get_device_class(node)
 
-        self._unique_id = f"{self._node.id}-switch-{self._on_off.id}"
+        self._attr_unique_id = f"{self._node.id}-switch-{self._on_off.id}"
 
     @property
     def translation_key(self) -> str | None:
@@ -101,13 +104,13 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         # If a switch is the main feature of a device it will get its name.
         translation_key = None
 
-        attribute_name = helpers.get_attribute_name(self._on_off.type)
+        attribute_name = get_attribute_for_enum(AttributeType, self._on_off.type)
 
         # If a switch type has more than one instance,
         # it will be named and numbered.
         if self._on_off.instance > 0:
-            translation_key = f"{attribute_name.lower()}_" f"{self._on_off.instance}"
-        # Some switches should always be named descriptive.
+            translation_key = f"{attribute_name.lower()}_{self._on_off.instance}"
+        # Some switches should be named descriptive without an instance number..
         elif self._on_off.type in DESCRIPTIVE_ATTRIBUTES:
             translation_key = attribute_name.lower()
 
@@ -133,6 +136,8 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         """Return icon if different from main feature."""
         if self._on_off.type == AttributeType.WATCHDOG_ON_OFF:
             return "mdi:dog"
+        elif self._on_off.type == AttributeType.MANUAL_OPERATION:
+            return "mdi:hand-back-left"
 
         return None
 

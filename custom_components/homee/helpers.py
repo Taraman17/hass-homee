@@ -5,7 +5,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from pymee import Homee
 from pymee.model import HomeeNode
-from pymee.const import AttributeType
 
 from .const import CONF_ALL_DEVICES, CONF_GROUPS, CONF_IMPORT_GROUPS, DOMAIN
 
@@ -51,12 +50,3 @@ def get_attribute_for_enum(att_class, att_id):
     if not attribute_label:
         return None
     return attribute_label[0]
-
-
-def get_attribute_name(attribute_type) -> str:
-    """Return the Name of an attribute type as string."""
-    for key, val in AttributeType.__dict__.items():
-        if val == attribute_type:
-            return key
-
-    return ""
