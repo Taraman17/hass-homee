@@ -101,8 +101,8 @@ Home Assistant encourages developers of integrations to use a separate python pa
 [homee]: https://hom.ee
 [buymecoffee]: https://ko-fi.com/taraman
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
-[commits-shield]: https://img.shields.io/github/last-commit/Taraman17/hacs-homee.svg?style=for-the-badge
-[commits]: https://github.com/Taraman17/hacs-homee/commits/master
+[commits-shield]: https://img.shields.io/github/last-commit/Taraman17/hass-homee.svg?style=for-the-badge
+[commits]: https://github.com/Taraman17/hass-homee/commits/master
 [hacs]: https://github.com/custom-components/hacs
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 [homee_logo]: https://raw.githubusercontent.com/Taraman17/brands/master/custom_integrations/homee/logo.png
@@ -110,6 +110,6 @@ Home Assistant encourages developers of integrations to use a separate python pa
 [forum]: https://community.home-assistant.io/
 [license-shield]: https://img.shields.io/github/license/custom-components/blueprint.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Taraman17-blue.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/Taraman17/hacs-homee.svg?style=for-the-badge
-[releases]: https://github.com/Taraman17/hacs-homee/releases
+[releases-shield]: https://img.shields.io/github/release/Taraman17/hass-homee.svg?style=for-the-badge
+[releases]: https://github.com/Taraman17/hass-homee/releases
 [FreshlyBrewedCode]: https://github.com/FreshlyBrewedCode
