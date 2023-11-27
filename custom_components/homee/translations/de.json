@@ -181,8 +181,9 @@
         "state": {
           "0": "Offen",
           "1": "Geschlossen",
-          "2": "Öffnet",
-          "3": "Schließt"
+          "2": "Teilgeöffnet",
+          "3": "Öffnet",
+          "4": "Schließt"
         }
       },
       "position_sensor": {
