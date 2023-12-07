@@ -89,108 +89,11 @@
   },
   "entity": {
     "sensor": {
-      "node_sensor_state": {
-        "name": "Node Status"
-      },
-      "node_sensor_protocol": {
-        "name": "Node Protokoll"
-      },
-      "brightness_sensor": {
-        "name": "Beleuchtungsstärke"
-      },
-      "voltage_sensor": {
-        "name": "Spannung"
-      },
-      "voltage_sensor_1": {
-        "name": "Spannung 1"
-      },
-      "voltage_sensor_2": {
-        "name": "Spannung 2"
-      },
-      "voltage_sensor_3": {
-        "name": "Spannung 3"
-      },
-      "voltage_sensor_4": {
-        "name": "Spannung 4"
-      },
-      "total_voltage_sensor": {
-        "name": "Gesamt Spannung"
-      },
-      "power_sensor": {
-        "name": "Leistung"
-      },
-      "power_sensor_1": {
-        "name": "Leistung 1"
-      },
-      "power_sensor_2": {
-        "name": "Leistung 2"
-      },
-      "power_sensor_3": {
-        "name": "Leistung 3"
-      },
-      "power_sensor_4": {
-        "name": "Leistung 4"
-      },
-      "total_power_sensor": {
-        "name": "Gesamt Leistung"
-      },
       "battery_sensor": {
         "name": "Batterie"
       },
-      "current_sensor": {
-        "name": "Stromstärke"
-      },
-      "current_sensor_1": {
-        "name": "Stromstärke 1"
-      },
-      "current_sensor_2": {
-        "name": "Stromstärke 2"
-      },
-      "current_sensor_3": {
-        "name": "Stromstärke 3"
-      },
-      "current_sensor_4": {
-        "name": "Stromstärke 4"
-      },
-      "total_current_sensor": {
-        "name": "Gesamt Stromstärke"
-      },
-      "temperature_sensor": {
-        "name": "Temperatur"
-      },
-      "energy_sensor": {
-        "name": "Energie"
-      },
-      "energy_sensor_1": {
-        "name": "Energie 1"
-      },
-      "energy_sensor_2": {
-        "name": "Energie 2"
-      },
-      "energy_sensor_3": {
-        "name": "Energie 3"
-      },
-      "energy_sensor_4": {
-        "name": "Energie 4"
-      },
-      "total_energy_sensor": {
-        "name": "Gesamt Energie"
-      },
-      "up_down_sensor": {
-        "name": "Zustand",
-        "state": {
-          "0": "Offen",
-          "1": "Geschlossen",
-          "2": "Teilgeöffnet",
-          "3": "Öffnet",
-          "4": "Schließt"
-        }
-      },
-      "position_sensor": {
-        "name": "Position"
-      },
-      "link_quality_sensor": {
-        "name": "Signalstärke"
+      "brightness_sensor": {
+        "name": "Beleuchtungsstärke"
       },
       "button_state_sensor": {
         "name": "Schalterstellung"
@@ -207,6 +110,109 @@
       "button_state_sensor_4": {
         "name": "Schalterstellung 4"
       },
+      "current_sensor": {
+        "name": "Stromstärke"
+      },
+      "current_sensor_1": {
+        "name": "Stromstärke 1"
+      },
+      "current_sensor_2": {
+        "name": "Stromstärke 2"
+      },
+      "current_sensor_3": {
+        "name": "Stromstärke 3"
+      },
+      "current_sensor_4": {
+        "name": "Stromstärke 4"
+      },
+      "dawn_sensor": {
+        "name": "Dämmerung"
+      },
+      "energy_sensor": {
+        "name": "Energie"
+      },
+      "energy_sensor_1": {
+        "name": "Energie 1"
+      },
+      "energy_sensor_2": {
+        "name": "Energie 2"
+      },
+      "energy_sensor_3": {
+        "name": "Energie 3"
+      },
+      "energy_sensor_4": {
+        "name": "Energie 4"
+      },
+      "link_quality_sensor": {
+        "name": "Signalstärke"
+      },
+      "node_sensor_protocol": {
+        "name": "Node Protokoll"
+      },
+      "node_sensor_state": {
+        "name": "Node Status"
+      },
+      "position_sensor": {
+        "name": "Position"
+      },
+      "power_sensor": {
+        "name": "Leistung"
+      },
+      "power_sensor_1": {
+        "name": "Leistung 1"
+      },
+      "power_sensor_2": {
+        "name": "Leistung 2"
+      },
+      "power_sensor_3": {
+        "name": "Leistung 3"
+      },
+      "power_sensor_4": {
+        "name": "Leistung 4"
+      },
+      "temperature_sensor": {
+        "name": "Temperatur"
+      },
+      "total_current_sensor": {
+        "name": "Gesamt Stromstärke"
+      },
+      "total_energy_sensor": {
+        "name": "Gesamt Energie"
+      },
+      "total_power_sensor": {
+        "name": "Gesamt Leistung"
+      },
+      "total_voltage_sensor": {
+        "name": "Gesamt Spannung"
+      },
+      "up_down_sensor": {
+        "name": "Zustand",
+        "state": {
+          "0": "Offen",
+          "1": "Geschlossen",
+          "2": "Teilgeöffnet",
+          "3": "Öffnet",
+          "4": "Schließt"
+        }
+      },
+      "voltage_sensor": {
+        "name": "Spannung"
+      },
+      "voltage_sensor_1": {
+        "name": "Spannung 1"
+      },
+      "voltage_sensor_2": {
+        "name": "Spannung 2"
+      },
+      "voltage_sensor_3": {
+        "name": "Spannung 3"
+      },
+      "voltage_sensor_4": {
+        "name": "Spannung 4"
+      },
+      "wind_speed_sensor": {
+        "name": "Windgeschwindigkeit"
+      },
       "window_position_sensor": {
         "name": "Window Position",
         "state": {
@@ -217,35 +223,44 @@
       }
     },
     "binary_sensor": {
-      "opening_sensor": {
-        "name": "Opening"
-      },
       "battery_low_sensor": {
         "name": "Batterie schwach"
       },
-      "plug_sensor": {
-        "name": "Steckdose"
-      },
-      "lock_sensor": {
-        "name": "Schloss"
-      },
-      "smoke_sensor": {
-        "name": "Rauchalarm"
-      },
-      "heat_sensor": {
-        "name": "Temperaturalarm"
+      "door_sensor": {
+        "name": "Tür"
       },
       "flood_sensor": {
         "name": "Überflutungsalarm"
       },
-      "window_sensor":{
-        "name": "Fenster"
+      "heat_sensor": {
+        "name": "Temperaturalarm"
       },
-      "door_sensor": {
-        "name": "Tür"
+      "lock_sensor": {
+        "name": "Schloss"
+      },
+      "opening_sensor": {
+        "name": "Opening"
+      },
+      "plug_sensor": {
+        "name": "Steckdose"
+      },
+      "smoke_sensor": {
+        "name": "Rauchalarm"
+      },
+      "window_sensor": {
+        "name": "Fenster"
       }
     },
     "switch": {
+      "automatic_mode_impulse": {
+        "name": "Automatikmodus Impuls"
+      },
+      "briefly_open_impulse": {
+        "name": "Kurzzeitig öffnen Impuls"
+      },
+      "identification_mode": {
+        "name": "Identifikationsmodus"
+      },
       "impulse": {
         "name": "Impuls"
       },
@@ -261,26 +276,23 @@
       "impulse_4": {
         "name": "Impuls 4"
       },
-      "light_impulse":{
+      "light_impulse": {
         "name": "Licht Impuls"
       },
-      "light_impulse_1":{
+      "light_impulse_1": {
         "name": "Licht Impuls 1"
       },
-      "light_impulse_2":{
+      "light_impulse_2": {
         "name": "Licht Impuls 2"
       },
-      "light_impulse_3":{
+      "light_impulse_3": {
         "name": "Licht Impuls 3"
       },
-      "light_impulse_4":{
+      "light_impulse_4": {
         "name": "Licht Impuls 4"
       },
-      "automatic_mode_impulse": {
-        "name": "Automatikmodus Impuls"
-      },
-      "briefly_open_impulse": {
-        "name": "Kurzzeitig öffnen Impuls"
+      "manual_operation": {
+        "name": "Handbetrieb"
       },
       "open_partial_impulse": {
         "name": "Teilweise öffnen Impuls"
@@ -288,14 +300,8 @@
       "permanently_open_impulse": {
         "name": "Dauerhaft geöffnet Impuls"
       },
-      "slat_rotation_impulse": {
-        "name": "Lamellendrehung Impuls"
-      },
-      "ventilate_ipulse": {
-        "name": "Belüften Impuls"
-      },
-      "manual_operation": {
-        "name": "Handbetrieb"
+      "rain_sensor": {
+        "name": "Regen"
       },
       "reset_meter": {
         "name": "Messwerte zurücksetzen"
@@ -311,6 +317,12 @@
       },
       "reset_meter_4": {
         "name": "Messwerte zurücksetzen 4"
+      },
+      "slat_rotation_impulse": {
+        "name": "Lamellendrehung Impuls"
+      },
+      "ventilate_ipulse": {
+        "name": "Belüften Impuls"
       },
       "watchdog_on_off": {
         "name": "Watchdog"
