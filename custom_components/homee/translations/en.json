@@ -340,11 +340,20 @@
       }
     },
     "number": {
+      "number_down_position": {
+        "name": "Down Position"
+      },
+      "number_endposition_configuration": {
+        "name": "Endposition"
+      },
       "number_target_temperature": {
         "name": "Target Temperature"
       },
       "number_wake_up_interval": {
         "name": "Wake-Up Interval"
+      },
+      "number_wind_monitoring_state": {
+        "name": "Wind Monitoring State"
       }
     }
   }

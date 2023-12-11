@@ -222,14 +222,16 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs):
         """Instruct the light to turn on."""
-        await self.async_set_value_by_id(self._on_off_attr.id, 1)
-
         if ATTR_BRIGHTNESS in kwargs and self._dimmer_attr is not None:
             await self.async_set_value_by_id(
                 self._dimmer_attr.id,
                 kwargs[ATTR_BRIGHTNESS] / 2.55,
                 # TODO use percentage_to_ranged_value introduced in core 2023.12
             )
+        else:
+            # If no brightness value is given, just torn on.
+            await self.async_set_value_by_id(self._on_off_attr.id, 1)
+
         if ATTR_COLOR_TEMP in kwargs and self._temp_attr is not None:
             await self.async_set_value_by_id(
                 self._temp_attr.id,
