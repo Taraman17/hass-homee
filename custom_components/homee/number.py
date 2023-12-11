@@ -13,14 +13,24 @@ from homeassistant.core import HomeAssistant
 from . import HomeeNodeEntity, helpers
 
 NUMBER_ATTRIBUTES = {
+    AttributeType.DOWN_POSITION,
+    AttributeType.ENDPOSITION_CONFIGURATION,
     AttributeType.TARGET_TEMPERATURE,
     AttributeType.WAKE_UP_INTERVAL,
+    AttributeType.WIND_MONITORING_STATE,
 }
+
 
 def get_device_properties(attribute: HomeeAttribute):
     """Determinde the device properties based on the attribute."""
     device_class = None
     translation_key = None
+
+    if attribute.type == AttributeType.DOWN_POSITION:
+        translation_key = "number_down_position"
+
+    if attribute.type == AttributeType.ENDPOSITION_CONFIGURATION:
+        translation_key = "number_endposition_configuration"
 
     if attribute.type == AttributeType.TARGET_TEMPERATURE:
         device_class = NumberDeviceClass.TEMPERATURE
@@ -29,7 +39,11 @@ def get_device_properties(attribute: HomeeAttribute):
     if attribute.type == AttributeType.WAKE_UP_INTERVAL:
         translation_key = "number_wake_up_interval"
 
-    return(device_class, translation_key)
+    if attribute.type == AttributeType.WIND_MONITORING_STATE:
+        translation_key = "number_wind_monitoring_state"
+
+    return (device_class, translation_key)
+
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
     """Add the homee platform for the number components."""
@@ -42,6 +56,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     if devices:
         async_add_devices(devices)
 
+
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
     return True
@@ -53,15 +68,17 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
     _attr_has_entity_name = True
 
     def __init__(
-            self,
-            node: HomeeNode,
-            entry: ConfigEntry,
-            number_attribute: HomeeAttribute = None
+        self,
+        node: HomeeNode,
+        entry: ConfigEntry,
+        number_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee number entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._number = number_attribute
-        self._attr_device_class, self._attr_translation_key = get_device_properties(number_attribute)
+        self._attr_device_class, self._attr_translation_key = get_device_properties(
+            number_attribute
+        )
         self._attr_native_min_value = number_attribute.minimum
         self._attr_native_max_value = number_attribute.maximum
         self._attr_native_step = number_attribute.step_value
