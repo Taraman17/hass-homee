@@ -319,10 +319,10 @@
       "homee_status": {
         "name": "Status",
         "state": {
-          "0": "Home",
-          "1": "Sleeping",
-          "2": "Away",
-          "3": "Vacation"
+          "armed_home": "Home",
+          "armed_night": "Sleeping",
+          "armed_away": "Away",
+          "armed_vacation": "Vacation"
         }
       }
     },
