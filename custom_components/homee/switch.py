@@ -26,6 +26,7 @@ HOMEE_PLUG_PROFILES = [
 HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.AUTOMATIC_MODE_IMPULSE,
     AttributeType.BRIEFLY_OPEN_IMPULSE,
+    AttributeType.IDENTIFICATION_MODE,
     AttributeType.IMPULSE,
     AttributeType.LIGHT_IMPULSE,
     AttributeType.MANUAL_OPERATION,
@@ -42,6 +43,7 @@ HOMEE_SWITCH_ATTRIBUTES = [
 DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.AUTOMATIC_MODE_IMPULSE,
     AttributeType.BRIEFLY_OPEN_IMPULSE,
+    AttributeType.IDENTIFICATION_MODE,
     AttributeType.LIGHT_IMPULSE,
     AttributeType.MANUAL_OPERATION,
     AttributeType.OPEN_PARTIAL_IMPULSE,
@@ -136,7 +138,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         """Return icon if different from main feature."""
         if self._on_off.type == AttributeType.WATCHDOG_ON_OFF:
             return "mdi:dog"
-        elif self._on_off.type == AttributeType.MANUAL_OPERATION:
+        if self._on_off.type == AttributeType.MANUAL_OPERATION:
             return "mdi:hand-back-left"
 
         return None
@@ -154,16 +156,16 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         """Return the current power usage in W."""
         if self.has_attribute(AttributeType.CURRENT_ENERGY_USE):
             return self.attribute(AttributeType.CURRENT_ENERGY_USE)
-        else:
-            return None
+
+        return None
 
     @property
     def today_energy_kwh(self):
         """Return the total power usage in kWh."""
         if self.has_attribute(AttributeType.ACCUMULATED_ENERGY_USE):
             return self.attribute(AttributeType.ACCUMULATED_ENERGY_USE)
-        else:
-            return None
+
+        return None
 
     @property
     def device_class(self):

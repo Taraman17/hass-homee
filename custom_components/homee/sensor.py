@@ -27,6 +27,7 @@ SENSOR_ATTRIBUTES = [
     AttributeType.BUTTON_STATE,
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
+    AttributeType.DAWN,
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
@@ -37,6 +38,7 @@ SENSOR_ATTRIBUTES = [
     AttributeType.TOTAL_VOLTAGE,
     AttributeType.UP_DOWN,
     AttributeType.VOLTAGE,
+    AttributeType.WIND_SPEED,
     AttributeType.WINDOW_POSITION,
 ]
 
@@ -53,6 +55,7 @@ MEASUREMENT_ATTRIBUTES = [
     AttributeType.BUTTON_STATE,
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
+    AttributeType.DAWN,
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
@@ -79,13 +82,6 @@ def get_device_properties(attribute: HomeeAttribute):
     translation_key = None
     icon = None
 
-    if attribute.type in [
-        AttributeType.ACCUMULATED_ENERGY_USE,
-        AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
-    ]:
-        device_class = SensorDeviceClass.ENERGY
-        translation_key = "energy_sensor"
-
     if attribute.type == AttributeType.BATTERY_LEVEL:
         device_class = SensorDeviceClass.BATTERY
         translation_key = "battery_sensor"
@@ -97,17 +93,27 @@ def get_device_properties(attribute: HomeeAttribute):
     if attribute.type == AttributeType.BUTTON_STATE:
         translation_key = "button_state_sensor"
 
-    if attribute.type in [AttributeType.VOLTAGE, AttributeType.TOTAL_VOLTAGE]:
-        device_class = SensorDeviceClass.VOLTAGE
-        translation_key = "voltage_sensor"
-
     if attribute.type in [AttributeType.CURRENT, AttributeType.TOTAL_CURRENT]:
         device_class = SensorDeviceClass.CURRENT
         translation_key = "current_sensor"
 
-    if attribute.type in [AttributeType.DEVICE_TEMPERATURE, AttributeType.TEMPERATURE]:
-        device_class = SensorDeviceClass.TEMPERATURE
-        translation_key = "temperature_sensor"
+    if attribute.type == AttributeType.DAWN:
+        translation_key = "dawn_sensor"
+        device_class = SensorDeviceClass.ILLUMINANCE
+
+    if attribute.type in [
+        AttributeType.ACCUMULATED_ENERGY_USE,
+        AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
+    ]:
+        device_class = SensorDeviceClass.ENERGY
+        translation_key = "energy_sensor"
+
+    if attribute.type == AttributeType.LINK_QUALITY:
+        translation_key = "link_quality_sensor"
+        icon = "mdi:signal"
+
+    if attribute.type == AttributeType.POSITION:
+        translation_key = "position_sensor"
 
     if attribute.type in [
         AttributeType.CURRENT_ENERGY_USE,
@@ -116,15 +122,20 @@ def get_device_properties(attribute: HomeeAttribute):
         device_class = SensorDeviceClass.POWER
         translation_key = "power_sensor"
 
+    if attribute.type in [AttributeType.DEVICE_TEMPERATURE, AttributeType.TEMPERATURE]:
+        device_class = SensorDeviceClass.TEMPERATURE
+        translation_key = "temperature_sensor"
+
     if attribute.type == AttributeType.UP_DOWN:
         translation_key = "up_down_sensor"
 
-    if attribute.type == AttributeType.POSITION:
-        translation_key = "position_sensor"
+    if attribute.type in [AttributeType.VOLTAGE, AttributeType.TOTAL_VOLTAGE]:
+        device_class = SensorDeviceClass.VOLTAGE
+        translation_key = "voltage_sensor"
 
-    if attribute.type == AttributeType.LINK_QUALITY:
-        translation_key = "link_quality_sensor"
-        icon = "mdi:signal"
+    if attribute.type == AttributeType.WIND_SPEED:
+        translation_key = "wind_speed_sensor"
+        device_class = SensorDeviceClass.WIND_SPEED
 
     if attribute.type == AttributeType.WINDOW_POSITION:
         translation_key = "window_position_sensor"
@@ -160,7 +171,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
-        props = ['state', 'protocol']
+        props = ["state", "protocol"]
         for item in props:
             devices.append(HomeeNodeSensor(node, config_entry, item))
         for attribute in node.attributes:
@@ -192,7 +203,7 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         (
             self._device_class,
             self._attr_translation_key,
-            self._attr_icon
+            self._attr_icon,
         ) = get_device_properties(measurement_attribute)
         self._state_class = get_state_class(measurement_attribute)
         self._sensor_index = measurement_attribute.instance
@@ -207,6 +218,10 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         if self._measurement.type in TEXT_STATUS_ATTRIBUTES:
             return int(self._measurement.current_value)
 
+        # TODO: If HA supports klx as unit, remove.
+        if self._measurement.unit == "klx":
+            return self._measurement.current_value * 1000
+
         return self._measurement.current_value
 
     @property
@@ -214,6 +229,10 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         """Return the native unit of the sensor."""
         if self._measurement.unit == "n/a":
             return None
+
+        # TODO: If HA supports klx as unit, remove.
+        if self._measurement.unit == "klx":
+            return "lx"
 
         return self._measurement.unit
 
@@ -226,6 +245,7 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
     def device_class(self):
         """Return the class of this node."""
         return self._device_class
+
 
 class HomeeNodeSensor(SensorEntity):
     """Represents a sensor based on a node's property."""
@@ -251,10 +271,7 @@ class HomeeNodeSensor(SensorEntity):
     def native_value(self) -> str:
         """Return the sensors value."""
         value = getattr(self._node, self._prop_name)
-        att_class = {
-            "state": NodeState,
-            "protocol": NodeProtocol
-        }
+        att_class = {"state": NodeState, "protocol": NodeProtocol}
 
         state = helpers.get_attribute_for_enum(att_class[self._prop_name], value)
         return state.lower()
