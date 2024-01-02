@@ -58,10 +58,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     # Create the Homee api object using host, user,
     # password & pymee instance from the config
     homee = Homee(
-        entry.data[CONF_HOST],
-        entry.data[CONF_USERNAME],
-        entry.data[CONF_PASSWORD],
-        "pymee_" + hass.config.location_name,
+        host=entry.data[CONF_HOST],
+        user=entry.data[CONF_USERNAME],
+        password=entry.data[CONF_PASSWORD],
+        device="pymee_" + hass.config.location_name,
+        reconnectInterval=10,
+        maxRetries=100,
     )
 
     # Start the homee websocket connection as a new task
