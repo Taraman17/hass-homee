@@ -60,6 +60,11 @@ def get_device_class(attribute: HomeeAttribute) -> int:
         device_class = BinarySensorDeviceClass.PLUG
         translation_key = "plug_sensor"
 
+    if attribute.type == AttributeType.PRESENCE_ALARM:
+        state_attr = AttributeType.PRESENCE_ALARM
+        device_class = BinarySensorDeviceClass.MOTION
+        translation_key = "motion_sensor"
+
     if AttributeType == AttributeType.RAIN_FALL:
         state_attr = AttributeType.RAIN_FALL
         device_class = BinarySensorDeviceClass.MOISTURE
@@ -69,11 +74,6 @@ def get_device_class(attribute: HomeeAttribute) -> int:
         state_attr = AttributeType.SMOKE_ALARM
         device_class = BinarySensorDeviceClass.SMOKE
         translation_key = "smoke_sensor"
-
-    if attribute.type == AttributeType.PRESENCE_ALARM:
-        state_attr = AttributeType.PRESENCE_ALARM
-        device_class = BinarySensorDeviceClass.MOTION
-        translation_key = "motion_sensor"
 
     return (device_class, state_attr, translation_key)
 
