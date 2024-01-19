@@ -2,19 +2,19 @@
 import asyncio
 import logging
 
-from homeassistant import config_entries, core, exceptions
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
-from homeassistant.core import callback
-from homeassistant.data_entry_flow import AbortFlow
-import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig
-
 # import homeassistant.helpers.config_validation as cv
 from pymee import (
     AuthenticationFailedException as HomeeAuthenticationFailedException,
     Homee,
 )
 import voluptuous as vol
+
+from homeassistant import config_entries, core, exceptions
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.core import callback
+from homeassistant.data_entry_flow import AbortFlow
+import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig
 
 from .const import (
     CONF_ADD_HOMEE_DATA,
@@ -204,7 +204,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             str(g.id): f"{g.name} ({len(g.nodes)})" for g in homee.groups
         }
 
-        #TODO: Add support for changing imported devices.
+        # TODO: Add support for changing imported devices.
         CONFIG_SCHEMA = vol.Schema(
             {
                 vol.Required(
@@ -226,7 +226,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             input_data = {}
             input_data[CONF_ALL_DEVICES] = self.entry.options[CONF_ALL_DEVICES]
             input_data[CONF_GROUPS] = {}
-            input_data[CONF_GROUPS][CONF_IMPORT_GROUPS] = self.entry.options[CONF_GROUPS].get(CONF_IMPORT_GROUPS, [])
+            input_data[CONF_GROUPS][CONF_IMPORT_GROUPS] = self.entry.options[
+                CONF_GROUPS
+            ].get(CONF_IMPORT_GROUPS, [])
             input_data[CONF_GROUPS][CONF_WINDOW_GROUPS] = user_input[CONF_WINDOW_GROUPS]
             input_data[CONF_GROUPS][CONF_DOOR_GROUPS] = user_input[CONF_DOOR_GROUPS]
             input_data[CONF_ADD_HOMEE_DATA] = user_input[CONF_ADD_HOMEE_DATA]

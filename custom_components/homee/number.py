@@ -3,10 +3,7 @@
 from pymee.const import AttributeType
 from pymee.model import HomeeAttribute, HomeeNode
 
-from homeassistant.components.number import (
-    NumberEntity,
-    NumberDeviceClass,
-)
+from homeassistant.components.number import NumberDeviceClass, NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
