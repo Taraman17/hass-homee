@@ -16,6 +16,7 @@ from homeassistant.helpers.entity import Entity
 
 from .const import (
     ATTR_ATTRIBUTE,
+    ATTR_HOMEE_DATA,
     ATTR_NODE,
     ATTR_VALUE,
     CONF_ADD_HOMEE_DATA,
@@ -224,6 +225,8 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
 class HomeeNodeEntity:
     """Representation of a Node in Homee."""
 
+    _unrecorded_attributes = frozenset({ATTR_HOMEE_DATA})
+
     def __init__(self, node: HomeeNode, entity: Entity, entry: ConfigEntry) -> None:
         """Initialize the wrapper using a HomeeNode and target entity."""
         self._node = node
@@ -287,16 +290,14 @@ class HomeeNodeEntity:
         return self._node._data
 
     @property
-    def state_attributes(self):
-        """Get the state attributes for all devices."""
-        data = self._entity.__class__.__bases__[1].state_attributes.fget(self)
-        if data is None:
-            data = {}
+    def extra_state_attributes(self) -> dict[str, dict]:
+        """Return entity specific state attributes."""
+        data = {}
 
         if self._entry.options.get(CONF_ADD_HOMEE_DATA, False):
-            data["homee_data"] = self._homee_data
+            data[ATTR_HOMEE_DATA] = self._homee_data
 
-        return data if data != {} else None
+        return data if data else None
 
     async def async_update(self):
         """Fetch new state data for this light."""
