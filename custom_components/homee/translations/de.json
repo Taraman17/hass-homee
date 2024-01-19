@@ -332,10 +332,10 @@
       "homee_status": {
         "name": "Status",
         "state": {
-          "0": "Zuhause",
-          "1": "Nacht",
-          "2": "Abwesend",
-          "3": "Urlaub"
+          "armed_home": "Zuhause",
+          "armed_night": "Nacht",
+          "armed_away": "Abwesend",
+          "armed_vacation": "Urlaub"
         }
       }
     },
