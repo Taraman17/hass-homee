@@ -2,14 +2,12 @@
 
 import logging
 
-from homeassistant.core import HomeAssistant
-from homeassistant.components.switch import (
-    SwitchDeviceClass,
-    SwitchEntity,
-)
-from homeassistant.config_entries import ConfigEntry
 from pymee.const import AttributeType, NodeProfile
 from pymee.model import HomeeAttribute, HomeeNode
+
+from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity
 from .helpers import get_attribute_for_enum, get_imported_nodes
