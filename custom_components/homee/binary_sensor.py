@@ -2,14 +2,15 @@
 
 import logging
 
-from homeassistant.core import HomeAssistant
-from homeassistant.components.binary_sensor import (
-    BinarySensorEntity,
-    BinarySensorDeviceClass,
-)
-from homeassistant.config_entries import ConfigEntry
 from pymee.const import AttributeType
 from pymee.model import HomeeAttribute, HomeeNode
+
+from homeassistant.components.binary_sensor import (
+    BinarySensorDeviceClass,
+    BinarySensorEntity,
+)
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity, helpers
 from .const import CONF_DOOR_GROUPS, CONF_GROUPS, CONF_WINDOW_GROUPS
@@ -24,39 +25,50 @@ HOMEE_BINARY_SENSOR_ATTRIBUTES = [
     AttributeType.ON_OFF,
     AttributeType.OPEN_CLOSE,
     AttributeType.SMOKE_ALARM,
+    AttributeType.PRESENCE_ALARM,
 ]
 
 
 def get_device_class(attribute: HomeeAttribute) -> int:
     """Determine the device class a homee node based on the available attributes."""
-    device_class = BinarySensorDeviceClass.OPENING
-    state_attr = AttributeType.OPEN_CLOSE
-    translation_key = "opening_sensor"
-
-    if attribute.type == AttributeType.BATTERY_LOW_ALARM:
-        state_attr = AttributeType.BATTERY_LOW_ALARM
-        device_class = BinarySensorDeviceClass.BATTERY
-        translation_key = "battery_low_sensor"
-
-    if attribute.type == AttributeType.HIGH_TEMPERATURE_ALARM:
-        state_attr = AttributeType.HIGH_TEMPERATURE_ALARM
-        device_class = BinarySensorDeviceClass.HEAT
-        translation_key = "heat_sensor"
+    state_attr = AttributeType.BATTERY_LOW_ALARM
+    device_class = BinarySensorDeviceClass.BATTERY
+    translation_key = "battery_low_sensor"
 
     if attribute.type == AttributeType.FLOOD_ALARM:
         state_attr = AttributeType.FLOOD_ALARM
         device_class = BinarySensorDeviceClass.MOISTURE
         translation_key = "flood_sensor"
 
-    if attribute.type == AttributeType.ON_OFF:
-        state_attr = AttributeType.ON_OFF
-        device_class = BinarySensorDeviceClass.PLUG
-        translation_key = "plug_sensor"
+    if attribute.type == AttributeType.HIGH_TEMPERATURE_ALARM:
+        state_attr = AttributeType.HIGH_TEMPERATURE_ALARM
+        device_class = BinarySensorDeviceClass.HEAT
+        translation_key = "heat_sensor"
 
     if attribute.type == AttributeType.LOCK_STATE:
         state_attr = AttributeType.LOCK_STATE
         device_class = BinarySensorDeviceClass.LOCK
         translation_key = "lock_sensor"
+
+    if attribute.type == AttributeType.BATTERY_LOW_ALARM:
+        device_class = BinarySensorDeviceClass.OPENING
+        state_attr = AttributeType.OPEN_CLOSE
+        translation_key = "opening_sensor"
+
+    if attribute.type == AttributeType.ON_OFF:
+        state_attr = AttributeType.ON_OFF
+        device_class = BinarySensorDeviceClass.PLUG
+        translation_key = "plug_sensor"
+
+    if attribute.type == AttributeType.PRESENCE_ALARM:
+        state_attr = AttributeType.PRESENCE_ALARM
+        device_class = BinarySensorDeviceClass.MOTION
+        translation_key = "motion_sensor"
+
+    if AttributeType == AttributeType.RAIN_FALL:
+        state_attr = AttributeType.RAIN_FALL
+        device_class = BinarySensorDeviceClass.MOISTURE
+        translation_key = "rain_sensor"
 
     if attribute.type == AttributeType.SMOKE_ALARM:
         state_attr = AttributeType.SMOKE_ALARM

@@ -2,25 +2,24 @@
 
 import logging
 
-from homeassistant.core import HomeAssistant
+from pymee.const import AttributeType, NodeProfile
+from pymee.model import HomeeNode
+
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
     ATTR_COLOR_TEMP,
     ATTR_HS_COLOR,
-    SUPPORT_BRIGHTNESS,
-    SUPPORT_COLOR,
-    SUPPORT_COLOR_TEMP,
+    ColorMode,
     LightEntity,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 from homeassistant.util.color import (
     color_hs_to_RGB,
     color_RGB_to_hs,
     color_temperature_kelvin_to_mired,
     color_temperature_mired_to_kelvin,
 )
-from pymee.const import AttributeType, NodeProfile
-from pymee.model import HomeeNode
 
 from . import HomeeNodeEntity, helpers
 from .const import HOMEE_LIGHT_MAX_MIRED, HOMEE_LIGHT_MIN_MIRED
@@ -41,11 +40,11 @@ def get_light_features(node: HomeeNodeEntity, default=0) -> int:
     features = default
 
     if node.has_attribute(AttributeType.DIMMING_LEVEL):
-        features |= SUPPORT_BRIGHTNESS
+        features |= ColorMode.BRIGHTNESS
     if node.has_attribute(AttributeType.COLOR) or node.has_attribute(AttributeType.HUE):
-        features |= SUPPORT_COLOR
+        features |= ColorMode.HS
     if node.has_attribute(AttributeType.COLOR_TEMPERATURE):
-        features |= SUPPORT_COLOR_TEMP
+        features |= ColorMode.COLOR_TEMP
 
     return features
 
@@ -125,18 +124,22 @@ def is_light_node(node: HomeeNode):
     return (
         node.profile
         in [
-            NodeProfile.DIMMABLE_LIGHT,
             NodeProfile.DIMMABLE_COLOR_LIGHT,
-            NodeProfile.DIMMABLE_EXTENDED_COLOR_LIGHT,
+            NodeProfile.DIMMABLE_COLOR_METERING_PLUG,
             NodeProfile.DIMMABLE_COLOR_TEMPERATURE_LIGHT,
+            NodeProfile.DIMMABLE_EXTENDED_COLOR_LIGHT,
+            NodeProfile.DIMMABLE_LIGHT,
             NodeProfile.DIMMABLE_LIGHT_WITH_BRIGHTNESS_SENSOR,
             NodeProfile.DIMMABLE_LIGHT_WITH_BRIGHTNESS_AND_PRESENCE_SENSOR,
             NodeProfile.DIMMABLE_LIGHT_WITH_PRESENCE_SENSOR,
-            NodeProfile.DIMMABLE_RGBWLIGHT,
-            NodeProfile.DIMMABLE_PLUG,
-            NodeProfile.DIMMABLE_SWITCH,
             NodeProfile.DIMMABLE_METERING_SWITCH,
             NodeProfile.DIMMABLE_METERING_PLUG,
+            NodeProfile.DIMMABLE_PLUG,
+            NodeProfile.DIMMABLE_RGBWLIGHT,
+            NodeProfile.DIMMABLE_SWITCH,
+            NodeProfile.WIFI_DIMMABLE_RGBWLIGHT,
+            NodeProfile.WIFI_DIMMABLE_LIGHT,
+            NodeProfile.WIFI_ON_OFF_DIMMABLE_METERING_SWITCH,
         ]
         and AttributeType.ON_OFF in node._attribute_map
     )
@@ -147,7 +150,9 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
 
     _attr_has_entity_name = True
 
-    def __init__(self, node: HomeeNode, light_set, light_index, entry: ConfigEntry) -> None:
+    def __init__(
+        self, node: HomeeNode, light_set, light_index, entry: ConfigEntry
+    ) -> None:
         """Initialize a homee light."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._supported_features = get_light_features(self)
@@ -176,6 +181,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
     @property
     def brightness(self):
         """Return the brightness of the light."""
+        # TODO: use value_to_brightness introduced in core 2023.12
         return self._dimmer_attr.current_value * 2.55
 
     @property
@@ -216,12 +222,16 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs):
         """Instruct the light to turn on."""
-        await self.async_set_value_by_id(self._on_off_attr.id, 1)
-
         if ATTR_BRIGHTNESS in kwargs and self._dimmer_attr is not None:
             await self.async_set_value_by_id(
-                self._dimmer_attr.id, kwargs[ATTR_BRIGHTNESS] / 2.55
+                self._dimmer_attr.id,
+                kwargs[ATTR_BRIGHTNESS] / 2.55,
+                # TODO use percentage_to_ranged_value introduced in core 2023.12
             )
+        else:
+            # If no brightness value is given, just torn on.
+            await self.async_set_value_by_id(self._on_off_attr.id, 1)
+
         if ATTR_COLOR_TEMP in kwargs and self._temp_attr is not None:
             await self.async_set_value_by_id(
                 self._temp_attr.id,
