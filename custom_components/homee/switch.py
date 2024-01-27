@@ -10,6 +10,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity
+from .const import LIGHT_PROFILES
 from .helpers import get_attribute_for_enum, get_imported_nodes
 
 _LOGGER = logging.getLogger(__name__)
@@ -69,7 +70,11 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
         for attribute in node.attributes:
             # These conditions identify a switch.
             if attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable:
-                devices.append(HomeeSwitch(node, config_entry, attribute))
+                if not (
+                    attribute.type == AttributeType.ON_OFF
+                    and node.profile in LIGHT_PROFILES
+                ):
+                    devices.append(HomeeSwitch(node, config_entry, attribute))
     if devices:
         async_add_devices(devices)
 
