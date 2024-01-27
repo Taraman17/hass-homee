@@ -2,7 +2,7 @@
 
 import logging
 
-from pymee.const import AttributeType, NodeProfile
+from pymee.const import AttributeType
 from pymee.model import HomeeNode
 
 from homeassistant.components.light import (
