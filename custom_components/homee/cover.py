@@ -113,6 +113,16 @@ class HomeeCover(HomeeNodeEntity, CoverEntity):
         else:
             self._position_attribute = AttributeType.SHUTTER_SLAT_POSITION
 
+        # Is up/down reversed?
+        oc_attribute = self.get_attribute(self._open_close_attribute)
+        if hasattr(oc_attribute.options, "reverse_control_ui"):
+            if oc_attribute.options.reverse_control_ui:
+                self._reverse_control_ui = True
+            else:
+                self._reverse_control_ui = False
+        else:
+            self._reverse_control_ui = False
+
     @property
     def name(self):
         """Return the display name of this cover."""
@@ -149,7 +159,7 @@ class HomeeCover(HomeeNodeEntity, CoverEntity):
         """Return the state of the cover."""
         # TODO: Not sure if the open_close reverse option really has effect
         #       here. The tested device showed 100% as open however.
-        if self.get_attribute(self._open_close_attribute).options.reverse_control_ui:
+        if self._reverse_control_ui:
             return (
                 self.attribute(self._position_attribute)
                 == self.get_attribute(self._position_attribute).minimum
@@ -167,17 +177,16 @@ class HomeeCover(HomeeNodeEntity, CoverEntity):
             # For now, we only know of one device that uses this Attribute.
             # For other devices the commands may be different.
             await self.async_set_value(open_close, 2)
+        elif self._reverse_control_ui:
+            await self.async_set_value(open_close, 1)
         else:
-            if self.get_attribute(open_close).options.reverse_control_ui:
-                await self.async_set_value(open_close, 1)
-            else:
-                await self.async_set_value(open_close, 0)
+            await self.async_set_value(open_close, 0)
 
     async def async_close_cover(self, **kwargs):
         """Close cover."""
         # For now, all devices use 1 as close here.
         open_close = self._open_close_attribute
-        if self.get_attribute(open_close).options.reverse_control_ui:
+        if self._reverse_control_ui:
             await self.async_set_value(open_close, 0)
         else:
             await self.async_set_value(open_close, 1)
