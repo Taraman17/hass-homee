@@ -50,7 +50,7 @@ def get_device_class(attribute: HomeeAttribute) -> int:
         device_class = BinarySensorDeviceClass.LOCK
         translation_key = "lock_sensor"
 
-    if attribute.type == AttributeType.BATTERY_LOW_ALARM:
+    if attribute.type == AttributeType.OPEN_CLOSE:
         device_class = BinarySensorDeviceClass.OPENING
         state_attr = AttributeType.OPEN_CLOSE
         translation_key = "opening_sensor"
