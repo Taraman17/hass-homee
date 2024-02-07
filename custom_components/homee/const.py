@@ -1,4 +1,5 @@
 """Constants for the homee integration."""
+from pymee.const import NodeProfile
 
 # General
 DOMAIN = "homee"
@@ -12,6 +13,26 @@ ATTR_ATTRIBUTE = "attribute"
 ATTR_HOMEE_DATA = "homee_data"
 ATTR_NODE = "node"
 ATTR_VALUE = "value"
+
+# Profile Groups
+LIGHT_PROFILES = [
+    NodeProfile.DIMMABLE_COLOR_LIGHT,
+    NodeProfile.DIMMABLE_COLOR_METERING_PLUG,
+    NodeProfile.DIMMABLE_COLOR_TEMPERATURE_LIGHT,
+    NodeProfile.DIMMABLE_EXTENDED_COLOR_LIGHT,
+    NodeProfile.DIMMABLE_LIGHT,
+    NodeProfile.DIMMABLE_LIGHT_WITH_BRIGHTNESS_SENSOR,
+    NodeProfile.DIMMABLE_LIGHT_WITH_BRIGHTNESS_AND_PRESENCE_SENSOR,
+    NodeProfile.DIMMABLE_LIGHT_WITH_PRESENCE_SENSOR,
+    NodeProfile.DIMMABLE_METERING_SWITCH,
+    NodeProfile.DIMMABLE_METERING_PLUG,
+    NodeProfile.DIMMABLE_PLUG,
+    NodeProfile.DIMMABLE_RGBWLIGHT,
+    NodeProfile.DIMMABLE_SWITCH,
+    NodeProfile.WIFI_DIMMABLE_RGBWLIGHT,
+    NodeProfile.WIFI_DIMMABLE_LIGHT,
+    NodeProfile.WIFI_ON_OFF_DIMMABLE_METERING_SWITCH,
+]
 
 
 HOMEE_LIGHT_MIN_MIRED = 153
