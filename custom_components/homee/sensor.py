@@ -31,12 +31,14 @@ SENSOR_ATTRIBUTES = [
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
+    AttributeType.RELATIVE_HUMIDITY,
     AttributeType.TEMPERATURE,
     AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
     AttributeType.TOTAL_CURRENT,
     AttributeType.TOTAL_CURRENT_ENERGY_USE,
     AttributeType.TOTAL_VOLTAGE,
     AttributeType.UP_DOWN,
+    AttributeType.UV,
     AttributeType.VOLTAGE,
     AttributeType.WIND_SPEED,
     AttributeType.WINDOW_POSITION,
@@ -59,9 +61,11 @@ MEASUREMENT_ATTRIBUTES = [
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
+    AttributeType.RELATIVE_HUMIDITY,
     AttributeType.TEMPERATURE,
     AttributeType.TOTAL_CURRENT_ENERGY_USE,
     AttributeType.TOTAL_CURRENT,
+    AttributeType.UV,
     AttributeType.VOLTAGE,
 ]
 
@@ -108,6 +112,10 @@ def get_device_properties(attribute: HomeeAttribute):
         device_class = SensorDeviceClass.ENERGY
         translation_key = "energy_sensor"
 
+    if attribute.type == AttributeType.RELATIVE_HUMIDITY:
+        device_class = SensorDeviceClass.HUMIDITY
+        translation_key = "relative_humidity_sensor"
+
     if attribute.type == AttributeType.LINK_QUALITY:
         translation_key = "link_quality_sensor"
         icon = "mdi:signal"
@@ -128,6 +136,9 @@ def get_device_properties(attribute: HomeeAttribute):
 
     if attribute.type == AttributeType.UP_DOWN:
         translation_key = "up_down_sensor"
+
+    if attribute.type == AttributeType.UV:
+        translation_key = "uv_sensor"
 
     if attribute.type in [AttributeType.VOLTAGE, AttributeType.TOTAL_VOLTAGE]:
         device_class = SensorDeviceClass.VOLTAGE
@@ -229,6 +240,8 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         """Return the native unit of the sensor."""
         if self._measurement.unit == "n/a":
             return None
+        if self.translation_key == "uv_sensor":
+            return "UV Index"
 
         # TODO: If HA supports klx as unit, remove.
         if self._measurement.unit == "klx":

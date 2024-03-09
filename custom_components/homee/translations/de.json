@@ -143,6 +143,9 @@
       "energy_sensor_4": {
         "name": "Energie 4"
       },
+      "relative_humidity_sensor": {
+        "name": "Relative Luftfeuchte"
+      },
       "link_quality_sensor": {
         "name": "Signalstärke"
       },
@@ -194,6 +197,9 @@
           "3": "Öffnet",
           "4": "Schließt"
         }
+      },
+      "uv_sensor": {
+        "name": "UV Strahlung"
       },
       "voltage_sensor": {
         "name": "Spannung"
@@ -249,6 +255,9 @@
       },
       "smoke_sensor": {
         "name": "Rauchalarm"
+      },
+      "tamper_sensor": {
+        "name": "Manipulationsalarm"
       },
       "window_sensor": {
         "name": "Fenster"
