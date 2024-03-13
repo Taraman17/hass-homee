@@ -26,6 +26,7 @@ Based on the intial work of [FreshlyBrewedCode]
 | `cover`               | Integrate homee devices that provide motor and position functions such as blinds and shutter actuators                            |
 | `climate`             | Integrate homee devices that provide temperature and can set a target temperature.                                                |
 | `light`               | Integrate lights from homee.                                                                                                      |
+| 'number'              | Integrate number entities - usually settings of some kind.                                                                        |
 | `switch`              | Integrate homee devices that can be turned `on`/`off` and can optionally provide information about the current power consumption. |
 | `alarm-control-panel` | Integrate the homee status.                                                                                                       |
 
