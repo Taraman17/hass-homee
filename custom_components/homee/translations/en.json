@@ -358,6 +358,9 @@
       "number_endposition_configuration": {
         "name": "Endposition"
       },
+      "number_motion_alarm_cancelation_delay": {
+        "name": "Motion Alarm Delay"
+      },
       "number_target_temperature": {
         "name": "Target Temperature"
       },

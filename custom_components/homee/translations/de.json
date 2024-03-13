@@ -358,6 +358,9 @@
       "number_endposition_configuration": {
         "name": "Endposition"
       },
+      "number_motion_alarm_cancelation_delay": {
+        "name": "Bewegungsmelder Verzögerung"
+      },
       "number_target_temperature": {
         "name": "Zieltemperatur"
       },
