@@ -143,6 +143,9 @@
       "energy_sensor_4": {
         "name": "Energy 4"
       },
+      "relative_humidity_sensor": {
+        "name": "Relative Humidity"
+      },
       "link_quality_sensor": {
         "name": "Link Quality"
       },
@@ -194,6 +197,9 @@
           "3": "Opening",
           "4": "Closing"
         }
+      },
+      "uv_sensor": {
+        "name": "Ultraviolet"
       },
       "voltage_sensor": {
         "name": "Voltage"
@@ -249,6 +255,9 @@
       },
       "smoke_sensor": {
         "name": "Smoke"
+      },
+      "tamper_sensor": {
+        "name": "Tamper Alarm"
       },
       "window_sensor": {
         "name": "Window"
@@ -348,6 +357,9 @@
       },
       "number_endposition_configuration": {
         "name": "Endposition"
+      },
+      "number_motion_alarm_cancelation_delay": {
+        "name": "Motion Alarm Delay"
       },
       "number_target_temperature": {
         "name": "Target Temperature"

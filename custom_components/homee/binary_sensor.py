@@ -22,10 +22,12 @@ HOMEE_BINARY_SENSOR_ATTRIBUTES = [
     AttributeType.HIGH_TEMPERATURE_ALARM,
     AttributeType.FLOOD_ALARM,
     AttributeType.LOCK_STATE,
+    AttributeType.MOTION_ALARM,
     AttributeType.ON_OFF,
     AttributeType.OPEN_CLOSE,
-    AttributeType.SMOKE_ALARM,
     AttributeType.PRESENCE_ALARM,
+    AttributeType.SMOKE_ALARM,
+    AttributeType.TAMPER_ALARM,
 ]
 
 
@@ -49,6 +51,11 @@ def get_device_class(attribute: HomeeAttribute) -> int:
         state_attr = AttributeType.LOCK_STATE
         device_class = BinarySensorDeviceClass.LOCK
         translation_key = "lock_sensor"
+
+    if attribute.type == AttributeType.MOTION_ALARM:
+        state_attr = AttributeType.MOTION_ALARM
+        device_class = BinarySensorDeviceClass.MOTION
+        translation_key = "motion_sensor"
 
     if attribute.type == AttributeType.OPEN_CLOSE:
         device_class = BinarySensorDeviceClass.OPENING
@@ -74,6 +81,11 @@ def get_device_class(attribute: HomeeAttribute) -> int:
         state_attr = AttributeType.SMOKE_ALARM
         device_class = BinarySensorDeviceClass.SMOKE
         translation_key = "smoke_sensor"
+
+    if attribute.type == AttributeType.TAMPER_ALARM:
+        state_attr = AttributeType.TAMPER_ALARM
+        device_class = BinarySensorDeviceClass.TAMPER
+        translation_key = "tamper_sensor"
 
     return (device_class, state_attr, translation_key)
 
