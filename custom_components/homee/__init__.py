@@ -11,6 +11,7 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import Entity
 
@@ -86,9 +87,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     # for debugging and custom automations.
     async def handle_set_value(call: ServiceCall):
         """Handle the service call."""
-        node = int(call.data.get(ATTR_NODE, 0))
-        attribute = int(call.data.get(ATTR_ATTRIBUTE, 0))
-        value = float(call.data.get(ATTR_VALUE, 0))
+        try:
+            node = int(call.data.get(ATTR_NODE, 0))
+        except ServiceValidationError:
+            _LOGGER.warning("node must be an integer value")
+
+        try:
+            attribute = int(call.data.get(ATTR_ATTRIBUTE, 0))
+        except ServiceValidationError:
+            _LOGGER.warning("attribute must be an integer value")
+
+        try:
+            value = float(call.data.get(ATTR_VALUE, 0))
+        except ServiceValidationError:
+            _LOGGER.warning("value must be a number value")
 
         hass.async_create_task(homee.set_value(node, attribute, value))
 

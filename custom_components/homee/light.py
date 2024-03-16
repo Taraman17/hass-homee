@@ -39,12 +39,17 @@ def get_supported_color_modes(node: HomeeNodeEntity) -> set[ColorMode]:
     """Determine the supported color modes from the available attributes."""
     color_modes: set[ColorMode] = set()
 
-    if node.has_attribute(AttributeType.DIMMING_LEVEL):
-        color_modes.add(ColorMode.BRIGHTNESS)
     if node.has_attribute(AttributeType.COLOR) or node.has_attribute(AttributeType.HUE):
         color_modes.add(ColorMode.HS)
     if node.has_attribute(AttributeType.COLOR_TEMPERATURE):
         color_modes.add(ColorMode.COLOR_TEMP)
+
+    # if no other color modes are available, set one of those
+    if len(color_modes) == 0:
+        if node.has_attribute(AttributeType.DIMMING_LEVEL):
+            color_modes.add(ColorMode.BRIGHTNESS)
+        else:
+            color_modes.add(ColorMode.ONOFF)
 
     return color_modes
 
@@ -57,8 +62,10 @@ def get_color_mode(supported_modes) -> ColorMode:
         return ColorMode.COLOR_TEMP
     if ColorMode.BRIGHTNESS in supported_modes:
         return ColorMode.BRIGHTNESS
+    if ColorMode.ONOFF in supported_modes:
+        return ColorMode.ONOFF
 
-    return ColorMode.ONOFF
+    return ColorMode.UNKNOWN
 
 
 def get_light_attribute_sets(node: HomeeNodeEntity, index: int):
