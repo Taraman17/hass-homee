@@ -87,20 +87,33 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     # for debugging and custom automations.
     async def handle_set_value(call: ServiceCall):
         """Handle the service call."""
+
         try:
             node = int(call.data.get(ATTR_NODE, 0))
-        except ServiceValidationError:
-            _LOGGER.warning("node must be an integer value")
+        except ValueError as exc:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="no_integer",
+                translation_placeholders={"service_attr": "Node"},
+            ) from exc
 
         try:
             attribute = int(call.data.get(ATTR_ATTRIBUTE, 0))
-        except ServiceValidationError:
-            _LOGGER.warning("attribute must be an integer value")
+        except ValueError as exc:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="no_integer",
+                translation_placeholders={"service_attr": "Attribute"},
+            ) from exc
 
         try:
             value = float(call.data.get(ATTR_VALUE, 0))
-        except ServiceValidationError:
-            _LOGGER.warning("value must be a number value")
+        except ValueError as exc:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="no_float",
+                translation_placeholders={"service_attr": "Value"},
+            ) from exc
 
         hass.async_create_task(homee.set_value(node, attribute, value))
 

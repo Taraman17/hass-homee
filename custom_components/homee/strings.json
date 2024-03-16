@@ -371,5 +371,13 @@
         "name": "Wind Monitoring State"
       }
     }
+  },
+  "exceptions": {
+    "no_integer": {
+      "message": "{service_attr} must be an integer."
+    },
+    "no_float": {
+      "message": "{service_attr} must be a number."
+    }
   }
 }
