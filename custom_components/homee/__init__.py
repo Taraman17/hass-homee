@@ -109,7 +109,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
                         homee.update_attribute(node_id, attribute_id)
                     )
                 else:
-                    node_id = re.search(r"^(\d{1,4})-\w{1,20}").groups(1)
+                    matches = re.search(r"^(\d{1,4})-\w{1,20}", this_entity.unique_id)
+                    node_id = matches.groups(1)
                     hass.async_create_task(homee.update_node(node_id))
 
         if "device_id" in call.data:
