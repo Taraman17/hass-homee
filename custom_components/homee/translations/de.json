@@ -371,5 +371,13 @@
         "name": "Windüberwachung"
       }
     }
+  },
+  "exceptions": {
+    "no_integer": {
+      "message": "{service_attr} muss eine Ganzzahl sein."
+    },
+    "no_float": {
+      "message": "{service_attr} muss eine Zahl sein."
+    }
   }
 }
