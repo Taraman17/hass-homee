@@ -14,8 +14,7 @@ _Component to integrate with [homee][homee]._
 
 Based on the intial work of [FreshlyBrewedCode]
 
-| :warning: This is a custom integration that is early in development and has so far only been tested in very specific environments and with a limited amount and variety of devices. Please backup your homee and Home Assistant instances before proceeding. |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+Integration is in HACS Default Repositories now!
 
 **This component will set up the following platforms.**
 
@@ -26,6 +25,7 @@ Based on the intial work of [FreshlyBrewedCode]
 | `cover`               | Integrate homee devices that provide motor and position functions such as blinds and shutter actuators                            |
 | `climate`             | Integrate homee devices that provide temperature and can set a target temperature.                                                |
 | `light`               | Integrate lights from homee.                                                                                                      |
+| 'number'              | Integrate number entities - usually settings of some kind.                                                                        |
 | `switch`              | Integrate homee devices that can be turned `on`/`off` and can optionally provide information about the current power consumption. |
 | `alarm-control-panel` | Integrate the homee status.                                                                                                       |
 
@@ -104,7 +104,7 @@ Home Assistant encourages developers of integrations to use a separate python pa
 [commits-shield]: https://img.shields.io/github/last-commit/Taraman17/hass-homee.svg?style=for-the-badge
 [commits]: https://github.com/Taraman17/hass-homee/commits/master
 [hacs]: https://github.com/custom-components/hacs
-[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[hacsbadge]: https://img.shields.io/badge/HACS-Default-green.svg?style=for-the-badge
 [homee_logo]: https://raw.githubusercontent.com/Taraman17/brands/master/custom_integrations/homee/logo.png
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
 [forum]: https://community.home-assistant.io/

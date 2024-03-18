@@ -11,6 +11,7 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import Entity
 
@@ -86,9 +87,33 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     # for debugging and custom automations.
     async def handle_set_value(call: ServiceCall):
         """Handle the service call."""
-        node = int(call.data.get(ATTR_NODE, 0))
-        attribute = int(call.data.get(ATTR_ATTRIBUTE, 0))
-        value = float(call.data.get(ATTR_VALUE, 0))
+
+        try:
+            node = int(call.data.get(ATTR_NODE, 0))
+        except ValueError as exc:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="no_integer",
+                translation_placeholders={"service_attr": "Node"},
+            ) from exc
+
+        try:
+            attribute = int(call.data.get(ATTR_ATTRIBUTE, 0))
+        except ValueError as exc:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="no_integer",
+                translation_placeholders={"service_attr": "Attribute"},
+            ) from exc
+
+        try:
+            value = float(call.data.get(ATTR_VALUE, 0))
+        except ValueError as exc:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="no_float",
+                translation_placeholders={"service_attr": "Value"},
+            ) from exc
 
         hass.async_create_task(homee.set_value(node, attribute, value))
 
@@ -109,7 +134,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
                         homee.update_attribute(node_id, attribute_id)
                     )
                 else:
-                    node_id = re.search(r"^(\d{1,4})-\w{1,20}").groups(1)
+                    matches = re.search(r"^(\d{1,4})-\w{1,20}", this_entity.unique_id)
+                    node_id = matches.groups(1)
                     hass.async_create_task(homee.update_node(node_id))
 
         if "device_id" in call.data:
