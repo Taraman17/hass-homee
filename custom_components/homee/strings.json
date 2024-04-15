@@ -223,8 +223,8 @@
         "name": "Window Position",
         "state": {
           "0": "Closed",
-          "1": "Tilted",
-          "2": "Open"
+          "1": "Open",
+          "2": "Tilted"
         }
       }
     },
