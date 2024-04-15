@@ -361,6 +361,9 @@
       "number_motion_alarm_cancelation_delay": {
         "name": "Motion Alarm Delay"
       },
+      "number_polling_interval": {
+        "name": "Polling Interval"
+      },
       "number_target_temperature": {
         "name": "Target Temperature"
       },

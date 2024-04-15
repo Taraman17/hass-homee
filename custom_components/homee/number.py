@@ -13,6 +13,7 @@ NUMBER_ATTRIBUTES = {
     AttributeType.DOWN_POSITION,
     AttributeType.ENDPOSITION_CONFIGURATION,
     AttributeType.MOTION_ALARM_CANCELATION_DELAY,
+    AttributeType.POLLING_INTERVAL,
     AttributeType.TARGET_TEMPERATURE,
     AttributeType.WAKE_UP_INTERVAL,
     AttributeType.WIND_MONITORING_STATE,
@@ -32,6 +33,9 @@ def get_device_properties(attribute: HomeeAttribute):
 
     if attribute.type == AttributeType.MOTION_ALARM_CANCELATION_DELAY:
         translation_key = "number_motion_alarm_cancelation_delay"
+
+    if attribute.type == AttributeType.POLLING_INTERVAL:
+        translation_key = "number_polling_interval"
 
     if attribute.type == AttributeType.TARGET_TEMPERATURE:
         device_class = NumberDeviceClass.TEMPERATURE

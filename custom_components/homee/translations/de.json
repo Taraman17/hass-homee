@@ -361,6 +361,9 @@
       "number_motion_alarm_cancelation_delay": {
         "name": "Bewegungsmelder Verzögerung"
       },
+      "number_polling_interval": {
+        "name": "Polling Intervall"
+      },
       "number_target_temperature": {
         "name": "Zieltemperatur"
       },
