@@ -201,6 +201,9 @@
       "uv_sensor": {
         "name": "Ultraviolet"
       },
+      "valve_position_sensor": {
+        "name": "Valve Position"
+      },
       "voltage_sensor": {
         "name": "Voltage"
       },
@@ -361,11 +364,17 @@
       "number_motion_alarm_cancelation_delay": {
         "name": "Motion Alarm Delay"
       },
+      "number_open_window_detection_sensibility": {
+        "name": "Window Open Sensibility"
+      },
       "number_polling_interval": {
         "name": "Polling Interval"
       },
       "number_target_temperature": {
         "name": "Target Temperature"
+      },
+      "number_temperature_offset": {
+        "name": "Temperature Offset"
       },
       "number_wake_up_interval": {
         "name": "Wake-Up Interval"

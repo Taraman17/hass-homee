@@ -201,6 +201,9 @@
       "uv_sensor": {
         "name": "UV Strahlung"
       },
+      "valve_position_sensor": {
+        "name": "Ventilstellung"
+      },
       "voltage_sensor": {
         "name": "Spannung"
       },
@@ -361,11 +364,17 @@
       "number_motion_alarm_cancelation_delay": {
         "name": "Bewegungsmelder Verzögerung"
       },
+      "number_open_window_detection_sensibility": {
+        "name": "Fenster Offen Empfindlichkeit"
+      },
       "number_polling_interval": {
         "name": "Polling Intervall"
       },
       "number_target_temperature": {
         "name": "Zieltemperatur"
+      },
+      "number_temperature_offset": {
+        "name": "Temperatur Offset"
       },
       "number_wake_up_interval": {
         "name": "Aufwachintervall"

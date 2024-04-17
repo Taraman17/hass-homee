@@ -27,6 +27,7 @@ SENSOR_ATTRIBUTES = [
     AttributeType.BUTTON_STATE,
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
+    AttributeType.CURRENT_VALVE_POSITION,
     AttributeType.DAWN,
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
@@ -57,6 +58,7 @@ MEASUREMENT_ATTRIBUTES = [
     AttributeType.BUTTON_STATE,
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
+    AttributeType.CURRENT_VALVE_POSITION,
     AttributeType.DAWN,
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
@@ -100,6 +102,9 @@ def get_device_properties(attribute: HomeeAttribute):
     if attribute.type in [AttributeType.CURRENT, AttributeType.TOTAL_CURRENT]:
         device_class = SensorDeviceClass.CURRENT
         translation_key = "current_sensor"
+
+    if attribute.type == AttributeType.CURRENT_VALVE_POSITION:
+        translation_key = "valve_position_sensor"
 
     if attribute.type == AttributeType.DAWN:
         translation_key = "dawn_sensor"
@@ -297,10 +302,10 @@ class HomeeNodeSensor(SensorEntity):
             return DeviceInfo(
                 identifiers={(DOMAIN, homee.deviceId)},
             )
-        else:
-            return DeviceInfo(
-                identifiers={(DOMAIN, self._node.id)},
-            )
+
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._node.id)},
+        )
 
     @property
     def entity_registry_enabled_default(self) -> bool:

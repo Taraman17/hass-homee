@@ -13,8 +13,10 @@ NUMBER_ATTRIBUTES = {
     AttributeType.DOWN_POSITION,
     AttributeType.ENDPOSITION_CONFIGURATION,
     AttributeType.MOTION_ALARM_CANCELATION_DELAY,
+    AttributeType.OPEN_WINDOW_DETECTION_SENSIBILITY,
     AttributeType.POLLING_INTERVAL,
     AttributeType.TARGET_TEMPERATURE,
+    AttributeType.TEMPERATURE_OFFSET,
     AttributeType.WAKE_UP_INTERVAL,
     AttributeType.WIND_MONITORING_STATE,
 }
@@ -34,12 +36,19 @@ def get_device_properties(attribute: HomeeAttribute):
     if attribute.type == AttributeType.MOTION_ALARM_CANCELATION_DELAY:
         translation_key = "number_motion_alarm_cancelation_delay"
 
+    if attribute.type == AttributeType.OPEN_WINDOW_DETECTION_SENSIBILITY:
+        translation_key = "number_open_window_detection_sensibility"
+
     if attribute.type == AttributeType.POLLING_INTERVAL:
         translation_key = "number_polling_interval"
 
     if attribute.type == AttributeType.TARGET_TEMPERATURE:
         device_class = NumberDeviceClass.TEMPERATURE
         translation_key = "number_target_temperature"
+
+    if attribute.type == AttributeType.TEMPERATURE_OFFSET:
+        device_class = NumberDeviceClass.TEMPERATURE
+        translation_key = "number_temperature_offset"
 
     if attribute.type == AttributeType.WAKE_UP_INTERVAL:
         translation_key = "number_wake_up_interval"
