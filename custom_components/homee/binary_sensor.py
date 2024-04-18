@@ -10,6 +10,7 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity, helpers
@@ -31,11 +32,18 @@ HOMEE_BINARY_SENSOR_ATTRIBUTES = [
 ]
 
 
-def get_device_class(attribute: HomeeAttribute) -> int:
+def get_device_class(attribute: HomeeAttribute):
     """Determine the device class a homee node based on the available attributes."""
-    state_attr = AttributeType.BATTERY_LOW_ALARM
-    device_class = BinarySensorDeviceClass.BATTERY
-    translation_key = "battery_low_sensor"
+    state_attr = None
+    device_class = None
+    translation_key = ""
+    entity_category = None
+
+    if attribute.type == AttributeType.BATTERY_LOW_ALARM:
+        state_attr = AttributeType.BATTERY_LOW_ALARM
+        device_class = BinarySensorDeviceClass.BATTERY
+        translation_key = "battery_low_sensor"
+        entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.FLOOD_ALARM:
         state_attr = AttributeType.FLOOD_ALARM
@@ -46,6 +54,7 @@ def get_device_class(attribute: HomeeAttribute) -> int:
         state_attr = AttributeType.HIGH_TEMPERATURE_ALARM
         device_class = BinarySensorDeviceClass.HEAT
         translation_key = "heat_sensor"
+        entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.LOCK_STATE:
         state_attr = AttributeType.LOCK_STATE
@@ -86,8 +95,9 @@ def get_device_class(attribute: HomeeAttribute) -> int:
         state_attr = AttributeType.TAMPER_ALARM
         device_class = BinarySensorDeviceClass.TAMPER
         translation_key = "tamper_sensor"
+        entity_category = EntityCategory.DIAGNOSTIC
 
-    return (device_class, state_attr, translation_key)
+    return (device_class, state_attr, translation_key, entity_category)
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
@@ -137,6 +147,7 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
             self._device_class,
             self._state_attr,
             self._attr_translation_key,
+            self._attr_entity_category,
         ) = get_device_class(self._on_off)
 
         # Set Window/Door device class based on configured groups
@@ -158,11 +169,11 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
             self._attr_name = None
 
     @property
-    def is_on(self):
+    def is_on(self) -> bool:
         """Return true if the binary sensor is on."""
         return bool(self.attribute(self._state_attr))
 
     @property
-    def device_class(self):
+    def device_class(self) -> BinarySensorDeviceClass:
         """Return the class of this device, from component DEVICE_CLASSES."""
         return self._device_class

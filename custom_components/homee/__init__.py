@@ -1,4 +1,5 @@
 """The homee integration."""
+
 import asyncio
 import logging
 import re
@@ -345,13 +346,13 @@ class HomeeNodeEntity:
         try:
             attribute = self._node.get_attribute_by_type(attribute_type)
         except Exception:
-            raise AttributeNotFoundException(attribute_type)
+            raise AttributeNotFoundException(attribute_type) from None
 
         # If the unit of the attribute is 'text', it is stored in .data
         if attribute.unit == "text":
             return self._node.get_attribute_by_type(attribute_type).data
-        else:
-            return self._node.get_attribute_by_type(attribute_type).current_value
+
+        return self._node.get_attribute_by_type(attribute_type).current_value
 
     def get_attribute(self, attribute_type):
         """Get the attribute object of the given type."""
