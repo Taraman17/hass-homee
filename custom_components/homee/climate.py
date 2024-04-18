@@ -7,8 +7,11 @@ from pymee.model import HomeeNode
 
 from homeassistant.components.climate import (
     ATTR_TEMPERATURE,
+    PRESET_BOOST,
+    PRESET_SLEEP,
     ClimateEntity,
     ClimateEntityFeature,
+    HVACAction,
     HVACMode,
 )
 from homeassistant.config_entries import ConfigEntry
@@ -31,10 +34,14 @@ def get_climate_features(node: HomeeNodeEntity, default=0) -> int:
 
     if node.has_attribute(AttributeType.TARGET_TEMPERATURE):
         features |= ClimateEntityFeature.TARGET_TEMPERATURE
-    if node.has_attribute(AttributeType.TARGET_TEMPERATURE_LOW) and node.has_attribute(
-        AttributeType.TARGET_TEMPERATURE_HIGH
-    ):
-        features |= ClimateEntityFeature.TARGET_TEMPERATURE_RANGE
+
+    if node.has_attribute(AttributeType.HEATING_MODE):
+        features |= ClimateEntityFeature.TURN_ON
+        features |= ClimateEntityFeature.TURN_OFF
+
+    if node.get_attribute(AttributeType.HEATING_MODE).maximum > 1:
+        # Node supports more modes than on and off
+        features |= ClimateEntityFeature.PRESET_MODE
 
     return features
 
@@ -76,41 +83,106 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
         """Initialize a homee climate entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._supported_features = get_climate_features(self)
+        self._attr_preset_modes = [PRESET_BOOST, PRESET_SLEEP]
+        self._attr_target_temperature_step = self.get_attribute(
+            AttributeType.TARGET_TEMPERATURE
+        ).step_value
+        self._attr_unique_id = f"{self._node.id}-climate"
 
     @property
-    def supported_features(self):
+    def supported_features(self) -> list[ClimateEntityFeature]:
         """Return the supported features of the entity."""
         return self._supported_features
 
     @property
-    def temperature_unit(self) -> str:
+    def temperature_unit(self) -> UnitOfTemperature:
         """Return the temperature unit of the device."""
         return HOMEE_UNIT_TO_HA_UNIT[self.get_attribute(AttributeType.TEMPERATURE).unit]
 
     @property
-    def hvac_modes(self):
+    def hvac_modes(self) -> list[HVACMode]:
         """Return the available hvac operation modes."""
-        return [HVACMode.HEAT]
+        return [HVACMode.OFF, HVACMode.HEAT]
 
     @property
-    def hvac_mode(self):
+    def hvac_mode(self) -> HVACMode:
         """Return the hvac operation mode."""
+        if self._node.profile in (
+            NodeProfile.RADIATOR_THERMOSTAT,
+            NodeProfile.WIFI_RADIATOR_THERMOSTAT,
+        ):
+            if self.get_attribute(AttributeType.HEATING_MODE).current_value == 0:
+                return HVACMode.OFF
+
         return HVACMode.HEAT
 
     @property
-    def current_temperature(self):
+    def hvac_action(self) -> HVACAction:
+        """Return the hvac action."""
+        if self._node.profile in (
+            NodeProfile.RADIATOR_THERMOSTAT,
+            NodeProfile.WIFI_RADIATOR_THERMOSTAT,
+        ):
+            if self.get_attribute(AttributeType.HEATING_MODE).current_value == 0:
+                return HVACAction.OFF
+
+            if self.attribute(AttributeType.CURRENT_VALVE_POSITION) > 0:
+                return HVACAction.HEATING
+
+        return HVACAction.IDLE
+
+    @property
+    def preset_mode(self) -> str:
+        """Return the present preset mode."""
+        if self.attribute(AttributeType.HEATING_MODE) == 2:
+            return PRESET_SLEEP
+        if self.attribute(AttributeType.HEATING_MODE) == 3:
+            return PRESET_BOOST
+
+        return None
+
+    @property
+    def current_temperature(self) -> float:
         """Return the current temperature."""
         return self.attribute(AttributeType.TEMPERATURE)
 
     @property
-    def target_temperature(self):
+    def target_temperature(self) -> float:
         """Return the temperature we try to reach."""
         return self.attribute(AttributeType.TARGET_TEMPERATURE)
 
     @property
-    def target_temperature_step(self):
-        """Return the supported step of target temperature."""
-        return self.get_attribute(AttributeType.TARGET_TEMPERATURE).step_value
+    def min_temp(self) -> float:
+        """Return the lowest settable target temperature."""
+        if self.has_attribute(AttributeType.TARGET_TEMPERATURE_LOW):
+            return self.attribute(AttributeType.TARGET_TEMPERATURE_LOW)
+
+        return self.get_attribute(AttributeType.TARGET_TEMPERATURE).minimum
+
+    @property
+    def max_temp(self) -> float:
+        """Return the lowest settable target temperature."""
+        if self.has_attribute(AttributeType.TARGET_TEMPERATURE_HIGH):
+            return self.attribute(AttributeType.TARGET_TEMPERATURE_HIGH)
+
+        return self.get_attribute(AttributeType.TARGET_TEMPERATURE).maximum
+
+    async def async_set_hvac_mode(self, hvac_mode):
+        """Set new target hvac mode."""
+        mode = 0
+        if hvac_mode == HVACMode.HEAT:
+            mode = 1
+
+        await self.async_set_value(AttributeType.HEATING_MODE, mode)
+
+    async def async_set_preset_mode(self, preset_mode):
+        """Set new target preset mode."""
+        if preset_mode == PRESET_SLEEP:
+            preset = 2
+        elif preset_mode == PRESET_BOOST:
+            preset = 3
+
+        self.async_set_value(AttributeType.HEATING_MODE, preset)
 
     async def async_set_temperature(self, **kwargs) -> None:
         """Set new target temperature."""
@@ -119,3 +191,11 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
             await self.async_set_value(
                 AttributeType.TARGET_TEMPERATURE, kwargs[ATTR_TEMPERATURE]
             )
+
+    async def async_turn_on(self):
+        """Turn the entity on."""
+        await self.async_set_value(AttributeType.HEATING_MODE, 1)
+
+    async def async_turn_off(self):
+        """Turn the entity on."""
+        await self.async_set_value(AttributeType.HEATING_MODE, 0)

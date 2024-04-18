@@ -12,6 +12,7 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 
@@ -27,6 +28,7 @@ SENSOR_ATTRIBUTES = [
     AttributeType.BUTTON_STATE,
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
+    AttributeType.CURRENT_VALVE_POSITION,
     AttributeType.DAWN,
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
@@ -57,6 +59,7 @@ MEASUREMENT_ATTRIBUTES = [
     AttributeType.BUTTON_STATE,
     AttributeType.CURRENT,
     AttributeType.CURRENT_ENERGY_USE,
+    AttributeType.CURRENT_VALVE_POSITION,
     AttributeType.DAWN,
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
@@ -85,10 +88,12 @@ def get_device_properties(attribute: HomeeAttribute):
     device_class = None
     translation_key = None
     icon = None
+    entity_category = None
 
     if attribute.type == AttributeType.BATTERY_LEVEL:
         device_class = SensorDeviceClass.BATTERY
         translation_key = "battery_sensor"
+        entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.BRIGHTNESS:
         device_class = SensorDeviceClass.ILLUMINANCE
@@ -100,6 +105,10 @@ def get_device_properties(attribute: HomeeAttribute):
     if attribute.type in [AttributeType.CURRENT, AttributeType.TOTAL_CURRENT]:
         device_class = SensorDeviceClass.CURRENT
         translation_key = "current_sensor"
+
+    if attribute.type == AttributeType.CURRENT_VALVE_POSITION:
+        translation_key = "valve_position_sensor"
+        entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.DAWN:
         translation_key = "dawn_sensor"
@@ -119,6 +128,7 @@ def get_device_properties(attribute: HomeeAttribute):
     if attribute.type == AttributeType.LINK_QUALITY:
         translation_key = "link_quality_sensor"
         icon = "mdi:signal"
+        entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.POSITION:
         translation_key = "position_sensor"
@@ -130,9 +140,14 @@ def get_device_properties(attribute: HomeeAttribute):
         device_class = SensorDeviceClass.POWER
         translation_key = "power_sensor"
 
-    if attribute.type in [AttributeType.DEVICE_TEMPERATURE, AttributeType.TEMPERATURE]:
+    if attribute.type == AttributeType.TEMPERATURE:
         device_class = SensorDeviceClass.TEMPERATURE
         translation_key = "temperature_sensor"
+
+    if attribute.type == AttributeType.DEVICE_TEMPERATURE:
+        device_class = SensorDeviceClass.TEMPERATURE
+        translation_key = "device_temperature_sensor"
+        entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.UP_DOWN:
         translation_key = "up_down_sensor"
@@ -163,7 +178,7 @@ def get_device_properties(attribute: HomeeAttribute):
                 "please report at https://github.com/Taraman17/hacs-homee/issues"
             )
 
-    return (device_class, translation_key, icon)
+    return (device_class, translation_key, icon, entity_category)
 
 
 def get_state_class(attribute: HomeeAttribute) -> int:
@@ -183,11 +198,12 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
         props = ["state", "protocol"]
-        for item in props:
-            devices.append(HomeeNodeSensor(node, config_entry, item))
-        for attribute in node.attributes:
-            if attribute.type in SENSOR_ATTRIBUTES:
-                devices.append(HomeeSensor(node, config_entry, attribute))
+        devices.extend(HomeeNodeSensor(node, config_entry, item) for item in props)
+        devices.extend(
+            HomeeSensor(node, config_entry, attribute)
+            for attribute in node.attributes
+            if attribute.type in SENSOR_ATTRIBUTES
+        )
     if devices:
         async_add_devices(devices)
 
@@ -215,6 +231,7 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
             self._device_class,
             self._attr_translation_key,
             self._attr_icon,
+            self._attr_entity_category,
         ) = get_device_properties(measurement_attribute)
         self._state_class = get_state_class(measurement_attribute)
         self._sensor_index = measurement_attribute.instance
@@ -276,6 +293,7 @@ class HomeeNodeSensor(SensorEntity):
         self._entry = entry
         self._prop_name = prop_name
         self._attr_available = True
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_translation_key = f"node_sensor_{prop_name}"
 
         self._attr_unique_id = f"{node.id}-sensor-{prop_name}"
@@ -297,10 +315,10 @@ class HomeeNodeSensor(SensorEntity):
             return DeviceInfo(
                 identifiers={(DOMAIN, homee.deviceId)},
             )
-        else:
-            return DeviceInfo(
-                identifiers={(DOMAIN, self._node.id)},
-            )
+
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._node.id)},
+        )
 
     @property
     def entity_registry_enabled_default(self) -> bool:

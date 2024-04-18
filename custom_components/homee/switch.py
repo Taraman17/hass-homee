@@ -7,6 +7,7 @@ from pymee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity
@@ -53,8 +54,10 @@ DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.WATCHDOG_ON_OFF,
 ]
 
+CONFIG_ATTRIBUTES = [AttributeType.IDENTIFICATION_MODE, AttributeType.WATCHDOG_ON_OFF]
 
-def get_device_class(node: HomeeNode) -> int:
+
+def get_device_class(node: HomeeNode) -> SwitchDeviceClass:
     """Determine the device class a homee node based on the node profile."""
     if node.profile in HOMEE_PLUG_PROFILES:
         return SwitchDeviceClass.OUTLET
@@ -62,19 +65,28 @@ def get_device_class(node: HomeeNode) -> int:
     return SwitchDeviceClass.SWITCH
 
 
+def get_entity_category(attribute) -> EntityCategory | None:
+    """Determine the Entity Category."""
+    if attribute.type in CONFIG_ATTRIBUTES:
+        return EntityCategory.CONFIG
+
+    return None
+
+
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
     """Add the homee platform for the switch component."""
 
     devices = []
     for node in get_imported_nodes(hass, config_entry):
-        for attribute in node.attributes:
-            # These conditions identify a switch.
-            if attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable:
-                if not (
-                    attribute.type == AttributeType.ON_OFF
-                    and node.profile in LIGHT_PROFILES
-                ):
-                    devices.append(HomeeSwitch(node, config_entry, attribute))
+        devices.extend(
+            HomeeSwitch(node, config_entry, attribute)
+            for attribute in node.attributes
+            if (attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable)
+            and not (
+                attribute.type == AttributeType.ON_OFF
+                and node.profile in LIGHT_PROFILES
+            )
+        )
     if devices:
         async_add_devices(devices)
 
@@ -100,6 +112,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         self._on_off = on_off_attribute
         self._switch_index = on_off_attribute.instance
         self._device_class = get_device_class(node)
+        self._attr_entity_category = get_entity_category(on_off_attribute)
 
         self._attr_unique_id = f"{self._node.id}-switch-{self._on_off.id}"
 

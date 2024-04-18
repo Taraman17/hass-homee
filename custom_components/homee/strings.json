@@ -128,6 +128,9 @@
       "dawn_sensor": {
         "name": "Dawn"
       },
+      "device_temperature_sensor": {
+        "name": "Device Temperature"
+      },
       "energy_sensor": {
         "name": "Energy"
       },
@@ -201,6 +204,9 @@
       "uv_sensor": {
         "name": "Ultraviolet"
       },
+      "valve_position_sensor": {
+        "name": "Valve Position"
+      },
       "voltage_sensor": {
         "name": "Voltage"
       },
@@ -223,8 +229,8 @@
         "name": "Window Position",
         "state": {
           "0": "Closed",
-          "1": "Tilted",
-          "2": "Open"
+          "1": "Open",
+          "2": "Tilted"
         }
       }
     },
@@ -361,8 +367,17 @@
       "number_motion_alarm_cancelation_delay": {
         "name": "Motion Alarm Delay"
       },
+      "number_open_window_detection_sensibility": {
+        "name": "Window Open Sensibility"
+      },
+      "number_polling_interval": {
+        "name": "Polling Interval"
+      },
       "number_target_temperature": {
         "name": "Target Temperature"
+      },
+      "number_temperature_offset": {
+        "name": "Temperature Offset"
       },
       "number_wake_up_interval": {
         "name": "Wake-Up Interval"

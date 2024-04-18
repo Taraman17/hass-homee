@@ -2,17 +2,17 @@
 
 import logging
 
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
+from pymee import Homee
+from pymee.const import AttributeType
+from pymee.model import HomeeAttribute, HomeeNode
+
 from homeassistant.components.alarm_control_panel import (
     AlarmControlPanelEntity,
     AlarmControlPanelEntityFeature,
 )
 from homeassistant.config_entries import ConfigEntry
-
-from pymee import Homee
-from pymee.const import AttributeType
-from pymee.model import HomeeAttribute, HomeeNode
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 
 from . import HomeeNodeEntity, helpers
 from .const import DOMAIN
@@ -36,10 +36,13 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
-        for attribute in node.attributes:
-            # These conditions identify a switch.
-            if attribute.type == AttributeType.HOMEE_MODE and attribute.editable and node.id == -1:
-                devices.append(HomeeAlarmPanel(node, config_entry, attribute))
+        devices.extend(
+            HomeeAlarmPanel(node, config_entry, attribute)
+            for attribute in node.attributes
+            if attribute.type == AttributeType.HOMEE_MODE
+            and attribute.editable
+            and node.id == -1
+        )
     if devices:
         async_add_devices(devices)
 
@@ -83,17 +86,14 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
     def state(self) -> str:
         """Return current state."""
         curr_state = int(self._alarm_panel_attribute.current_value)
-        if curr_state == 0:
-            return "armed_home"
-        elif curr_state == 1:
-            return "armed_night"
-        elif curr_state == 2:
-            return "armed_away"
-        elif curr_state == 3:
-            return "armed_vacation"
-        else:
-            return None
-        #return int(self._alarm_panel_attribute.current_value)
+
+        return {
+            0: "armed_home",
+            1: "armed_night",
+            2: "armed_away",
+            3: "armed_vacation",
+        }.get(curr_state)
+        # return int(self._alarm_panel_attribute.current_value)
 
     async def async_alarm_disarm(self, code=None) -> None:
         """Send disarm command."""
