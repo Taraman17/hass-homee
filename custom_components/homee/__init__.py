@@ -11,7 +11,7 @@ import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
-from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import Entity
@@ -73,6 +73,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     # and wait until we are connected
     hass.loop.create_task(homee.run())
     await homee.wait_until_connected()
+
+    # Migrate unique ids that are int.
+    await _migrate_old_unique_ids(hass, entry.entry_id)
 
     # Log info about nodes, to facilitate recognition of unknown nodes.
     for node in homee.nodes:
@@ -388,3 +391,28 @@ class AttributeNotFoundException(Exception):
     def __init__(self, attributeType) -> None:
         """Initialize the exception."""
         self.attributeType = attributeType
+
+
+async def _migrate_old_unique_ids(hass: HomeAssistant, entry_id: str) -> None:
+    entity_registry = er.async_get(hass)
+
+    @callback
+    def _async_migrator(entity_entry: er.RegistryEntry) -> dict[str, str] | None:
+        # Climate entities had a string unique id.
+        if isinstance(entity_entry.unique_id, int):
+            new_unique_id = f"{entity_entry.unique_id}-climate"
+            if existing_entity_id := entity_registry.async_get_entity_id(
+                entity_entry.domain, entity_entry.platform, new_unique_id
+            ):
+                _LOGGER.error(
+                    "Cannot migrate to unique_id '%s', already exists for '%s', "
+                    "You may have to delete unavailable ring entities",
+                    new_unique_id,
+                    existing_entity_id,
+                )
+                return None
+            _LOGGER.info("Fixing non string unique id %s", entity_entry.unique_id)
+            return {"new_unique_id": new_unique_id}
+        return None
+
+    await er.async_migrate_entries(hass, entry_id, _async_migrator)
