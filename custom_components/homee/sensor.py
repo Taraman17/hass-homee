@@ -140,9 +140,14 @@ def get_device_properties(attribute: HomeeAttribute):
         device_class = SensorDeviceClass.POWER
         translation_key = "power_sensor"
 
-    if attribute.type in [AttributeType.DEVICE_TEMPERATURE, AttributeType.TEMPERATURE]:
+    if attribute.type == AttributeType.TEMPERATURE:
         device_class = SensorDeviceClass.TEMPERATURE
         translation_key = "temperature_sensor"
+
+    if attribute.type == AttributeType.DEVICE_TEMPERATURE:
+        device_class = SensorDeviceClass.TEMPERATURE
+        translation_key = "device_temperature_sensor"
+        entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.UP_DOWN:
         translation_key = "up_down_sensor"
@@ -193,11 +198,12 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
         props = ["state", "protocol"]
-        for item in props:
-            devices.append(HomeeNodeSensor(node, config_entry, item))
-        for attribute in node.attributes:
-            if attribute.type in SENSOR_ATTRIBUTES:
-                devices.append(HomeeSensor(node, config_entry, attribute))
+        devices.extend(HomeeNodeSensor(node, config_entry, item) for item in props)
+        devices.extend(
+            HomeeSensor(node, config_entry, attribute)
+            for attribute in node.attributes
+            if attribute.type in SENSOR_ATTRIBUTES
+        )
     if devices:
         async_add_devices(devices)
 

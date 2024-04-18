@@ -61,10 +61,11 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     # homee: Homee = hass.data[DOMAIN][config_entry.entry_id]
 
     devices = []
-    for node in helpers.get_imported_nodes(hass, config_entry):
-        if not is_cover_node(node):
-            continue
-        devices.append(HomeeCover(node, config_entry))
+    nodes = helpers.get_imported_nodes(hass, config_entry)
+    devices.extend(
+        HomeeCover(node, config_entry) for node in nodes if is_cover_node(node)
+    )
+
     if devices:
         async_add_devices(devices)
 

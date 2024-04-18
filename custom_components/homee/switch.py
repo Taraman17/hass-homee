@@ -78,14 +78,15 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
 
     devices = []
     for node in get_imported_nodes(hass, config_entry):
-        for attribute in node.attributes:
-            # These conditions identify a switch.
-            if attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable:
-                if not (
-                    attribute.type == AttributeType.ON_OFF
-                    and node.profile in LIGHT_PROFILES
-                ):
-                    devices.append(HomeeSwitch(node, config_entry, attribute))
+        devices.extend(
+            HomeeSwitch(node, config_entry, attribute)
+            for attribute in node.attributes
+            if (attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable)
+            and not (
+                attribute.type == AttributeType.ON_OFF
+                and node.profile in LIGHT_PROFILES
+            )
+        )
     if devices:
         async_add_devices(devices)
 

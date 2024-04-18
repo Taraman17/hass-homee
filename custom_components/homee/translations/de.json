@@ -128,6 +128,9 @@
       "dawn_sensor": {
         "name": "Dämmerung"
       },
+      "device_temperature_sensor": {
+        "name": "Gerätetemperatur"
+      },
       "energy_sensor": {
         "name": "Energie"
       },

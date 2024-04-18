@@ -74,9 +74,11 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
 
     devices = []
     for node in helpers.get_imported_nodes(hass, config_entry):
-        for attribute in node.attributes:
-            if attribute.type in NUMBER_ATTRIBUTES and attribute.editable:
-                devices.append(HomeeNumber(node, config_entry, attribute))
+        devices.extend(
+            HomeeNumber(node, config_entry, attribute)
+            for attribute in node.attributes
+            if attribute.type in NUMBER_ATTRIBUTES and attribute.editable
+        )
     if devices:
         async_add_devices(devices)
 
