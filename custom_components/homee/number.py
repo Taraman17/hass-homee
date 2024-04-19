@@ -16,7 +16,6 @@ NUMBER_ATTRIBUTES = {
     AttributeType.MOTION_ALARM_CANCELATION_DELAY,
     AttributeType.OPEN_WINDOW_DETECTION_SENSIBILITY,
     AttributeType.POLLING_INTERVAL,
-    AttributeType.TARGET_TEMPERATURE,
     AttributeType.TEMPERATURE_OFFSET,
     AttributeType.WAKE_UP_INTERVAL,
     AttributeType.WIND_MONITORING_STATE,
@@ -48,10 +47,6 @@ def get_device_properties(attribute: HomeeAttribute):
     if attribute.type == AttributeType.POLLING_INTERVAL:
         translation_key = "number_polling_interval"
         entity_category = EntityCategory.CONFIG
-
-    if attribute.type == AttributeType.TARGET_TEMPERATURE:
-        device_class = NumberDeviceClass.TEMPERATURE
-        translation_key = "number_target_temperature"
 
     if attribute.type == AttributeType.TEMPERATURE_OFFSET:
         device_class = NumberDeviceClass.TEMPERATURE
@@ -110,13 +105,32 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
         self._attr_native_min_value = number_attribute.minimum
         self._attr_native_max_value = number_attribute.maximum
         self._attr_native_step = number_attribute.step_value
-        self._attr_native_value = number_attribute.current_value
-        self._attr_native_unit_of_measurement = number_attribute.unit
 
         if self.translation_key is None:
             self._attr_name = None
 
         self._attr_unique_id = f"{self._node.id}-number-{self._number.id}"
+
+    @property
+    def native_value(self):
+        """Return the native value of the sensor."""
+        # TODO: If HA supports klx as unit, remove.
+        if self._number.unit == "klx":
+            return self._number.current_value * 1000
+
+        return self._number.current_value
+
+    @property
+    def native_unit_of_measurement(self):
+        """Return the native unit of the number entity."""
+        if self._number.unit == "n/a":
+            return None
+
+        # TODO: If HA supports klx as unit, remove.
+        if self._number.unit == "klx":
+            return "lx"
+
+        return self._number.unit
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
