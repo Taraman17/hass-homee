@@ -67,9 +67,13 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 def is_climate_node(node: HomeeNode):
     """Determine if a node is controllable as a homee light based on it's profile and attributes."""
     return node.profile in [
-        NodeProfile.RADIATOR_THERMOSTAT,
-        NodeProfile.THERMOSTAT_WITH_HEATING_AND_COOLING,
         NodeProfile.HEATING_SYSTEM,
+        NodeProfile.RADIATOR_THERMOSTAT,
+        NodeProfile.ROOM_THERMOSTAT,
+        NodeProfile.ROOM_THERMOSTAT_WITH_HUMIDITY_SENSOR,
+        NodeProfile.THERMOSTAT_WITH_HEATING_AND_COOLING,
+        NodeProfile.WIFI_RADIATOR_THERMOSTAT,
+        NodeProfile.WIFI_ROOM_THERMOSTAT,
     ]
 
 
