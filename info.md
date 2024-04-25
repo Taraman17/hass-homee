@@ -19,17 +19,17 @@ Integration is in HACS Default Repositories now!
 
 **This component will set up the following platforms.**
 
-| Platform              | Description                                                                                                                       |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `alarm-control-panel` | Integrate the homee status.                                                                                                       |
-| `binary_sensor`       | Integrate homee devices that provide binary state information like `on`/`off` or `open`/`close`.                                  |
-| `climate`             | Integrate homee devices that provide temperature and can set a target temperature.                                                |
-| `cover`               | Integrate homee devices that provide motor and position functions such as blinds and shutter actuators                            |
-| `light`               | Integrate lights from homee.                                                                                                      |
-| `lock`                | Integrate locks from homee.                                                                                                       |
-| `number`              | Integrate number entities - usually settings of some kind.                                                                        |
-| `sensor`              | Integrate homee devices that provide readings.                                                                                    |
-| `switch`              | Integrate homee devices that can be turned `on`/`off` and can optionally provide information about the current power consumption. |
+| Platform              | Description                                                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `alarm-control-panel` | Integrate the homee status.                                                                                                          |
+| `binary_sensor`       | Integrate homee devices that provide binary state information like `on`/`off` or `open`/`close`.                                     |
+| `climate`             | Integrate homee devices that provide temperature and can set a target temperature. Currently only heating thermostats are supported. |
+| `cover`               | Integrate homee devices that provide motor and position functions such as blinds and shutter actuators                               |
+| `light`               | Integrate lights from homee.                                                                                                         |
+| `lock`                | Integrate locks from homee.                                                                                                          |
+| `number`              | Integrate number entities - usually settings of some kind.                                                                           |
+| `sensor`              | Integrate homee devices that provide readings.                                                                                       |
+| `switch`              | Integrate homee devices that can be turned `on`/`off` and can optionally provide information about the current power consumption.    |
 
 ![homee][homee_logo]
 

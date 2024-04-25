@@ -28,24 +28,6 @@ HOMEE_UNIT_TO_HA_UNIT = {
 }
 
 
-def get_climate_features(node: HomeeNodeEntity, default=0) -> int:
-    """Determine the supported climate features of a homee node based on the available attributes."""
-    features = default
-
-    if node.has_attribute(AttributeType.TARGET_TEMPERATURE):
-        features |= ClimateEntityFeature.TARGET_TEMPERATURE
-
-    if node.has_attribute(AttributeType.HEATING_MODE):
-        features |= ClimateEntityFeature.TURN_ON
-        features |= ClimateEntityFeature.TURN_OFF
-
-    if node.get_attribute(AttributeType.HEATING_MODE).maximum > 1:
-        # Node supports more modes than on and off
-        features |= ClimateEntityFeature.PRESET_MODE
-
-    return features
-
-
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
     """Add the homee platform for the light integration."""
     # homee: Homee = hass.data[DOMAIN][config_entry.entry_id]
@@ -77,6 +59,24 @@ def is_climate_node(node: HomeeNode):
     ]
 
 
+def get_climate_features(node: HomeeNodeEntity, default=0) -> int:
+    """Determine the supported climate features of a homee node based on the available attributes."""
+    features = default
+
+    if node.has_attribute(AttributeType.TARGET_TEMPERATURE):
+        features |= ClimateEntityFeature.TARGET_TEMPERATURE
+
+    if node.has_attribute(AttributeType.HEATING_MODE):
+        features |= ClimateEntityFeature.TURN_ON
+        features |= ClimateEntityFeature.TURN_OFF
+
+        if node.get_attribute(AttributeType.HEATING_MODE).maximum > 1:
+            # Node supports more modes than off and heating
+            features |= ClimateEntityFeature.PRESET_MODE
+
+    return features
+
+
 class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     """Representation of a homee climate device."""
 
@@ -90,7 +90,6 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
         """Initialize a homee climate entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._supported_features = get_climate_features(self)
-        self._attr_preset_modes = [PRESET_BOOST, PRESET_SLEEP]
         self._attr_target_temperature_step = self.get_attribute(
             AttributeType.TARGET_TEMPERATURE
         ).step_value
@@ -109,7 +108,22 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     @property
     def hvac_modes(self) -> list[HVACMode]:
         """Return the available hvac operation modes."""
-        return [HVACMode.OFF, HVACMode.HEAT]
+        if self._node.profile in (
+            NodeProfile.RADIATOR_THERMOSTAT,
+            NodeProfile.WIFI_RADIATOR_THERMOSTAT,
+        ):
+            return [HVACMode.OFF, HVACMode.HEAT]
+
+        return [HVACMode.HEAT]
+
+    @property
+    def preset_modes(self) -> list[str]:
+        """Return the available preset modes."""
+        if self.has_attribute(AttributeType.HEATING_MODE):
+            if self.get_attribute(AttributeType.HEATING_MODE).maximum > 1:
+                return [PRESET_BOOST, PRESET_SLEEP]
+
+        return None
 
     @property
     def hvac_mode(self) -> HVACMode:
@@ -136,7 +150,9 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
             if self.attribute(AttributeType.CURRENT_VALVE_POSITION) > 0:
                 return HVACAction.HEATING
 
-        return HVACAction.IDLE
+            return HVACAction.IDLE
+
+        return HVACAction.HEATING
 
     @property
     def preset_mode(self) -> str:
