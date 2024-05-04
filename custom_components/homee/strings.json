@@ -379,11 +379,25 @@
       "number_temperature_offset": {
         "name": "Temperature Offset"
       },
+      "number_valve_position": {
+        "name": "Valve Position"
+      },
       "number_wake_up_interval": {
         "name": "Wake-Up Interval"
       },
       "number_wind_monitoring_state": {
         "name": "Wind Monitoring State"
+      }
+    },
+    "climate": {
+      "homee": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "manual": "Manual"
+            }
+          }
+        }
       }
     }
   },
@@ -393,6 +407,9 @@
     },
     "no_float": {
       "message": "{service_attr} must be a number."
+    },
+    "not_editable": {
+      "message": "{entity} is currently not changeable."
     }
   }
 }

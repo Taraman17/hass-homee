@@ -1,0 +1,15 @@
+{
+  "entity": {
+    "climate": {
+      "homee": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "manual": "mdi:hand-back-right"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -205,7 +205,7 @@
         "name": "UV Strahlung"
       },
       "valve_position_sensor": {
-        "name": "Ventilstellung"
+        "name": "Ventilöffnung"
       },
       "voltage_sensor": {
         "name": "Spannung"
@@ -379,11 +379,25 @@
       "number_temperature_offset": {
         "name": "Temperatur Offset"
       },
+      "number_valve_position": {
+        "name": "Ventilöffnung"
+      },
       "number_wake_up_interval": {
         "name": "Aufwachintervall"
       },
       "number_wind_monitoring_state": {
         "name": "Windüberwachung"
+      }
+    },
+    "climate": {
+      "homee": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "manual": "Manuell"
+            }
+          }
+        }
       }
     }
   },
@@ -393,6 +407,9 @@
     },
     "no_float": {
       "message": "{service_attr} muss eine Zahl sein."
+    },
+    "not_editable": {
+      "message": "{entity} kann zur Zeit nicht verändert werden."
     }
   }
 }

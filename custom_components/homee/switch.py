@@ -11,7 +11,7 @@ from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity
-from .const import LIGHT_PROFILES
+from .const import CLIMATE_PROFILES, LIGHT_PROFILES
 from .helpers import get_attribute_for_enum, get_imported_nodes
 
 _LOGGER = logging.getLogger(__name__)
@@ -85,6 +85,10 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
             and not (
                 attribute.type == AttributeType.ON_OFF
                 and node.profile in LIGHT_PROFILES
+            )
+            and not (
+                attribute.type == AttributeType.MANUAL_OPERATION
+                and node.profile in CLIMATE_PROFILES
             )
         )
     if devices:
