@@ -404,6 +404,9 @@
     },
     "no_float": {
       "message": "{service_attr} must be a number."
+    },
+    "not_editable": {
+      "message": "{entity} is currently not changeable."
     }
   }
 }

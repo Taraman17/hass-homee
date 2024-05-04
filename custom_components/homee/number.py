@@ -7,9 +7,10 @@ from homeassistant.components.number import NumberDeviceClass, NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import ServiceValidationError
 
 from . import HomeeNodeEntity, helpers
+from .const import DOMAIN
 
 NUMBER_ATTRIBUTES = {
     AttributeType.CURRENT_VALVE_POSITION,
@@ -142,4 +143,8 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
         if self._number.editable:
             await self.async_set_value_by_id(self._number.id, value)
         else:
-            raise HomeAssistantError("This number is not editable at the moment.")
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="not_editable",
+                translation_placeholders={"entity": self.name},
+            )
