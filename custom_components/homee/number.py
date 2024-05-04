@@ -7,10 +7,12 @@ from homeassistant.components.number import NumberDeviceClass, NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 
 from . import HomeeNodeEntity, helpers
 
 NUMBER_ATTRIBUTES = {
+    AttributeType.CURRENT_VALVE_POSITION,
     AttributeType.DOWN_POSITION,
     AttributeType.ENDPOSITION_CONFIGURATION,
     AttributeType.MOTION_ALARM_CANCELATION_DELAY,
@@ -27,6 +29,9 @@ def get_device_properties(attribute: HomeeAttribute):
     device_class = None
     translation_key = None
     entity_category = None
+
+    if attribute.type == AttributeType.CURRENT_VALVE_POSITION:
+        translation_key = "number_valve_position"
 
     if attribute.type == AttributeType.DOWN_POSITION:
         translation_key = "number_down_position"
@@ -72,7 +77,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
         devices.extend(
             HomeeNumber(node, config_entry, attribute)
             for attribute in node.attributes
-            if attribute.type in NUMBER_ATTRIBUTES and attribute.editable
+            if attribute.type in NUMBER_ATTRIBUTES
         )
     if devices:
         async_add_devices(devices)
@@ -134,4 +139,7 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
-        await self.async_set_value_by_id(self._number.id, value)
+        if self._number.editable:
+            await self.async_set_value_by_id(self._number.id, value)
+        else:
+            raise HomeAssistantError("This number is not editable at the moment.")

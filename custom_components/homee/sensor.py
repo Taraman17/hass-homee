@@ -106,10 +106,6 @@ def get_device_properties(attribute: HomeeAttribute):
         device_class = SensorDeviceClass.CURRENT
         translation_key = "current_sensor"
 
-    if attribute.type == AttributeType.CURRENT_VALVE_POSITION:
-        translation_key = "valve_position_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
     if attribute.type == AttributeType.DAWN:
         translation_key = "dawn_sensor"
         device_class = SensorDeviceClass.ILLUMINANCE

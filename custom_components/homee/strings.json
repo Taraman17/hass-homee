@@ -204,9 +204,6 @@
       "uv_sensor": {
         "name": "Ultraviolet"
       },
-      "valve_position_sensor": {
-        "name": "Valve Position"
-      },
       "voltage_sensor": {
         "name": "Voltage"
       },
@@ -379,11 +376,25 @@
       "number_temperature_offset": {
         "name": "Temperature Offset"
       },
+      "number_valve_position": {
+        "name": "Valve Position"
+      },
       "number_wake_up_interval": {
         "name": "Wake-Up Interval"
       },
       "number_wind_monitoring_state": {
         "name": "Wind Monitoring State"
+      }
+    },
+    "climate": {
+      "homee": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "manual": "Manual"
+            }
+          }
+        }
       }
     }
   },

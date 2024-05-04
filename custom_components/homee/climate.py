@@ -8,7 +8,8 @@ from pymee.model import HomeeNode
 from homeassistant.components.climate import (
     ATTR_TEMPERATURE,
     PRESET_BOOST,
-    PRESET_SLEEP,
+    PRESET_ECO,
+    PRESET_NONE,
     ClimateEntity,
     ClimateEntityFeature,
     HVACAction,
@@ -19,12 +20,19 @@ from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity, helpers
+from .const import CLIMATE_PROFILES, DOMAIN, PRESET_MANUAL
 
 _LOGGER = logging.getLogger(__name__)
 
 HOMEE_UNIT_TO_HA_UNIT = {
     "°C": UnitOfTemperature.CELSIUS,
     "°F": UnitOfTemperature.FAHRENHEIT,
+}
+
+ROOM_THERMOSTATS = {
+    NodeProfile.ROOM_THERMOSTAT,
+    NodeProfile.ROOM_THERMOSTAT_WITH_HUMIDITY_SENSOR,
+    NodeProfile.WIFI_ROOM_THERMOSTAT,
 }
 
 
@@ -48,20 +56,14 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 def is_climate_node(node: HomeeNode):
     """Determine if a node is controllable as a homee light based on it's profile and attributes."""
-    return node.profile in [
-        NodeProfile.HEATING_SYSTEM,
-        NodeProfile.RADIATOR_THERMOSTAT,
-        NodeProfile.ROOM_THERMOSTAT,
-        NodeProfile.ROOM_THERMOSTAT_WITH_HUMIDITY_SENSOR,
-        NodeProfile.THERMOSTAT_WITH_HEATING_AND_COOLING,
-        NodeProfile.WIFI_RADIATOR_THERMOSTAT,
-        NodeProfile.WIFI_ROOM_THERMOSTAT,
-    ]
+    return node.profile in CLIMATE_PROFILES
 
 
 def get_climate_features(node: HomeeNodeEntity, default=0) -> int:
     """Determine the supported climate features of a homee node based on the available attributes."""
     features = default
+    hvac_modes = [HVACMode.HEAT]
+    preset_modes = []
 
     if node.has_attribute(AttributeType.TARGET_TEMPERATURE):
         features |= ClimateEntityFeature.TARGET_TEMPERATURE
@@ -69,12 +71,15 @@ def get_climate_features(node: HomeeNodeEntity, default=0) -> int:
     if node.has_attribute(AttributeType.HEATING_MODE):
         features |= ClimateEntityFeature.TURN_ON
         features |= ClimateEntityFeature.TURN_OFF
+        hvac_modes.append(HVACMode.OFF)
 
         if node.get_attribute(AttributeType.HEATING_MODE).maximum > 1:
-            # Node supports more modes than off and heating
+            # Node supports more modes than off and heating.
             features |= ClimateEntityFeature.PRESET_MODE
+            preset_modes.extend([PRESET_BOOST, PRESET_ECO, PRESET_MANUAL])
 
-    return features
+    preset_modes = None if preset_modes.count == 0 else [*preset_modes, PRESET_NONE]
+    return (features, hvac_modes, preset_modes)
 
 
 class HomeeClimate(HomeeNodeEntity, ClimateEntity):
@@ -82,6 +87,7 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
 
     _attr_has_entity_name = True
     _attr_name = None
+    _attr_translation_key = DOMAIN
 
     # TODO: remove after release of HA 2025.01
     _enable_turn_on_off_backwards_compatibility = False
@@ -89,16 +95,15 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     def __init__(self, node: HomeeNode, entry: ConfigEntry) -> None:
         """Initialize a homee climate entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
-        self._supported_features = get_climate_features(self)
+        (
+            self._attr_supported_features,
+            self._attr_hvac_modes,
+            self._attr_preset_modes,
+        ) = get_climate_features(self)
         self._attr_target_temperature_step = self.get_attribute(
             AttributeType.TARGET_TEMPERATURE
         ).step_value
         self._attr_unique_id = f"{self._node.id}-climate"
-
-    @property
-    def supported_features(self) -> list[ClimateEntityFeature]:
-        """Return the supported features of the entity."""
-        return self._supported_features
 
     @property
     def temperature_unit(self) -> UnitOfTemperature:
@@ -106,32 +111,9 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
         return HOMEE_UNIT_TO_HA_UNIT[self.get_attribute(AttributeType.TEMPERATURE).unit]
 
     @property
-    def hvac_modes(self) -> list[HVACMode]:
-        """Return the available hvac operation modes."""
-        if self._node.profile in (
-            NodeProfile.RADIATOR_THERMOSTAT,
-            NodeProfile.WIFI_RADIATOR_THERMOSTAT,
-        ):
-            return [HVACMode.OFF, HVACMode.HEAT]
-
-        return [HVACMode.HEAT]
-
-    @property
-    def preset_modes(self) -> list[str]:
-        """Return the available preset modes."""
-        if self.has_attribute(AttributeType.HEATING_MODE):
-            if self.get_attribute(AttributeType.HEATING_MODE).maximum > 1:
-                return [PRESET_BOOST, PRESET_SLEEP]
-
-        return None
-
-    @property
     def hvac_mode(self) -> HVACMode:
         """Return the hvac operation mode."""
-        if self._node.profile in (
-            NodeProfile.RADIATOR_THERMOSTAT,
-            NodeProfile.WIFI_RADIATOR_THERMOSTAT,
-        ):
+        if self._node.profile not in ROOM_THERMOSTATS:
             if self.get_attribute(AttributeType.HEATING_MODE).current_value == 0:
                 return HVACMode.OFF
 
@@ -140,10 +122,7 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     @property
     def hvac_action(self) -> HVACAction:
         """Return the hvac action."""
-        if self._node.profile in (
-            NodeProfile.RADIATOR_THERMOSTAT,
-            NodeProfile.WIFI_RADIATOR_THERMOSTAT,
-        ):
+        if self._node.profile not in ROOM_THERMOSTATS:
             if self.get_attribute(AttributeType.HEATING_MODE).current_value == 0:
                 return HVACAction.OFF
 
@@ -152,17 +131,23 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
 
             return HVACAction.IDLE
 
+        if self.target_temperature >= self.current_temperature:
+            return HVACAction.IDLE
+
         return HVACAction.HEATING
 
     @property
     def preset_mode(self) -> str:
         """Return the present preset mode."""
-        if self.attribute(AttributeType.HEATING_MODE) == 2:
-            return PRESET_SLEEP
-        if self.attribute(AttributeType.HEATING_MODE) == 3:
-            return PRESET_BOOST
+        if self.has_attribute(AttributeType.HEATING_MODE):
+            if self.attribute(AttributeType.HEATING_MODE) == 2:
+                return PRESET_ECO
+            if self.attribute(AttributeType.HEATING_MODE) == 3:
+                return PRESET_BOOST
+            if self.attribute(AttributeType.HEATING_MODE) == 4:
+                return PRESET_MANUAL
 
-        return None
+        return PRESET_NONE
 
     @property
     def current_temperature(self) -> float:
@@ -192,6 +177,7 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
 
     async def async_set_hvac_mode(self, hvac_mode):
         """Set new target hvac mode."""
+        # Currently only HEAT and OFF are supported.
         mode = 0
         if hvac_mode == HVACMode.HEAT:
             mode = 1
@@ -200,12 +186,16 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
 
     async def async_set_preset_mode(self, preset_mode):
         """Set new target preset mode."""
-        if preset_mode == PRESET_SLEEP:
+        if preset_mode == PRESET_NONE:
+            preset = 1
+        if preset_mode == PRESET_ECO:
             preset = 2
         elif preset_mode == PRESET_BOOST:
             preset = 3
+        elif preset_mode == PRESET_MANUAL:
+            preset = 4
 
-        self.async_set_value(AttributeType.HEATING_MODE, preset)
+        await self.async_set_value(AttributeType.HEATING_MODE, preset)
 
     async def async_set_temperature(self, **kwargs) -> None:
         """Set new target temperature."""
