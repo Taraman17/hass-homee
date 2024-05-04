@@ -118,6 +118,11 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
         self._attr_unique_id = f"{self._node.id}-number-{self._number.id}"
 
     @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return self._number.editable
+
+    @property
     def native_value(self):
         """Return the native value of the sensor."""
         # TODO: If HA supports klx as unit, remove.

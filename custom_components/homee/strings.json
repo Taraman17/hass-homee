@@ -204,6 +204,9 @@
       "uv_sensor": {
         "name": "Ultraviolet"
       },
+      "valve_position_sensor": {
+        "name": "Valve Position"
+      },
       "voltage_sensor": {
         "name": "Voltage"
       },

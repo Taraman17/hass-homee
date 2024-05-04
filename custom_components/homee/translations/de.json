@@ -204,6 +204,9 @@
       "uv_sensor": {
         "name": "UV Strahlung"
       },
+      "valve_position_sensor": {
+        "name": "Ventilöffnung"
+      },
       "voltage_sensor": {
         "name": "Spannung"
       },
@@ -377,7 +380,7 @@
         "name": "Temperatur Offset"
       },
       "number_valve_position": {
-        "name": "Ventilstellung"
+        "name": "Ventilöffnung"
       },
       "number_wake_up_interval": {
         "name": "Aufwachintervall"
