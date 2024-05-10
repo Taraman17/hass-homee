@@ -9,6 +9,7 @@
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
 [![Community Forum][forum-shield]][forum]
+![][usage]
 
 _Component to integrate with [homee][homee]._
 
@@ -18,42 +19,28 @@ Integration is in HACS Default Repositories now!
 
 **This component will set up the following platforms.**
 
-| Platform              | Description                                                                                                                       |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `binary_sensor`       | Integrate homee devices that provide binary state information like `on`/`off` or `open`/`close`.                                  |
-| `sensor`              | Integrate homee devices that provide readings.                                                                                    |
-| `cover`               | Integrate homee devices that provide motor and position functions such as blinds and shutter actuators                            |
-| `climate`             | Integrate homee devices that provide temperature and can set a target temperature.                                                |
-| `light`               | Integrate lights from homee.                                                                                                      |
-| 'number'              | Integrate number entities - usually settings of some kind.                                                                        |
-| `switch`              | Integrate homee devices that can be turned `on`/`off` and can optionally provide information about the current power consumption. |
-| `alarm-control-panel` | Integrate the homee status.                                                                                                       |
+| Platform              | Description                                                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `alarm-control-panel` | Integrate the homee status.                                                                                                          |
+| `binary_sensor`       | Integrate homee devices that provide binary state information like `on`/`off` or `open`/`close`.                                     |
+| `climate`             | Integrate homee devices that provide temperature and can set a target temperature. Currently only heating thermostats are supported. |
+| `cover`               | Integrate homee devices that provide motor and position functions such as blinds and shutter actuators                               |
+| `light`               | Integrate lights from homee.                                                                                                         |
+| `lock`                | Integrate locks from homee.                                                                                                          |
+| `number`              | Integrate number entities - usually settings of some kind.                                                                           |
+| `sensor`              | Integrate homee devices that provide readings.                                                                                       |
+| `switch`              | Integrate homee devices that can be turned `on`/`off` and can optionally provide information about the current power consumption.    |
 
 ![homee][homee_logo]
 
-## :information_source: Upgrade from previous Repository
-
-:warning: **Backup homee and Home Assistant!**
-
-1. In HACS click on the homee integration.
-2. In the top right menu click "remove"
-   ![grafik](https://github.com/FreshlyBrewedCode/hacs-homee/assets/4706817/af69b1da-6f81-4c31-b051-4a58fc264a54)
-
-3. click "ignore". This way, the integration will be deleted, but the config will stay.
-   ![grafik](https://github.com/FreshlyBrewedCode/hacs-homee/assets/4706817/29de90d1-2bf4-49ae-8ec4-b48eab737269)
-
-4. !WITHOUT RESTART! Add [this repository] to HACS and install.
-5. Now restart.
-
-If you want to use the new feature to import all devicess from homee, you have to remove the integration and reinstall.
-
 ## Configuration
 
-> :information_source: Because of a bug (#4) you should only configure **one** homee in Home Assistant.
+> :information_source: Because of a bug (#5) configuring **more than one** homee in Home Assistant can cause strange behavour - feedback is appreciated.
 
 The integration will attempt to discover homee cubes in your network. Discovered cubes should show up in the "Configuration" -> "Integrations" section along with the associated homee id and host ip address.
 
 1. In the HA UI go to "Configuration" -> "Integrations", click "Configure" on a discovered homee or click "+", search for "homee", and select the "homee" integration from the list.
+   Or click here: [![Start Config Flow](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=homee)
 2. In the dialog enter the username and password of a homee account that can access your cube, as well as the host (ip address of the homee cube) if you are not configuring a discovered cube.
    As well choose if you want to import all devices into HA or only ones from certain hommee-groups
    Click submit.
@@ -113,3 +100,4 @@ Home Assistant encourages developers of integrations to use a separate python pa
 [releases-shield]: https://img.shields.io/github/release/Taraman17/hass-homee.svg?style=for-the-badge
 [releases]: https://github.com/Taraman17/hass-homee/releases
 [FreshlyBrewedCode]: https://github.com/FreshlyBrewedCode
+[usage]: https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.homee.total

@@ -1,4 +1,5 @@
 """Constants for the homee integration."""
+
 from pymee.const import NodeProfile
 
 # General
@@ -15,6 +16,15 @@ ATTR_NODE = "node"
 ATTR_VALUE = "value"
 
 # Profile Groups
+CLIMATE_PROFILES = [
+    NodeProfile.HEATING_SYSTEM,
+    NodeProfile.RADIATOR_THERMOSTAT,
+    NodeProfile.ROOM_THERMOSTAT,
+    NodeProfile.ROOM_THERMOSTAT_WITH_HUMIDITY_SENSOR,
+    NodeProfile.THERMOSTAT_WITH_HEATING_AND_COOLING,
+    NodeProfile.WIFI_RADIATOR_THERMOSTAT,
+    NodeProfile.WIFI_ROOM_THERMOSTAT,
+]
 LIGHT_PROFILES = [
     NodeProfile.DIMMABLE_COLOR_LIGHT,
     NodeProfile.DIMMABLE_COLOR_METERING_PLUG,
@@ -34,7 +44,6 @@ LIGHT_PROFILES = [
     NodeProfile.WIFI_ON_OFF_DIMMABLE_METERING_SWITCH,
 ]
 
-
 HOMEE_LIGHT_MIN_MIRED = 153
 HOMEE_LIGHT_MAX_MIRED = 556
 
@@ -46,3 +55,6 @@ CONF_GROUPS = "groups"
 CONF_IMPORT_GROUPS = "import_groups"
 CONF_WINDOW_GROUPS = "window_groups"
 CONF_DOOR_GROUPS = "door_groups"
+
+# Climate Presets
+PRESET_MANUAL = "manual"

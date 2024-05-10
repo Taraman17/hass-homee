@@ -1,5 +1,5 @@
 {
-    "name": "homee",
-    "hacs": "0.24.0",
-    "homeassistant": "2023.9.0"
+  "name": "homee",
+  "hacs": "0.24.0",
+  "homeassistant": "2023.12.3"
 }
