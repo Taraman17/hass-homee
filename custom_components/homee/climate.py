@@ -131,7 +131,7 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
 
             return HVACAction.IDLE
 
-        if self.target_temperature >= self.current_temperature:
+        if self.current_temperature >= self.target_temperature:
             return HVACAction.IDLE
 
         return HVACAction.HEATING
