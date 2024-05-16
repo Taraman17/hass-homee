@@ -15,11 +15,18 @@ from .const import DOMAIN
 NUMBER_ATTRIBUTES = {
     AttributeType.CURRENT_VALVE_POSITION,
     AttributeType.DOWN_POSITION,
+    AttributeType.DOWN_SLAT_POSITION,
+    AttributeType.DOWN_TIME,
     AttributeType.ENDPOSITION_CONFIGURATION,
     AttributeType.MOTION_ALARM_CANCELATION_DELAY,
     AttributeType.OPEN_WINDOW_DETECTION_SENSIBILITY,
     AttributeType.POLLING_INTERVAL,
+    AttributeType.SHUTTER_SLAT_TIME,
+    AttributeType.SLAT_MAX_ANGLE,
+    AttributeType.SLAT_MIN_ANGLE,
+    AttributeType.SLAT_STEPS,
     AttributeType.TEMPERATURE_OFFSET,
+    AttributeType.UP_TIME,
     AttributeType.WAKE_UP_INTERVAL,
     AttributeType.WIND_MONITORING_STATE,
 }
@@ -38,6 +45,15 @@ def get_device_properties(attribute: HomeeAttribute):
         translation_key = "number_down_position"
         entity_category = EntityCategory.CONFIG
 
+    if attribute.type == AttributeType.DOWN_SLAT_POSITION:
+        translation_key = "number_down_slat_position"
+        entity_category = EntityCategory.CONFIG
+
+    if attribute.type == AttributeType.DOWN_TIME:
+        device_class = NumberDeviceClass.DURATION
+        translation_key = "number_down_time"
+        entity_category = EntityCategory.CONFIG
+
     if attribute.type == AttributeType.ENDPOSITION_CONFIGURATION:
         translation_key = "number_endposition_configuration"
         entity_category = EntityCategory.CONFIG
@@ -54,9 +70,31 @@ def get_device_properties(attribute: HomeeAttribute):
         translation_key = "number_polling_interval"
         entity_category = EntityCategory.CONFIG
 
+    if attribute.type == AttributeType.SHUTTER_SLAT_TIME:
+        device_class = NumberDeviceClass.DURATION
+        translation_key = "number_shutter_slat_time"
+        entity_category = EntityCategory.CONFIG
+
+    if attribute.type == AttributeType.SLAT_MAX_ANGLE:
+        translation_key = "number_slat_max_angle"
+        entity_category = EntityCategory.CONFIG
+
+    if attribute.type == AttributeType.SLAT_MIN_ANGLE:
+        translation_key = "number_slat_min_angle"
+        entity_category = EntityCategory.CONFIG
+
+    if attribute.type == AttributeType.SLAT_STEPS:
+        translation_key = "number_slat_steps"
+        entity_category = EntityCategory.CONFIG
+
     if attribute.type == AttributeType.TEMPERATURE_OFFSET:
         device_class = NumberDeviceClass.TEMPERATURE
         translation_key = "number_temperature_offset"
+        entity_category = EntityCategory.CONFIG
+
+    if attribute.type == AttributeType.UP_TIME:
+        device_class = NumberDeviceClass.DURATION
+        translation_key = "number_up_time"
         entity_category = EntityCategory.CONFIG
 
     if attribute.type == AttributeType.WAKE_UP_INTERVAL:

@@ -361,6 +361,12 @@
       "number_down_position": {
         "name": "Down Position"
       },
+      "number_down_slat_position": {
+        "name": "Down Slat Position"
+      },
+      "number_down_time": {
+        "name": "Down-movement duration"
+      },
       "number_endposition_configuration": {
         "name": "Endposition"
       },
@@ -373,11 +379,26 @@
       "number_polling_interval": {
         "name": "Polling Interval"
       },
+      "number_shutter_slat_time": {
+        "name": "Slat Turn Duration"
+      },
+      "number_slat_max_angle": {
+        "name": "Maximum Slat Angle"
+      },
+      "number_slat_min_angle": {
+        "name": "Minimum Slat Angle"
+      },
+      "number_slat_steps": {
+        "name": "Slat Steps"
+      },
       "number_target_temperature": {
         "name": "Target Temperature"
       },
       "number_temperature_offset": {
         "name": "Temperature Offset"
+      },
+      "number_up_time": {
+        "name": "Up-movement duration"
       },
       "number_valve_position": {
         "name": "Valve Position"
