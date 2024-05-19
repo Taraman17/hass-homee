@@ -336,9 +336,6 @@
       "reset_meter_4": {
         "name": "Messwerte zurücksetzen 4"
       },
-      "slat_rotation_impulse": {
-        "name": "Lamellendrehung Impuls"
-      },
       "ventilate_ipulse": {
         "name": "Belüften Impuls"
       },

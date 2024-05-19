@@ -35,7 +35,6 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
     AttributeType.SIREN,
-    AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
     AttributeType.WATCHDOG_ON_OFF,
 ]
@@ -49,7 +48,6 @@ DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
-    AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
     AttributeType.WATCHDOG_ON_OFF,
 ]

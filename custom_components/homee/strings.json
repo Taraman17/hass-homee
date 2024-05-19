@@ -336,9 +336,6 @@
       "reset_meter_4": {
         "name": "Reset Meter 4"
       },
-      "slat_rotation_impulse": {
-        "name": "Slat Rotation Impulse"
-      },
       "ventilate_ipulse": {
         "name": "Ventilate Impulse"
       },
