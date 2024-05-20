@@ -201,6 +201,16 @@
           "4": "Schließt"
         }
       },
+      "up_down_sensor_rev": {
+        "name": "State",
+        "state": {
+          "0": "Geschlossen",
+          "1": "Offen",
+          "2": "Teilgeöffnet",
+          "3": "Schließt",
+          "4": "Öffnet"
+        }
+      },
       "uv_sensor": {
         "name": "UV Strahlung"
       },

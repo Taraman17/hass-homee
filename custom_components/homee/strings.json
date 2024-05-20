@@ -201,6 +201,16 @@
           "4": "Closing"
         }
       },
+      "up_down_sensor_rev": {
+        "name": "State",
+        "state": {
+          "0": "Closed",
+          "1": "Open",
+          "2": "Partially Open",
+          "3": "Closing",
+          "4": "Opening"
+        }
+      },
       "uv_sensor": {
         "name": "Ultraviolet"
       },

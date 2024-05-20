@@ -4,7 +4,7 @@ import logging
 from typing import cast
 
 from pymee.const import AttributeType, NodeProfile
-from pymee.model import HomeeAttribute, HomeeNode
+from pymee.model import HomeeNode
 
 from homeassistant.components.cover import (
     ATTR_POSITION,
@@ -202,7 +202,7 @@ class HomeeCover(HomeeNodeEntity, CoverEntity):
         if self.has_attribute(AttributeType.POSITION):
             return (
                 self.attribute(AttributeType.POSITION)
-                == self.get_attribute(AttributeType.POSITION).minimum
+                == self.get_attribute(AttributeType.POSITION).maximum
             )
 
         if self._open_close_attribute is not None:
