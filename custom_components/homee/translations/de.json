@@ -201,6 +201,16 @@
           "4": "Schließt"
         }
       },
+      "up_down_sensor_rev": {
+        "name": "State",
+        "state": {
+          "0": "Geschlossen",
+          "1": "Offen",
+          "2": "Teilgeöffnet",
+          "3": "Schließt",
+          "4": "Öffnet"
+        }
+      },
       "uv_sensor": {
         "name": "UV Strahlung"
       },
@@ -277,7 +287,7 @@
         "name": "Kurzzeitig öffnen Impuls"
       },
       "identification_mode": {
-        "name": "Identifikationsmodus"
+        "name": "Erkennungsmodus"
       },
       "impulse": {
         "name": "Impuls"
@@ -336,9 +346,6 @@
       "reset_meter_4": {
         "name": "Messwerte zurücksetzen 4"
       },
-      "slat_rotation_impulse": {
-        "name": "Lamellendrehung Impuls"
-      },
       "ventilate_ipulse": {
         "name": "Belüften Impuls"
       },
@@ -361,6 +368,12 @@
       "number_down_position": {
         "name": "Untere Position"
       },
+      "number_down_slat_position": {
+        "name": "Down Slat Position"
+      },
+      "number_down_time": {
+        "name": "Dauer Runterfahren"
+      },
       "number_endposition_configuration": {
         "name": "Endposition"
       },
@@ -373,11 +386,26 @@
       "number_polling_interval": {
         "name": "Polling Intervall"
       },
+      "number_shutter_slat_time": {
+        "name": "Lamellendrehzeit"
+      },
+      "number_slat_max_angle": {
+        "name": "Maximaler Lamellenwinkel"
+      },
+      "number_slat_min_angle": {
+        "name": "Minimaler Lamellenwinkel"
+      },
+      "number_slat_steps": {
+        "name": "Lamellenstufen"
+      },
       "number_target_temperature": {
         "name": "Zieltemperatur"
       },
       "number_temperature_offset": {
         "name": "Temperatur Offset"
+      },
+      "number_up_time": {
+        "name": "Dauer Hochfahren"
       },
       "number_valve_position": {
         "name": "Ventilöffnung"

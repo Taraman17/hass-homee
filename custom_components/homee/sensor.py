@@ -229,16 +229,24 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         self._measurement = measurement_attribute
         (
             self._device_class,
-            self._attr_translation_key,
+            self._translation_key,
             self._attr_icon,
             self._attr_entity_category,
         ) = get_device_properties(measurement_attribute)
         self._state_class = get_state_class(measurement_attribute)
         self._sensor_index = measurement_attribute.instance
-        if self.translation_key is None:
+        if self._translation_key is None:
             self._attr_name = None
 
         self._attr_unique_id = f"{self._node.id}-sensor-{self._measurement.id}"
+
+    @property
+    def translation_key(self) -> str:
+        """Return the translation key of the sensor entity."""
+        if self.is_reversed(self._measurement.type):
+            return f"{self._translation_key}_rev"
+
+        return self._translation_key
 
     @property
     def native_value(self):
