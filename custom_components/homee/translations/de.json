@@ -322,6 +322,9 @@
       "manual_operation": {
         "name": "Handbetrieb"
       },
+      "motor_rotation": {
+        "name": "Motor Drehrichtung"
+      },
       "open_partial_impulse": {
         "name": "Teilweise öffnen Impuls"
       },

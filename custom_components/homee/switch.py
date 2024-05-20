@@ -30,6 +30,7 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.IMPULSE,
     AttributeType.LIGHT_IMPULSE,
     AttributeType.MANUAL_OPERATION,
+    AttributeType.MOTOR_ROTATION,
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.ON_OFF,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
@@ -45,6 +46,7 @@ DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.IDENTIFICATION_MODE,
     AttributeType.LIGHT_IMPULSE,
     AttributeType.MANUAL_OPERATION,
+    AttributeType.MOTOR_ROTATION,
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
@@ -52,7 +54,7 @@ DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.WATCHDOG_ON_OFF,
 ]
 
-CONFIG_ATTRIBUTES = [AttributeType.WATCHDOG_ON_OFF]
+CONFIG_ATTRIBUTES = [AttributeType.MOTOR_ROTATION, AttributeType.WATCHDOG_ON_OFF]
 DIAGNOSTIC_ATTRIBUTES = [AttributeType.IDENTIFICATION_MODE]
 
 

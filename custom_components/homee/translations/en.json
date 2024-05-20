@@ -322,6 +322,9 @@
       "manual_operation": {
         "name": "Manual Operation"
       },
+      "motor_rotation": {
+        "name": "Motor rotation direction"
+      },
       "open_partial_impulse": {
         "name": "Open Partial Impulse"
       },
