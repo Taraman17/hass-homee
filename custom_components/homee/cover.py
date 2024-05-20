@@ -211,6 +211,13 @@ class HomeeCover(HomeeNodeEntity, CoverEntity):
 
             return self.attribute(self._open_close_attribute) == 1
 
+        # If none of the above is present, it might be a slat only cover.
+        if self.has_attribute(AttributeType.SHUTTER_SLAT_POSITION):
+            return (
+                self.attribute(AttributeType.SHUTTER_SLAT_POSITION)
+                == self.get_attribute(AttributeType.SHUTTER_SLAT_POSITION).minimum
+            )
+
         return None
 
     async def async_open_cover(self, **kwargs):
