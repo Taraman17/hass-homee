@@ -20,13 +20,14 @@ _LOGGER = logging.getLogger(__name__)
 
 HOMEE_BINARY_SENSOR_ATTRIBUTES = [
     AttributeType.BATTERY_LOW_ALARM,
-    AttributeType.HIGH_TEMPERATURE_ALARM,
     AttributeType.FLOOD_ALARM,
+    AttributeType.HIGH_TEMPERATURE_ALARM,
     AttributeType.LOCK_STATE,
     AttributeType.MOTION_ALARM,
     AttributeType.ON_OFF,
     AttributeType.OPEN_CLOSE,
     AttributeType.PRESENCE_ALARM,
+    AttributeType.RAIN_FALL,
     AttributeType.SMOKE_ALARM,
     AttributeType.TAMPER_ALARM,
 ]
@@ -66,22 +67,22 @@ def get_device_class(attribute: HomeeAttribute):
         device_class = BinarySensorDeviceClass.MOTION
         translation_key = "motion_sensor"
 
-    if attribute.type == AttributeType.OPEN_CLOSE:
-        device_class = BinarySensorDeviceClass.OPENING
-        state_attr = AttributeType.OPEN_CLOSE
-        translation_key = "opening_sensor"
-
     if attribute.type == AttributeType.ON_OFF:
         state_attr = AttributeType.ON_OFF
         device_class = BinarySensorDeviceClass.PLUG
         translation_key = "plug_sensor"
+
+    if attribute.type == AttributeType.OPEN_CLOSE:
+        device_class = BinarySensorDeviceClass.OPENING
+        state_attr = AttributeType.OPEN_CLOSE
+        translation_key = "opening_sensor"
 
     if attribute.type == AttributeType.PRESENCE_ALARM:
         state_attr = AttributeType.PRESENCE_ALARM
         device_class = BinarySensorDeviceClass.MOTION
         translation_key = "motion_sensor"
 
-    if AttributeType == AttributeType.RAIN_FALL:
+    if attribute.type == AttributeType.RAIN_FALL:
         state_attr = AttributeType.RAIN_FALL
         device_class = BinarySensorDeviceClass.MOISTURE
         translation_key = "rain_sensor"

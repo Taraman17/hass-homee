@@ -88,12 +88,82 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "battery_low_sensor": {
+        "name": "Batterie schwach"
+      },
+      "door_sensor": {
+        "name": "Tür"
+      },
+      "flood_sensor": {
+        "name": "Überflutungsalarm"
+      },
+      "heat_sensor": {
+        "name": "Temperaturalarm"
+      },
+      "lock_sensor": {
+        "name": "Schloss"
+      },
+      "motion_sensor": {
+        "name": "Bewegung"
+      },
+      "opening_sensor": {
+        "name": "Opening"
+      },
+      "plug_sensor": {
+        "name": "Steckdose"
+      },
+      "rain_sensor": {
+        "name": "Regen"
+      },
+      "smoke_sensor": {
+        "name": "Rauchalarm"
+      },
+      "tamper_sensor": {
+        "name": "Manipulationsalarm"
+      },
+      "window_sensor": {
+        "name": "Fenster"
+      }
+    },
+    "event": {
+      "button": {
+        "name": "up_down_remote",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "0": "Keines",
+              "1": "Hoch",
+              "2": "Runter",
+              "3": "Stop",
+              "4": "Hoch (halten)",
+              "5": "Runter (halten)",
+              "6": "Stop (halten)",
+              "7": "C-Taste",
+              "9": "A-Taste"
+            }
+          }
+        }
+      }
+    },
     "sensor": {
       "battery_sensor": {
         "name": "Batterie"
       },
       "brightness_sensor": {
         "name": "Beleuchtungsstärke"
+      },
+      "brightness_sensor_1": {
+        "name": "Beleuchtungsstärke 1"
+      },
+      "brightness_sensor_2": {
+        "name": "Beleuchtungsstärke 2"
+      },
+      "brightness_sensor_3": {
+        "name": "Beleuchtungsstärke 3"
+      },
+      "brightness_sensor_4": {
+        "name": "Beleuchtungsstärke 4"
       },
       "button_state_sensor": {
         "name": "Schalterstellung"
@@ -176,6 +246,12 @@
       "power_sensor_4": {
         "name": "Leistung 4"
       },
+      "rainfall_hour_sensor": {
+        "name": "Niederschlag Letzte Stunde"
+      },
+      "rainfall_day_sensor": {
+        "name": "Niederschlag Heute"
+      },
       "temperature_sensor": {
         "name": "Temperatur"
       },
@@ -244,41 +320,6 @@
         }
       }
     },
-    "binary_sensor": {
-      "battery_low_sensor": {
-        "name": "Batterie schwach"
-      },
-      "door_sensor": {
-        "name": "Tür"
-      },
-      "flood_sensor": {
-        "name": "Überflutungsalarm"
-      },
-      "heat_sensor": {
-        "name": "Temperaturalarm"
-      },
-      "lock_sensor": {
-        "name": "Schloss"
-      },
-      "motion_sensor": {
-        "name": "Bewegung"
-      },
-      "opening_sensor": {
-        "name": "Opening"
-      },
-      "plug_sensor": {
-        "name": "Steckdose"
-      },
-      "smoke_sensor": {
-        "name": "Rauchalarm"
-      },
-      "tamper_sensor": {
-        "name": "Manipulationsalarm"
-      },
-      "window_sensor": {
-        "name": "Fenster"
-      }
-    },
     "switch": {
       "automatic_mode_impulse": {
         "name": "Automatikmodus Impuls"
@@ -330,9 +371,6 @@
       },
       "permanently_open_impulse": {
         "name": "Dauerhaft geöffnet Impuls"
-      },
-      "rain_sensor": {
-        "name": "Regen"
       },
       "reset_meter": {
         "name": "Messwerte zurücksetzen"

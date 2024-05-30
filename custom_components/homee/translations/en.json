@@ -88,12 +88,82 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "battery_low_sensor": {
+        "name": "Battery Low"
+      },
+      "door_sensor": {
+        "name": "Door"
+      },
+      "flood_sensor": {
+        "name": "Flood Alarm"
+      },
+      "heat_sensor": {
+        "name": "Temperature Alarm"
+      },
+      "lock_sensor": {
+        "name": "Lock"
+      },
+      "motion_sensor": {
+        "name": "Motion"
+      },
+      "opening_sensor": {
+        "name": "Opening"
+      },
+      "plug_sensor": {
+        "name": "Plug"
+      },
+      "rain_sensor": {
+        "name": "Rain"
+      },
+      "smoke_sensor": {
+        "name": "Smoke"
+      },
+      "tamper_sensor": {
+        "name": "Tamper Alarm"
+      },
+      "window_sensor": {
+        "name": "Window"
+      }
+    },
+    "event": {
+      "button": {
+        "name": "up_down_remote",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "0": "None",
+              "1": "Up",
+              "2": "Down",
+              "3": "Stop",
+              "4": "Up (long press)",
+              "5": "Down (long press)",
+              "6": "Stop (long press)",
+              "7": "C-Button",
+              "9": "A-Button"
+            }
+          }
+        }
+      }
+    },
     "sensor": {
       "battery_sensor": {
         "name": "Battery"
       },
       "brightness_sensor": {
         "name": "Illuminance"
+      },
+      "brightness_sensor_1": {
+        "name": "Illuminance 1"
+      },
+      "brightness_sensor_2": {
+        "name": "Illuminance 2"
+      },
+      "brightness_sensor_3": {
+        "name": "Illuminance 3"
+      },
+      "brightness_sensor_4": {
+        "name": "Illuminance 4"
       },
       "button_state_sensor": {
         "name": "Button State"
@@ -176,6 +246,12 @@
       "power_sensor_4": {
         "name": "Power 4"
       },
+      "rainfall_hour_sensor": {
+        "name": "Rainfall Last Hour"
+      },
+      "rainfall_day_sensor": {
+        "name": "Rainfall Today"
+      },
       "temperature_sensor": {
         "name": "Temperature"
       },
@@ -244,41 +320,6 @@
         }
       }
     },
-    "binary_sensor": {
-      "battery_low_sensor": {
-        "name": "Battery Low"
-      },
-      "door_sensor": {
-        "name": "Door"
-      },
-      "flood_sensor": {
-        "name": "Flood Alarm"
-      },
-      "heat_sensor": {
-        "name": "Temperature Alarm"
-      },
-      "lock_sensor": {
-        "name": "Lock"
-      },
-      "motion_sensor": {
-        "name": "Motion"
-      },
-      "opening_sensor": {
-        "name": "Opening"
-      },
-      "plug_sensor": {
-        "name": "Plug"
-      },
-      "smoke_sensor": {
-        "name": "Smoke"
-      },
-      "tamper_sensor": {
-        "name": "Tamper Alarm"
-      },
-      "window_sensor": {
-        "name": "Window"
-      }
-    },
     "switch": {
       "automatic_mode_impulse": {
         "name": "Automatic Mode Impulse"
@@ -330,9 +371,6 @@
       },
       "permanently_open_impulse": {
         "name": "Permanently Open Impulse"
-      },
-      "rain_sensor": {
-        "name": "Rain"
       },
       "reset_meter": {
         "name": "Reset Meter"
