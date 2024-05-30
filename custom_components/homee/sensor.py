@@ -64,6 +64,7 @@ MEASUREMENT_ATTRIBUTES = [
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
+    AttributeType.RAIN_FALL,
     AttributeType.RELATIVE_HUMIDITY,
     AttributeType.TEMPERATURE,
     AttributeType.TOTAL_CURRENT_ENERGY_USE,
@@ -74,6 +75,8 @@ MEASUREMENT_ATTRIBUTES = [
 
 TOTAL_INCREASING_ATTRIBUTES = [
     AttributeType.ACCUMULATED_ENERGY_USE,
+    AttributeType.RAIN_FALL_LAST_HOUR,
+    AttributeType.RAIN_FALL_TODAY,
     AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
 ]
 
@@ -139,6 +142,14 @@ def get_device_properties(attribute: HomeeAttribute):
     ]:
         device_class = SensorDeviceClass.POWER
         translation_key = "power_sensor"
+
+    if attribute.type == AttributeType.RAIN_FALL_LAST_HOUR:
+        device_class = SensorDeviceClass.PRECIPITATION
+        translation_key = "rainfall_hour_sensor"
+
+    if attribute.type == AttributeType.RAIN_FALL_TODAY:
+        device_class = SensorDeviceClass.PRECIPITATION
+        translation_key = "rainfall_day_sensor"
 
     if attribute.type == AttributeType.TEMPERATURE:
         device_class = SensorDeviceClass.TEMPERATURE

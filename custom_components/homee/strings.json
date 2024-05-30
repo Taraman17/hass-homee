@@ -95,6 +95,18 @@
       "brightness_sensor": {
         "name": "Illuminance"
       },
+      "brightness_sensor_1": {
+        "name": "Illuminance 1"
+      },
+      "brightness_sensor_2": {
+        "name": "Illuminance 2"
+      },
+      "brightness_sensor_3": {
+        "name": "Illuminance 3"
+      },
+      "brightness_sensor_4": {
+        "name": "Illuminance 4"
+      },
       "button_state_sensor": {
         "name": "Button State"
       },
@@ -175,6 +187,12 @@
       },
       "power_sensor_4": {
         "name": "Power 4"
+      },
+      "rainfall_hour_sensor": {
+        "name": "Rainfall Last Hour"
+      },
+      "rainfall_day_sensor": {
+        "name": "Rainfall Today"
       },
       "temperature_sensor": {
         "name": "Temperature"
@@ -269,6 +287,9 @@
       "plug_sensor": {
         "name": "Plug"
       },
+      "rain_sensor": {
+        "name": "Rain"
+      },
       "smoke_sensor": {
         "name": "Smoke"
       },
@@ -323,16 +344,13 @@
         "name": "Manual Operation"
       },
       "motor_rotation": {
-        "name": "Motor rotation direction"
+        "name": "Motor ro tation direction"
       },
       "open_partial_impulse": {
         "name": "Open Partial Impulse"
       },
       "permanently_open_impulse": {
         "name": "Permanently Open Impulse"
-      },
-      "rain_sensor": {
-        "name": "Rain"
       },
       "reset_meter": {
         "name": "Reset Meter"

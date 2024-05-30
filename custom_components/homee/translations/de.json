@@ -95,6 +95,18 @@
       "brightness_sensor": {
         "name": "Beleuchtungsstärke"
       },
+      "brightness_sensor_1": {
+        "name": "Beleuchtungsstärke 1"
+      },
+      "brightness_sensor_2": {
+        "name": "Beleuchtungsstärke 2"
+      },
+      "brightness_sensor_3": {
+        "name": "Beleuchtungsstärke 3"
+      },
+      "brightness_sensor_4": {
+        "name": "Beleuchtungsstärke 4"
+      },
       "button_state_sensor": {
         "name": "Schalterstellung"
       },
@@ -175,6 +187,12 @@
       },
       "power_sensor_4": {
         "name": "Leistung 4"
+      },
+      "rainfall_hour_sensor": {
+        "name": "Niederschlag Letzte Stunde"
+      },
+      "rainfall_day_sensor": {
+        "name": "Niederschlag Heute"
       },
       "temperature_sensor": {
         "name": "Temperatur"
@@ -269,6 +287,9 @@
       "plug_sensor": {
         "name": "Steckdose"
       },
+      "rain_sensor": {
+        "name": "Regen"
+      },
       "smoke_sensor": {
         "name": "Rauchalarm"
       },
@@ -330,9 +351,6 @@
       },
       "permanently_open_impulse": {
         "name": "Dauerhaft geöffnet Impuls"
-      },
-      "rain_sensor": {
-        "name": "Regen"
       },
       "reset_meter": {
         "name": "Messwerte zurücksetzen"
