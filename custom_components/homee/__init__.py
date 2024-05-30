@@ -43,6 +43,7 @@ PLATFORMS = [
     "binary_sensor",
     "climate",
     "cover",
+    "event",
     "light",
     "lock",
     "number",

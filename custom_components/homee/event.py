@@ -5,9 +5,13 @@ import logging
 from pymee.const import AttributeType
 from pymee.model import HomeeAttribute, HomeeNode
 
-from homeassistant.components.event import EventEntity
+from homeassistant.components.event import (
+    EventDeviceClass,
+    EventEntity,
+    EventEntityDescription,
+)
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 
 from . import HomeeNodeEntity
 from .helpers import get_imported_nodes
@@ -37,8 +41,13 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 class HomeeEvent(HomeeNodeEntity, EventEntity):
     """Representation of a homee event."""
 
-    _attr_has_entity_name = True
-    _attr_name = None
+    entity_description = EventEntityDescription(
+        key="up_down_remote",
+        device_class=EventDeviceClass.BUTTON,
+        event_types=["0", "1", "2", "3", "4", "5", "6", "7", "9"],
+        translation_key="up_down_remote",
+        has_entity_name=True,
+    )
 
     def __init__(
         self,
@@ -51,3 +60,9 @@ class HomeeEvent(HomeeNodeEntity, EventEntity):
         self._event = event_attribute
         self._switch_index = event_attribute.instance
         self._attr_unique_id = f"{self._node.id}-event-{self._event.id}"
+
+    @callback
+    def _async_handle_event(self, event: HomeeAttribute) -> None:
+        """Handle a homee event."""
+        self._trigger_event(int(event.current_value))
+        self.async_write_ha_state()

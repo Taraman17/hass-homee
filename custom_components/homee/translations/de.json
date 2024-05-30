@@ -88,6 +88,64 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "battery_low_sensor": {
+        "name": "Batterie schwach"
+      },
+      "door_sensor": {
+        "name": "Tür"
+      },
+      "flood_sensor": {
+        "name": "Überflutungsalarm"
+      },
+      "heat_sensor": {
+        "name": "Temperaturalarm"
+      },
+      "lock_sensor": {
+        "name": "Schloss"
+      },
+      "motion_sensor": {
+        "name": "Bewegung"
+      },
+      "opening_sensor": {
+        "name": "Opening"
+      },
+      "plug_sensor": {
+        "name": "Steckdose"
+      },
+      "rain_sensor": {
+        "name": "Regen"
+      },
+      "smoke_sensor": {
+        "name": "Rauchalarm"
+      },
+      "tamper_sensor": {
+        "name": "Manipulationsalarm"
+      },
+      "window_sensor": {
+        "name": "Fenster"
+      }
+    },
+    "event": {
+      "button": {
+        "name": "up_down_remote",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "0": "Keines",
+              "1": "Hoch",
+              "2": "Runter",
+              "3": "Stop",
+              "4": "Hoch (halten)",
+              "5": "Runter (halten)",
+              "6": "Stop (halten)",
+              "7": "C-Taste",
+              "9": "A-Taste"
+            }
+          }
+        }
+      }
+    },
     "sensor": {
       "battery_sensor": {
         "name": "Batterie"
@@ -260,44 +318,6 @@
           "1": "Offen",
           "2": "Gekippt"
         }
-      }
-    },
-    "binary_sensor": {
-      "battery_low_sensor": {
-        "name": "Batterie schwach"
-      },
-      "door_sensor": {
-        "name": "Tür"
-      },
-      "flood_sensor": {
-        "name": "Überflutungsalarm"
-      },
-      "heat_sensor": {
-        "name": "Temperaturalarm"
-      },
-      "lock_sensor": {
-        "name": "Schloss"
-      },
-      "motion_sensor": {
-        "name": "Bewegung"
-      },
-      "opening_sensor": {
-        "name": "Opening"
-      },
-      "plug_sensor": {
-        "name": "Steckdose"
-      },
-      "rain_sensor": {
-        "name": "Regen"
-      },
-      "smoke_sensor": {
-        "name": "Rauchalarm"
-      },
-      "tamper_sensor": {
-        "name": "Manipulationsalarm"
-      },
-      "window_sensor": {
-        "name": "Fenster"
       }
     },
     "switch": {
