@@ -65,7 +65,7 @@ class HomeeEvent(HomeeNodeEntity, EventEntity):
     def _async_handle_event(self, node: HomeeNode, event: HomeeAttribute) -> None:
         """Handle a homee event."""
         if event.type == AttributeType.UP_DOWN_REMOTE:
-            self._trigger_event(int(event.current_value))
+            self._trigger_event(str(int(event.current_value)))
             self.async_write_ha_state()
 
     async def async_added_to_hass(self) -> None:
