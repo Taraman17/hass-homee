@@ -62,7 +62,7 @@ class HomeeEvent(HomeeNodeEntity, EventEntity):
         self._attr_unique_id = f"{self._node.id}-event-{self._event.id}"
 
     @callback
-    def _async_handle_event(self, event: HomeeAttribute) -> None:
+    def _async_handle_event(self, node: HomeeNode, event: HomeeAttribute) -> None:
         """Handle a homee event."""
         if event.type == AttributeType.UP_DOWN_REMOTE:
             self._trigger_event(int(event.current_value))
