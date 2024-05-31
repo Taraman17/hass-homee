@@ -64,5 +64,10 @@ class HomeeEvent(HomeeNodeEntity, EventEntity):
     @callback
     def _async_handle_event(self, event: HomeeAttribute) -> None:
         """Handle a homee event."""
-        self._trigger_event(int(event.current_value))
-        self.async_write_ha_state()
+        if event.type == AttributeType.UP_DOWN_REMOTE:
+            self._trigger_event(int(event.current_value))
+            self.async_write_ha_state()
+
+    async def async_added_to_hass(self) -> None:
+        """Register callbacks with your device API/library."""
+        self._node.add_on_changed_listener(self._async_handle_event)
