@@ -127,8 +127,8 @@
       }
     },
     "event": {
-      "button": {
-        "name": "up_down_remote",
+      "up_down_remote": {
+        "name": "Up Down Remote",
         "state_attributes": {
           "event_type": {
             "state": {
