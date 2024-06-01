@@ -88,6 +88,17 @@
     }
   },
   "entity": {
+    "alarm_control_panel": {
+      "homee_status": {
+        "name": "Status",
+        "state": {
+          "armed_home": "Zuhause",
+          "armed_night": "Nacht",
+          "armed_away": "Abwesend",
+          "armed_vacation": "Urlaub"
+        }
+      }
+    },
     "binary_sensor": {
       "battery_low_sensor": {
         "name": "Batterie schwach"
@@ -126,6 +137,17 @@
         "name": "Fenster"
       }
     },
+    "climate": {
+      "homee": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "manual": "Manuell"
+            }
+          }
+        }
+      }
+    },
     "event": {
       "up_down_remote": {
         "name": "Up Down Remote",
@@ -144,6 +166,59 @@
             }
           }
         }
+      }
+    },
+    "number": {
+      "number_down_position": {
+        "name": "Untere Position"
+      },
+      "number_down_slat_position": {
+        "name": "Down Slat Position"
+      },
+      "number_down_time": {
+        "name": "Dauer Runterfahren"
+      },
+      "number_endposition_configuration": {
+        "name": "Endposition"
+      },
+      "number_motion_alarm_cancelation_delay": {
+        "name": "Bewegungsmelder Verzögerung"
+      },
+      "number_open_window_detection_sensibility": {
+        "name": "Fenster Offen Empfindlichkeit"
+      },
+      "number_polling_interval": {
+        "name": "Polling Intervall"
+      },
+      "number_shutter_slat_time": {
+        "name": "Lamellendrehzeit"
+      },
+      "number_slat_max_angle": {
+        "name": "Maximaler Lamellenwinkel"
+      },
+      "number_slat_min_angle": {
+        "name": "Minimaler Lamellenwinkel"
+      },
+      "number_slat_steps": {
+        "name": "Lamellenstufen"
+      },
+      "number_target_temperature": {
+        "name": "Zieltemperatur"
+      },
+      "number_temperature_offset": {
+        "name": "Temperatur Offset"
+      },
+      "number_up_time": {
+        "name": "Dauer Hochfahren"
+      },
+      "number_valve_position": {
+        "name": "Ventilöffnung"
+      },
+      "number_wake_up_interval": {
+        "name": "Aufwachintervall"
+      },
+      "number_wind_monitoring_state": {
+        "name": "Windüberwachung"
       }
     },
     "sensor": {
@@ -392,81 +467,6 @@
       },
       "watchdog_on_off": {
         "name": "Watchdog"
-      }
-    },
-    "alarm_control_panel": {
-      "homee_status": {
-        "name": "Status",
-        "state": {
-          "armed_home": "Zuhause",
-          "armed_night": "Nacht",
-          "armed_away": "Abwesend",
-          "armed_vacation": "Urlaub"
-        }
-      }
-    },
-    "number": {
-      "number_down_position": {
-        "name": "Untere Position"
-      },
-      "number_down_slat_position": {
-        "name": "Down Slat Position"
-      },
-      "number_down_time": {
-        "name": "Dauer Runterfahren"
-      },
-      "number_endposition_configuration": {
-        "name": "Endposition"
-      },
-      "number_motion_alarm_cancelation_delay": {
-        "name": "Bewegungsmelder Verzögerung"
-      },
-      "number_open_window_detection_sensibility": {
-        "name": "Fenster Offen Empfindlichkeit"
-      },
-      "number_polling_interval": {
-        "name": "Polling Intervall"
-      },
-      "number_shutter_slat_time": {
-        "name": "Lamellendrehzeit"
-      },
-      "number_slat_max_angle": {
-        "name": "Maximaler Lamellenwinkel"
-      },
-      "number_slat_min_angle": {
-        "name": "Minimaler Lamellenwinkel"
-      },
-      "number_slat_steps": {
-        "name": "Lamellenstufen"
-      },
-      "number_target_temperature": {
-        "name": "Zieltemperatur"
-      },
-      "number_temperature_offset": {
-        "name": "Temperatur Offset"
-      },
-      "number_up_time": {
-        "name": "Dauer Hochfahren"
-      },
-      "number_valve_position": {
-        "name": "Ventilöffnung"
-      },
-      "number_wake_up_interval": {
-        "name": "Aufwachintervall"
-      },
-      "number_wind_monitoring_state": {
-        "name": "Windüberwachung"
-      }
-    },
-    "climate": {
-      "homee": {
-        "state_attributes": {
-          "preset_mode": {
-            "state": {
-              "manual": "Manuell"
-            }
-          }
-        }
       }
     }
   },

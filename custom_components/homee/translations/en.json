@@ -88,6 +88,17 @@
     }
   },
   "entity": {
+    "alarm_control_panel": {
+      "homee_status": {
+        "name": "Status",
+        "state": {
+          "armed_home": "Home",
+          "armed_night": "Sleeping",
+          "armed_away": "Away",
+          "armed_vacation": "Vacation"
+        }
+      }
+    },
     "binary_sensor": {
       "battery_low_sensor": {
         "name": "Battery Low"
@@ -126,6 +137,17 @@
         "name": "Window"
       }
     },
+    "climate": {
+      "homee": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "manual": "Manual"
+            }
+          }
+        }
+      }
+    },
     "event": {
       "up_down_remote": {
         "name": "Up Down Remote",
@@ -144,6 +166,59 @@
             }
           }
         }
+      }
+    },
+    "number": {
+      "number_down_position": {
+        "name": "Down Position"
+      },
+      "number_down_slat_position": {
+        "name": "Down Slat Position"
+      },
+      "number_down_time": {
+        "name": "Down-movement duration"
+      },
+      "number_endposition_configuration": {
+        "name": "End position"
+      },
+      "number_motion_alarm_cancelation_delay": {
+        "name": "Motion Alarm Delay"
+      },
+      "number_open_window_detection_sensibility": {
+        "name": "Window Open Sensibility"
+      },
+      "number_polling_interval": {
+        "name": "Polling Interval"
+      },
+      "number_shutter_slat_time": {
+        "name": "Slat Turn Duration"
+      },
+      "number_slat_max_angle": {
+        "name": "Maximum Slat Angle"
+      },
+      "number_slat_min_angle": {
+        "name": "Minimum Slat Angle"
+      },
+      "number_slat_steps": {
+        "name": "Slat Steps"
+      },
+      "number_target_temperature": {
+        "name": "Target Temperature"
+      },
+      "number_temperature_offset": {
+        "name": "Temperature Offset"
+      },
+      "number_up_time": {
+        "name": "Up-movement duration"
+      },
+      "number_valve_position": {
+        "name": "Valve Position"
+      },
+      "number_wake_up_interval": {
+        "name": "Wake-Up Interval"
+      },
+      "number_wind_monitoring_state": {
+        "name": "Wind Monitoring State"
       }
     },
     "sensor": {
@@ -217,7 +292,7 @@
         "name": "Energy 4"
       },
       "relative_humidity_sensor": {
-        "name": "Relative Humidity"
+        "name": " Relative Humidity"
       },
       "link_quality_sensor": {
         "name": "Link Quality"
@@ -364,7 +439,7 @@
         "name": "Manual Operation"
       },
       "motor_rotation": {
-        "name": "Motor rotation direction"
+        "name": "Motor ro tation direction"
       },
       "open_partial_impulse": {
         "name": "Open Partial Impulse"
@@ -392,81 +467,6 @@
       },
       "watchdog_on_off": {
         "name": "Watchdog"
-      }
-    },
-    "alarm_control_panel": {
-      "homee_status": {
-        "name": "Status",
-        "state": {
-          "armed_home": "Home",
-          "armed_night": "Sleeping",
-          "armed_away": "Away",
-          "armed_vacation": "Vacation"
-        }
-      }
-    },
-    "number": {
-      "number_down_position": {
-        "name": "Down Position"
-      },
-      "number_down_slat_position": {
-        "name": "Down Slat Position"
-      },
-      "number_down_time": {
-        "name": "Down-movement duration"
-      },
-      "number_endposition_configuration": {
-        "name": "Endposition"
-      },
-      "number_motion_alarm_cancelation_delay": {
-        "name": "Motion Alarm Delay"
-      },
-      "number_open_window_detection_sensibility": {
-        "name": "Window Open Sensibility"
-      },
-      "number_polling_interval": {
-        "name": "Polling Interval"
-      },
-      "number_shutter_slat_time": {
-        "name": "Slat Turn Duration"
-      },
-      "number_slat_max_angle": {
-        "name": "Maximum Slat Angle"
-      },
-      "number_slat_min_angle": {
-        "name": "Minimum Slat Angle"
-      },
-      "number_slat_steps": {
-        "name": "Slat Steps"
-      },
-      "number_target_temperature": {
-        "name": "Target Temperature"
-      },
-      "number_temperature_offset": {
-        "name": "Temperature Offset"
-      },
-      "number_up_time": {
-        "name": "Up-movement duration"
-      },
-      "number_valve_position": {
-        "name": "Valve Position"
-      },
-      "number_wake_up_interval": {
-        "name": "Wake-Up Interval"
-      },
-      "number_wind_monitoring_state": {
-        "name": "Wind Monitoring State"
-      }
-    },
-    "climate": {
-      "homee": {
-        "state_attributes": {
-          "preset_mode": {
-            "state": {
-              "manual": "Manual"
-            }
-          }
-        }
       }
     }
   },
