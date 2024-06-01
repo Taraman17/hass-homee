@@ -1,20 +1,15 @@
 {
-    "domain": "homee",
-    "name": "homee",
-    "codeowners": [
-        "@Taraman17"
-    ],
-    "config_flow": true,
-    "dependencies": [],
-    "documentation": "https://github.com/Taraman17/hass-homee",
-    "homekit": {},
-    "integration_type": "hub",
-    "iot_class": "local_push",
-    "issue_tracker": "https://github.com/Taraman17/hass-homee/issues",
-    "requirements": [
-        "pymee==1.11.2",
-        "websockets==11.0.1"
-    ],
-    "ssdp": [],
-    "version": "2.9.3"
+  "domain": "homee",
+  "name": "homee",
+  "codeowners": ["@Taraman17"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/Taraman17/hass-homee",
+  "homekit": {},
+  "integration_type": "hub",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/Taraman17/hass-homee/issues",
+  "requirements": ["pymee==1.11.2", "websockets==11.0.1"],
+  "ssdp": [],
+  "version": "2.9.4"
 }
