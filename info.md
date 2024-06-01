@@ -25,6 +25,7 @@ Integration is in HACS Default Repositories now!
 | `binary_sensor`       | Integrate homee devices that provide binary state information like `on`/`off` or `open`/`close`.                                     |
 | `climate`             | Integrate homee devices that provide temperature and can set a target temperature. Currently only heating thermostats are supported. |
 | `cover`               | Integrate homee devices that provide motor and position functions such as blinds and shutter actuators                               |
+| `event`               | Integrate events from button remots from homee.                                                                                      |
 | `light`               | Integrate lights from homee.                                                                                                         |
 | `lock`                | Integrate locks from homee.                                                                                                          |
 | `number`              | Integrate number entities - usually settings of some kind.                                                                           |

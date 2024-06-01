@@ -59,7 +59,7 @@ def is_climate_node(node: HomeeNode):
     return node.profile in CLIMATE_PROFILES
 
 
-def get_climate_features(node: HomeeNodeEntity, default=0) -> int:
+def get_climate_features(node, default=0) -> int:
     """Determine the supported climate features of a homee node based on the available attributes."""
     features = default
     hvac_modes = [HVACMode.HEAT]

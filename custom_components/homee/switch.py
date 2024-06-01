@@ -30,12 +30,12 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.IMPULSE,
     AttributeType.LIGHT_IMPULSE,
     AttributeType.MANUAL_OPERATION,
+    AttributeType.MOTOR_ROTATION,
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.ON_OFF,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
     AttributeType.SIREN,
-    AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
     AttributeType.WATCHDOG_ON_OFF,
 ]
@@ -46,15 +46,16 @@ DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.IDENTIFICATION_MODE,
     AttributeType.LIGHT_IMPULSE,
     AttributeType.MANUAL_OPERATION,
+    AttributeType.MOTOR_ROTATION,
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
-    AttributeType.SLAT_ROTATION_IMPULSE,
     AttributeType.VENTILATE_IMPULSE,
     AttributeType.WATCHDOG_ON_OFF,
 ]
 
-CONFIG_ATTRIBUTES = [AttributeType.IDENTIFICATION_MODE, AttributeType.WATCHDOG_ON_OFF]
+CONFIG_ATTRIBUTES = [AttributeType.MOTOR_ROTATION, AttributeType.WATCHDOG_ON_OFF]
+DIAGNOSTIC_ATTRIBUTES = [AttributeType.IDENTIFICATION_MODE]
 
 
 def get_device_class(node: HomeeNode) -> SwitchDeviceClass:
@@ -69,6 +70,9 @@ def get_entity_category(attribute) -> EntityCategory | None:
     """Determine the Entity Category."""
     if attribute.type in CONFIG_ATTRIBUTES:
         return EntityCategory.CONFIG
+
+    if attribute.type in DIAGNOSTIC_ATTRIBUTES:
+        return EntityCategory.DIAGNOSTIC
 
     return None
 

@@ -88,12 +88,157 @@
     }
   },
   "entity": {
+    "alarm_control_panel": {
+      "homee_status": {
+        "name": "Status",
+        "state": {
+          "armed_home": "Zuhause",
+          "armed_night": "Nacht",
+          "armed_away": "Abwesend",
+          "armed_vacation": "Urlaub"
+        }
+      }
+    },
+    "binary_sensor": {
+      "battery_low_sensor": {
+        "name": "Batterie schwach"
+      },
+      "door_sensor": {
+        "name": "Tür"
+      },
+      "flood_sensor": {
+        "name": "Überflutungsalarm"
+      },
+      "heat_sensor": {
+        "name": "Temperaturalarm"
+      },
+      "lock_sensor": {
+        "name": "Schloss"
+      },
+      "motion_sensor": {
+        "name": "Bewegung"
+      },
+      "opening_sensor": {
+        "name": "Opening"
+      },
+      "plug_sensor": {
+        "name": "Steckdose"
+      },
+      "rain_sensor": {
+        "name": "Regen"
+      },
+      "smoke_sensor": {
+        "name": "Rauchalarm"
+      },
+      "tamper_sensor": {
+        "name": "Manipulationsalarm"
+      },
+      "window_sensor": {
+        "name": "Fenster"
+      }
+    },
+    "climate": {
+      "homee": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "manual": "Manuell"
+            }
+          }
+        }
+      }
+    },
+    "event": {
+      "up_down_remote": {
+        "name": "Up Down Remote",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "0": "Keines",
+              "1": "Hoch",
+              "2": "Runter",
+              "3": "Stop",
+              "4": "Hoch (halten)",
+              "5": "Runter (halten)",
+              "6": "Stop (halten)",
+              "7": "C-Taste",
+              "9": "A-Taste"
+            }
+          }
+        }
+      }
+    },
+    "number": {
+      "number_down_position": {
+        "name": "Untere Position"
+      },
+      "number_down_slat_position": {
+        "name": "Down Slat Position"
+      },
+      "number_down_time": {
+        "name": "Dauer Runterfahren"
+      },
+      "number_endposition_configuration": {
+        "name": "Endposition"
+      },
+      "number_motion_alarm_cancelation_delay": {
+        "name": "Bewegungsmelder Verzögerung"
+      },
+      "number_open_window_detection_sensibility": {
+        "name": "Fenster Offen Empfindlichkeit"
+      },
+      "number_polling_interval": {
+        "name": "Polling Intervall"
+      },
+      "number_shutter_slat_time": {
+        "name": "Lamellendrehzeit"
+      },
+      "number_slat_max_angle": {
+        "name": "Maximaler Lamellenwinkel"
+      },
+      "number_slat_min_angle": {
+        "name": "Minimaler Lamellenwinkel"
+      },
+      "number_slat_steps": {
+        "name": "Lamellenstufen"
+      },
+      "number_target_temperature": {
+        "name": "Zieltemperatur"
+      },
+      "number_temperature_offset": {
+        "name": "Temperatur Offset"
+      },
+      "number_up_time": {
+        "name": "Dauer Hochfahren"
+      },
+      "number_valve_position": {
+        "name": "Ventilöffnung"
+      },
+      "number_wake_up_interval": {
+        "name": "Aufwachintervall"
+      },
+      "number_wind_monitoring_state": {
+        "name": "Windüberwachung"
+      }
+    },
     "sensor": {
       "battery_sensor": {
         "name": "Batterie"
       },
       "brightness_sensor": {
         "name": "Beleuchtungsstärke"
+      },
+      "brightness_sensor_1": {
+        "name": "Beleuchtungsstärke 1"
+      },
+      "brightness_sensor_2": {
+        "name": "Beleuchtungsstärke 2"
+      },
+      "brightness_sensor_3": {
+        "name": "Beleuchtungsstärke 3"
+      },
+      "brightness_sensor_4": {
+        "name": "Beleuchtungsstärke 4"
       },
       "button_state_sensor": {
         "name": "Schalterstellung"
@@ -176,6 +321,12 @@
       "power_sensor_4": {
         "name": "Leistung 4"
       },
+      "rainfall_hour_sensor": {
+        "name": "Niederschlag Letzte Stunde"
+      },
+      "rainfall_day_sensor": {
+        "name": "Niederschlag Heute"
+      },
       "temperature_sensor": {
         "name": "Temperatur"
       },
@@ -199,6 +350,16 @@
           "2": "Teilgeöffnet",
           "3": "Öffnet",
           "4": "Schließt"
+        }
+      },
+      "up_down_sensor_rev": {
+        "name": "State",
+        "state": {
+          "0": "Geschlossen",
+          "1": "Offen",
+          "2": "Teilgeöffnet",
+          "3": "Schließt",
+          "4": "Öffnet"
         }
       },
       "uv_sensor": {
@@ -234,41 +395,6 @@
         }
       }
     },
-    "binary_sensor": {
-      "battery_low_sensor": {
-        "name": "Batterie schwach"
-      },
-      "door_sensor": {
-        "name": "Tür"
-      },
-      "flood_sensor": {
-        "name": "Überflutungsalarm"
-      },
-      "heat_sensor": {
-        "name": "Temperaturalarm"
-      },
-      "lock_sensor": {
-        "name": "Schloss"
-      },
-      "motion_sensor": {
-        "name": "Bewegung"
-      },
-      "opening_sensor": {
-        "name": "Opening"
-      },
-      "plug_sensor": {
-        "name": "Steckdose"
-      },
-      "smoke_sensor": {
-        "name": "Rauchalarm"
-      },
-      "tamper_sensor": {
-        "name": "Manipulationsalarm"
-      },
-      "window_sensor": {
-        "name": "Fenster"
-      }
-    },
     "switch": {
       "automatic_mode_impulse": {
         "name": "Automatikmodus Impuls"
@@ -277,7 +403,7 @@
         "name": "Kurzzeitig öffnen Impuls"
       },
       "identification_mode": {
-        "name": "Identifikationsmodus"
+        "name": "Erkennungsmodus"
       },
       "impulse": {
         "name": "Impuls"
@@ -312,14 +438,14 @@
       "manual_operation": {
         "name": "Handbetrieb"
       },
+      "motor_rotation": {
+        "name": "Motor Drehrichtung"
+      },
       "open_partial_impulse": {
         "name": "Teilweise öffnen Impuls"
       },
       "permanently_open_impulse": {
         "name": "Dauerhaft geöffnet Impuls"
-      },
-      "rain_sensor": {
-        "name": "Regen"
       },
       "reset_meter": {
         "name": "Messwerte zurücksetzen"
@@ -336,68 +462,11 @@
       "reset_meter_4": {
         "name": "Messwerte zurücksetzen 4"
       },
-      "slat_rotation_impulse": {
-        "name": "Lamellendrehung Impuls"
-      },
       "ventilate_ipulse": {
         "name": "Belüften Impuls"
       },
       "watchdog_on_off": {
         "name": "Watchdog"
-      }
-    },
-    "alarm_control_panel": {
-      "homee_status": {
-        "name": "Status",
-        "state": {
-          "armed_home": "Zuhause",
-          "armed_night": "Nacht",
-          "armed_away": "Abwesend",
-          "armed_vacation": "Urlaub"
-        }
-      }
-    },
-    "number": {
-      "number_down_position": {
-        "name": "Untere Position"
-      },
-      "number_endposition_configuration": {
-        "name": "Endposition"
-      },
-      "number_motion_alarm_cancelation_delay": {
-        "name": "Bewegungsmelder Verzögerung"
-      },
-      "number_open_window_detection_sensibility": {
-        "name": "Fenster Offen Empfindlichkeit"
-      },
-      "number_polling_interval": {
-        "name": "Polling Intervall"
-      },
-      "number_target_temperature": {
-        "name": "Zieltemperatur"
-      },
-      "number_temperature_offset": {
-        "name": "Temperatur Offset"
-      },
-      "number_valve_position": {
-        "name": "Ventilöffnung"
-      },
-      "number_wake_up_interval": {
-        "name": "Aufwachintervall"
-      },
-      "number_wind_monitoring_state": {
-        "name": "Windüberwachung"
-      }
-    },
-    "climate": {
-      "homee": {
-        "state_attributes": {
-          "preset_mode": {
-            "state": {
-              "manual": "Manuell"
-            }
-          }
-        }
       }
     }
   },

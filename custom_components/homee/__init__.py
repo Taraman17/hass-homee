@@ -43,6 +43,7 @@ PLATFORMS = [
     "binary_sensor",
     "climate",
     "cover",
+    "event",
     "light",
     "lock",
     "number",
@@ -365,6 +366,15 @@ class HomeeNodeEntity:
     def has_attribute(self, attribute_type):
         """Check if an attribute of the given type exists."""
         return attribute_type in self._node._attribute_map
+
+    def is_reversed(self, attribute_type) -> bool:
+        """Check if movement direction is reversed."""
+        attribute = self._node.get_attribute_by_type(attribute_type)
+        if hasattr(attribute.options, "reverse_control_ui"):
+            if attribute.options.reverse_control_ui:
+                return True
+
+        return False
 
     async def async_set_value(self, attribute_type: int, value: float):
         """Set an attribute value on the homee node."""

@@ -64,6 +64,7 @@ MEASUREMENT_ATTRIBUTES = [
     AttributeType.DEVICE_TEMPERATURE,
     AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
+    AttributeType.RAIN_FALL,
     AttributeType.RELATIVE_HUMIDITY,
     AttributeType.TEMPERATURE,
     AttributeType.TOTAL_CURRENT_ENERGY_USE,
@@ -74,6 +75,8 @@ MEASUREMENT_ATTRIBUTES = [
 
 TOTAL_INCREASING_ATTRIBUTES = [
     AttributeType.ACCUMULATED_ENERGY_USE,
+    AttributeType.RAIN_FALL_LAST_HOUR,
+    AttributeType.RAIN_FALL_TODAY,
     AttributeType.TOTAL_ACCUMULATED_ENERGY_USE,
 ]
 
@@ -139,6 +142,14 @@ def get_device_properties(attribute: HomeeAttribute):
     ]:
         device_class = SensorDeviceClass.POWER
         translation_key = "power_sensor"
+
+    if attribute.type == AttributeType.RAIN_FALL_LAST_HOUR:
+        device_class = SensorDeviceClass.PRECIPITATION
+        translation_key = "rainfall_hour_sensor"
+
+    if attribute.type == AttributeType.RAIN_FALL_TODAY:
+        device_class = SensorDeviceClass.PRECIPITATION
+        translation_key = "rainfall_day_sensor"
 
     if attribute.type == AttributeType.TEMPERATURE:
         device_class = SensorDeviceClass.TEMPERATURE
@@ -229,16 +240,24 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         self._measurement = measurement_attribute
         (
             self._device_class,
-            self._attr_translation_key,
+            self._translation_key,
             self._attr_icon,
             self._attr_entity_category,
         ) = get_device_properties(measurement_attribute)
         self._state_class = get_state_class(measurement_attribute)
         self._sensor_index = measurement_attribute.instance
-        if self.translation_key is None:
+        if self._translation_key is None:
             self._attr_name = None
 
         self._attr_unique_id = f"{self._node.id}-sensor-{self._measurement.id}"
+
+    @property
+    def translation_key(self) -> str:
+        """Return the translation key of the sensor entity."""
+        if self.is_reversed(self._measurement.type):
+            return f"{self._translation_key}_rev"
+
+        return self._translation_key
 
     @property
     def native_value(self):

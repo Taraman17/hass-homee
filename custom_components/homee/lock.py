@@ -16,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
-    """Add the homee platform for the switch component."""
+    """Add the homee platform for the lock component."""
 
     devices = []
     for node in get_imported_nodes(hass, config_entry):
