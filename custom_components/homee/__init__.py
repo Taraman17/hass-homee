@@ -370,10 +370,9 @@ class HomeeNodeEntity:
     def is_reversed(self, attribute_type) -> bool:
         """Check if movement direction is reversed."""
         attribute = self._node.get_attribute_by_type(attribute_type)
-        if hasattr(attribute, "options"):
-            if hasattr(attribute.options, "reverse_control_ui"):
-                if attribute.options.reverse_control_ui:
-                    return True
+        if hasattr(attribute.options, "reverse_control_ui"):
+            if attribute.options.reverse_control_ui:
+                return True
 
         return False
 
