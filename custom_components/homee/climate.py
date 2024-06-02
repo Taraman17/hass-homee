@@ -113,7 +113,7 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     @property
     def hvac_mode(self) -> HVACMode:
         """Return the hvac operation mode."""
-        if self._node.profile not in ROOM_THERMOSTATS:
+        if ClimateEntityFeature.TURN_OFF in self.supported_features:
             if self.get_attribute(AttributeType.HEATING_MODE).current_value == 0:
                 return HVACMode.OFF
 
@@ -122,14 +122,13 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     @property
     def hvac_action(self) -> HVACAction:
         """Return the hvac action."""
-        if self._node.profile not in ROOM_THERMOSTATS:
+        if ClimateEntityFeature.TURN_OFF in self.supported_features:
             if self.get_attribute(AttributeType.HEATING_MODE).current_value == 0:
                 return HVACAction.OFF
 
-            if self.attribute(AttributeType.CURRENT_VALVE_POSITION) > 0:
-                return HVACAction.HEATING
-
-            return HVACAction.IDLE
+        if self.has_attribute(AttributeType.CURRENT_VALVE_POSITION):
+            if self.attribute(AttributeType.CURRENT_VALVE_POSITION) == 0:
+                return HVACAction.IDLE
 
         if self.current_temperature >= self.target_temperature:
             return HVACAction.IDLE
@@ -139,7 +138,7 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     @property
     def preset_mode(self) -> str:
         """Return the present preset mode."""
-        if self.has_attribute(AttributeType.HEATING_MODE):
+        if ClimateEntityFeature.PRESET_MODE in self.supported_features:
             if self.attribute(AttributeType.HEATING_MODE) == 2:
                 return PRESET_ECO
             if self.attribute(AttributeType.HEATING_MODE) == 3:
