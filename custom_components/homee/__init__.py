@@ -67,8 +67,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         user=entry.data[CONF_USERNAME],
         password=entry.data[CONF_PASSWORD],
         device="pymee_" + hass.config.location_name,
-        reconnectInterval=10,
-        maxRetries=100,
+        reconnect_interval=10,
+        max_retries=100,
     )
 
     # Start the homee websocket connection as a new task
@@ -168,7 +168,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         # TODO: figure out how to derive the MAC address -
         # will need to update pymee?
         # connections={(dr.CONNECTION_NETWORK_MAC, entry.mac)},
-        identifiers={(DOMAIN, homee.deviceId)},
+        identifiers={(DOMAIN, homee.device_id)},
         manufacturer="homee",
         name=homee.settings.homee_name,
         model="homee",

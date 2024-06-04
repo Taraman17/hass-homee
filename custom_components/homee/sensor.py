@@ -332,7 +332,7 @@ class HomeeNodeSensor(SensorEntity):
         homee: Homee = self.hass.data[DOMAIN][self._entry.entry_id]
         if self._node.id == -1:
             return DeviceInfo(
-                identifiers={(DOMAIN, homee.deviceId)},
+                identifiers={(DOMAIN, homee.device_id)},
             )
 
         return DeviceInfo(
