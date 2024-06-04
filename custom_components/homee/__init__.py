@@ -32,7 +32,7 @@ from .const import (
     SERVICE_SET_VALUE,
     SERVICE_UPDATE_ENTITY,
 )
-from .helpers import get_attribute_for_enum
+from .helpers import get_attribute_for_enum_new
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -299,7 +299,7 @@ class HomeeNodeEntity:
             },
             "name": self._node.name,
             "manufacturer": "unknown",
-            "model": get_attribute_for_enum(
+            "model": get_attribute_for_enum_new(
                 NodeProfile, self._homee_data["profile"]
             ).lower(),
             "sw_version": sw_version,

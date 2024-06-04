@@ -10,7 +10,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity
-from .helpers import get_attribute_for_enum, get_imported_nodes
+from .helpers import get_attribute_for_enum_new, get_imported_nodes
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class HomeeLock(HomeeNodeEntity, LockEntity):
     @property
     def changed_by(self) -> str:
         """Return by what the lock was last changed."""
-        return f"{get_attribute_for_enum(AttributeChangedBy, self._lock.changed_by)}-{self._lock.changed_by_id}"
+        return f"{get_attribute_for_enum_new(AttributeChangedBy, self._lock.changed_by)}-{self._lock.changed_by_id}"
 
     async def async_lock(self, **kwargs):
         """Lock all or specified locks. A code to lock the lock with may optionally be specified."""

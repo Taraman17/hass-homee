@@ -1,4 +1,5 @@
 """Helper functions for the homee custom component."""
+
 import inspect
 
 from pymee import Homee
@@ -51,3 +52,8 @@ def get_attribute_for_enum(att_class, att_id):
     if not attribute_label:
         return None
     return attribute_label[0]
+
+
+def get_attribute_for_enum_new(att_class, att_id):
+    """Return the attribute label for a given integer."""
+    return att_class(att_id).name
