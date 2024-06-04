@@ -84,7 +84,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         _LOGGER.info(
             "Found node %s, with following Data: %s",
             node.name,
-            node._data,
+            node.raw_data,
         )
 
     hass.data[DOMAIN][entry.entry_id] = homee
@@ -319,7 +319,7 @@ class HomeeNodeEntity:
     @property
     def raw_data(self):
         """Return the raw data of the node."""
-        return self._node._data
+        return self._node.raw_data
 
     @property
     def extra_state_attributes(self) -> dict[str, dict]:
@@ -332,8 +332,8 @@ class HomeeNodeEntity:
         return data if data else None
 
     async def async_update(self):
-        """Fetch new state data for this light."""
-        self._node._remap_attributes()
+        """Fetch new state data for this node."""
+        self._node.remap_attributes()
 
     def register_listener(self):
         """Register the on_changed listener on the node."""
@@ -350,7 +350,7 @@ class HomeeNodeEntity:
         """Try to get the current value of the attribute of the given type."""
         try:
             attribute = self._node.get_attribute_by_type(attribute_type)
-        except Exception:
+        except KeyError:
             raise AttributeNotFoundException(attribute_type) from None
 
         # If the unit of the attribute is 'text', it is stored in .data
@@ -365,7 +365,7 @@ class HomeeNodeEntity:
 
     def has_attribute(self, attribute_type):
         """Check if an attribute of the given type exists."""
-        return attribute_type in self._node._attribute_map
+        return attribute_type in self._node.attribute_map
 
     def is_reversed(self, attribute_type) -> bool:
         """Check if movement direction is reversed."""
