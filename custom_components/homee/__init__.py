@@ -179,10 +179,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     # async_setup_devices(hass, homee, entry)
 
     # Forward entry setup to the platforms
-    for component in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, component)
-        )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     entry.async_on_unload(entry.add_update_listener(async_update_entry))
 
