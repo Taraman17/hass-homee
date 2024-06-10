@@ -32,7 +32,7 @@ from .const import (
     SERVICE_SET_VALUE,
     SERVICE_UPDATE_ENTITY,
 )
-from .helpers import get_attribute_for_enum
+from .helpers import get_name_for_enum
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -67,8 +67,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         user=entry.data[CONF_USERNAME],
         password=entry.data[CONF_PASSWORD],
         device="pymee_" + hass.config.location_name,
-        reconnectInterval=10,
-        maxRetries=100,
+        reconnect_interval=10,
+        max_retries=100,
     )
 
     # Start the homee websocket connection as a new task
@@ -84,7 +84,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         _LOGGER.info(
             "Found node %s, with following Data: %s",
             node.name,
-            node._data,
+            node.raw_data,
         )
 
     hass.data[DOMAIN][entry.entry_id] = homee
@@ -168,7 +168,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         # TODO: figure out how to derive the MAC address -
         # will need to update pymee?
         # connections={(dr.CONNECTION_NETWORK_MAC, entry.mac)},
-        identifiers={(DOMAIN, homee.deviceId)},
+        identifiers={(DOMAIN, homee.device_id)},
         manufacturer="homee",
         name=homee.settings.homee_name,
         model="homee",
@@ -179,10 +179,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     # async_setup_devices(hass, homee, entry)
 
     # Forward entry setup to the platforms
-    for component in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, component)
-        )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     entry.async_on_unload(entry.add_update_listener(async_update_entry))
 
@@ -299,7 +296,7 @@ class HomeeNodeEntity:
             },
             "name": self._node.name,
             "manufacturer": "unknown",
-            "model": get_attribute_for_enum(
+            "model": get_name_for_enum(
                 NodeProfile, self._homee_data["profile"]
             ).lower(),
             "sw_version": sw_version,
@@ -319,7 +316,7 @@ class HomeeNodeEntity:
     @property
     def raw_data(self):
         """Return the raw data of the node."""
-        return self._node._data
+        return self._node.raw_data
 
     @property
     def extra_state_attributes(self) -> dict[str, dict]:
@@ -332,8 +329,8 @@ class HomeeNodeEntity:
         return data if data else None
 
     async def async_update(self):
-        """Fetch new state data for this light."""
-        self._node._remap_attributes()
+        """Fetch new state data for this node."""
+        self._node.remap_attributes()
 
     def register_listener(self):
         """Register the on_changed listener on the node."""
@@ -350,7 +347,7 @@ class HomeeNodeEntity:
         """Try to get the current value of the attribute of the given type."""
         try:
             attribute = self._node.get_attribute_by_type(attribute_type)
-        except Exception:
+        except KeyError:
             raise AttributeNotFoundException(attribute_type) from None
 
         # If the unit of the attribute is 'text', it is stored in .data
@@ -365,7 +362,7 @@ class HomeeNodeEntity:
 
     def has_attribute(self, attribute_type):
         """Check if an attribute of the given type exists."""
-        return attribute_type in self._node._attribute_map
+        return attribute_type in self._node.attribute_map
 
     def is_reversed(self, attribute_type) -> bool:
         """Check if movement direction is reversed."""

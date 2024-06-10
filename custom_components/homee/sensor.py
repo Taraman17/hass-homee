@@ -323,7 +323,7 @@ class HomeeNodeSensor(SensorEntity):
         value = getattr(self._node, self._prop_name)
         att_class = {"state": NodeState, "protocol": NodeProtocol}
 
-        state = helpers.get_attribute_for_enum(att_class[self._prop_name], value)
+        state = helpers.get_name_for_enum(att_class[self._prop_name], value)
         return state.lower()
 
     @property
@@ -332,7 +332,7 @@ class HomeeNodeSensor(SensorEntity):
         homee: Homee = self.hass.data[DOMAIN][self._entry.entry_id]
         if self._node.id == -1:
             return DeviceInfo(
-                identifiers={(DOMAIN, homee.deviceId)},
+                identifiers={(DOMAIN, homee.device_id)},
             )
 
         return DeviceInfo(
