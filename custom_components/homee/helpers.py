@@ -1,6 +1,7 @@
 """Helper functions for the homee custom component."""
 
 import inspect
+import logging
 
 from pymee import Homee
 from pymee.model import HomeeNode
@@ -9,6 +10,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from .const import CONF_ALL_DEVICES, CONF_GROUPS, CONF_IMPORT_GROUPS, DOMAIN
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def get_imported_nodes(
@@ -41,19 +44,13 @@ def get_imported_nodes(
     return nodes
 
 
-def get_attribute_for_enum(att_class, att_id):
-    """Return the attribute label for a given integer."""
-    attributes = [
-        a
-        for a in inspect.getmembers(att_class, lambda a: not inspect.isroutine(a))
-        if not (a[0].startswith("__") and a[0].endswith("__"))
-    ]
-    attribute_label = [a[0] for a in attributes if a[1] == att_id]
-    if not attribute_label:
-        return None
-    return attribute_label[0]
+def get_name_for_enum(att_class, att_id):
+    """Return the enum item name for a given integer."""
+    try:
+        attribute_name = att_class(att_id).name
+    except ValueError as e:
+        _LOGGER.warning("Value %s does not exist in %s", att_id, att_class.__name__)
+        return "Unknown"
 
+    return attribute_name
 
-def get_attribute_for_enum_new(att_class, att_id):
-    """Return the attribute label for a given integer."""
-    return att_class(att_id).name
