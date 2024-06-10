@@ -11,5 +11,5 @@
   "issue_tracker": "https://github.com/Taraman17/hass-homee/issues",
   "requirements": ["pymee==2.0.0", "websockets==11.0.1"],
   "ssdp": [],
-  "version": "2.9.5"
+  "version": "2.9.6"
 }
