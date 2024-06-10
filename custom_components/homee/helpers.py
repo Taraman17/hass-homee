@@ -1,6 +1,5 @@
 """Helper functions for the homee custom component."""
 
-import inspect
 import logging
 
 from pymee import Homee
@@ -48,7 +47,7 @@ def get_name_for_enum(att_class, att_id):
     """Return the enum item name for a given integer."""
     try:
         attribute_name = att_class(att_id).name
-    except ValueError as e:
+    except ValueError:
         _LOGGER.warning("Value %s does not exist in %s", att_id, att_class.__name__)
         return "Unknown"
 
