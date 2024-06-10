@@ -12,7 +12,7 @@ from homeassistant.core import HomeAssistant
 
 from . import HomeeNodeEntity
 from .const import CLIMATE_PROFILES, LIGHT_PROFILES
-from .helpers import get_attribute_for_enum, get_imported_nodes
+from .helpers import get_name_for_enum, get_imported_nodes
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -130,7 +130,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         # If a switch is the main feature of a device it will get its name.
         translation_key = None
 
-        attribute_name = get_attribute_for_enum(AttributeType, self._on_off.type)
+        attribute_name = get_name_for_enum(AttributeType, self._on_off.type)
 
         # If a switch type has more than one instance,
         # it will be named and numbered.
