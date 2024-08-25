@@ -1,8 +1,6 @@
 """Config flow for homee integration."""
-import asyncio
 import logging
 
-# import homeassistant.helpers.config_validation as cv
 from pymee import (
     AuthenticationFailedException as HomeeAuthenticationFailedException,
     Homee,
@@ -33,6 +31,25 @@ default_options = {
     "add_homee_data": False,
 }
 
+AUTH_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_HOST): str,
+        vol.Required(CONF_USERNAME): str,
+        vol.Required(CONF_PASSWORD): str,
+        vol.Required(CONF_ALL_DEVICES, default="all"): SelectSelector(
+            SelectSelectorConfig(
+                options=["all", "groups"],
+                translation_key="all_devices_or_groups",
+                multiple=False,
+            )
+        ),
+        vol.Required(
+            CONF_ADD_HOMEE_DATA,
+            default=default_options.get(CONF_ADD_HOMEE_DATA),
+        ): bool,
+    }
+)
+
 
 async def validate_and_connect(hass: core.HomeAssistant, data) -> Homee:
     """Validate the user input allows us to connect."""
@@ -48,7 +65,7 @@ async def validate_and_connect(hass: core.HomeAssistant, data) -> Homee:
         _LOGGER.info("Got access token for homee")
     except HomeeAuthenticationFailedException as exc:
         raise InvalidAuth from exc
-    except asyncio.TimeoutError as exc:
+    except TimeoutError as exc:
         raise CannotConnect from exc
 
     hass.loop.create_task(homee.run())
@@ -85,24 +102,6 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input=None):
         """Handle the initial user step."""
-        AUTH_SCHEMA = vol.Schema(
-            {
-                vol.Required(CONF_HOST): str,
-                vol.Required(CONF_USERNAME): str,
-                vol.Required(CONF_PASSWORD): str,
-                vol.Required(CONF_ALL_DEVICES, default="all"): SelectSelector(
-                    SelectSelectorConfig(
-                        options=["all", "groups"],
-                        translation_key="all_devices_or_groups",
-                        multiple=False,
-                    )
-                ),
-                vol.Required(
-                    CONF_ADD_HOMEE_DATA,
-                    default=default_options.get(CONF_ADD_HOMEE_DATA),
-                ): bool,
-            }
-        )
 
         errors = {}
         if user_input is not None:
