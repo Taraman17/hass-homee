@@ -207,9 +207,9 @@ class HomeeCover(HomeeNodeEntity, CoverEntity):
 
         if self._open_close_attribute is not None:
             if not self.is_reversed(self._open_close_attribute):
-                return self.attribute(self._open_close_attribute) == 0
+                return self.attribute(self._open_close_attribute) == 1
 
-            return self.attribute(self._open_close_attribute) == 1
+            return self.attribute(self._open_close_attribute) == 0
 
         # If none of the above is present, it might be a slat only cover.
         if self.has_attribute(AttributeType.SHUTTER_SLAT_POSITION):
