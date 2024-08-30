@@ -1,6 +1,6 @@
 """Test the Homee config flow."""
 
-from unittest.mock import MagicMock, patch, ANY
+from unittest.mock import MagicMock, ANY
 
 from homeassistant.config_entries import SOURCE_USER
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
@@ -16,7 +16,6 @@ from custom_components.homee.const import (
     CONF_WINDOW_GROUPS,
     DOMAIN,
 )
-from pymee import AuthenticationFailedException
 
 from .conftest import (
     HOMEE_ID,
@@ -94,6 +93,7 @@ async def test_flow(hass: HomeAssistant, mock_homee: MagicMock) -> None:
 
     assert expected == final_result
 
+
 async def test_flow_only_groups(hass: HomeAssistant, mock_homee: MagicMock) -> None:
     """Test the Config Flow with "only groups" option."""
     result = await hass.config_entries.flow.async_init(
@@ -119,6 +119,7 @@ async def test_flow_only_groups(hass: HomeAssistant, mock_homee: MagicMock) -> N
         groups_result["data_schema"].schema.items.__sizeof__()
         == SCHEMA_IMPORT_GROUPS.schema.items.__sizeof__()
     )
+
 
 async def test_flow_already_configured(
     hass: HomeAssistant,
