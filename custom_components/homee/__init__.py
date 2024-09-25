@@ -4,9 +4,6 @@ import asyncio
 import logging
 import re
 
-from pymee import Homee
-from pymee.const import AttributeType, NodeProfile
-from pymee.model import HomeeAttribute, HomeeNode
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
@@ -15,6 +12,9 @@ from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import Entity
+from pymee import Homee
+from pymee.const import AttributeType, NodeProfile
+from pymee.model import HomeeAttribute, HomeeNode
 
 from .const import (
     ATTR_ATTRIBUTE,
@@ -216,6 +216,11 @@ async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload homee integration after config change."""
     await hass.config_entries.async_reload(entry.entry_id)
 
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, config_entry: ConfigEntry, device_entry: dr.DeviceEntry
+) -> bool:
+    """Remove a config entry from a device."""
+    return True
 
 async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     """Migrate old entry."""
