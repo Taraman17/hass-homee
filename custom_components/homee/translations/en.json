@@ -292,7 +292,7 @@
         "name": "Energy 4"
       },
       "relative_humidity_sensor": {
-        "name": " Relative Humidity"
+        "name": "Relative Humidity"
       },
       "link_quality_sensor": {
         "name": "Link Quality"

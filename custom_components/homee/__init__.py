@@ -220,6 +220,15 @@ async def async_remove_config_entry_device(
     hass: HomeAssistant, config_entry: ConfigEntry, device_entry: dr.DeviceEntry
 ) -> bool:
     """Remove a config entry from a device."""
+    homee = hass.data[DOMAIN][config_entry.entry_id]
+    model = NodeProfile[device_entry.model.upper()].value
+    for node in homee.nodes:
+        # 'identifiers' is a set of tuples, so we need to check for the tuple.
+        if ('homee', node.id) in device_entry.identifiers:
+            if node.profile == model:
+                # If Node is still present in Homee, don't delete.
+                return False
+
     return True
 
 async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
