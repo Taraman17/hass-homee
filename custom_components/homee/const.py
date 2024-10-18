@@ -17,6 +17,7 @@ ATTR_VALUE = "value"
 
 # Profile Groups
 CLIMATE_PROFILES = [
+    NodeProfile.COSI_THERM_CHANNEL,
     NodeProfile.HEATING_SYSTEM,
     NodeProfile.RADIATOR_THERMOSTAT,
     NodeProfile.ROOM_THERMOSTAT,

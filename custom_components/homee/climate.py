@@ -37,7 +37,7 @@ ROOM_THERMOSTATS = {
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
-    """Add the homee platform for the light integration."""
+    """Add the homee platform for the climate integration."""
     # homee: Homee = hass.data[DOMAIN][config_entry.entry_id]
 
     devices = []
@@ -49,18 +49,18 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
         async_add_devices(devices)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry): # pylint: disable=unused-argument
     """Unload a config entry."""
     return True
 
 
 def is_climate_node(node: HomeeNode):
-    """Determine if a node is controllable as a homee light based on it's profile and attributes."""
+    """Determine if a node is controllable as a climate device based on it's profile."""
     return node.profile in CLIMATE_PROFILES
 
 
 def get_climate_features(node, default=0) -> int:
-    """Determine the supported climate features of a homee node based on the available attributes."""
+    """Determine supported climate features of a node based on the available attributes."""
     features = default
     hvac_modes = [HVACMode.HEAT]
     preset_modes = []
@@ -78,7 +78,7 @@ def get_climate_features(node, default=0) -> int:
             features |= ClimateEntityFeature.PRESET_MODE
             preset_modes.extend([PRESET_BOOST, PRESET_ECO, PRESET_MANUAL])
 
-    preset_modes = None if preset_modes.count == 0 else [*preset_modes, PRESET_NONE]
+    preset_modes = None if len(preset_modes) == 0 else [*preset_modes, PRESET_NONE]
     return (features, hvac_modes, preset_modes)
 
 
@@ -185,6 +185,7 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
 
     async def async_set_preset_mode(self, preset_mode):
         """Set new target preset mode."""
+        preset = 0
         if preset_mode == PRESET_NONE:
             preset = 1
         if preset_mode == PRESET_ECO:
