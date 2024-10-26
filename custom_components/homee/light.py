@@ -2,9 +2,6 @@
 
 import logging
 
-from pymee.const import AttributeType
-from pymee.model import HomeeNode
-
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
     ATTR_COLOR_TEMP,
@@ -15,11 +12,15 @@ from homeassistant.components.light import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.util.color import (
+    brightness_to_value,
     color_hs_to_RGB,
     color_RGB_to_hs,
     color_temperature_kelvin_to_mired,
     color_temperature_mired_to_kelvin,
+    value_to_brightness,
 )
+from pymee.const import AttributeType
+from pymee.model import HomeeNode
 
 from . import HomeeNodeEntity, helpers
 from .const import HOMEE_LIGHT_MAX_MIRED, HOMEE_LIGHT_MIN_MIRED, LIGHT_PROFILES
@@ -141,7 +142,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 def is_light_node(node: HomeeNode):
     """Determine if a node is controllable as a homee light based on its profile and attributes."""
     return (
-        node.profile in LIGHT_PROFILES and AttributeType.ON_OFF in node._attribute_map
+        node.profile in LIGHT_PROFILES and AttributeType.ON_OFF in node.attribute_map
     )
 
 
@@ -171,14 +172,16 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
         """Return the name if set, else a generic name."""
         if self._light_index == 0:
             return None
-        else:
-            return f"light {self._light_index + 1}"
+
+        return f"light {self._light_index + 1}"
 
     @property
     def brightness(self):
         """Return the brightness of the light."""
-        # TODO: use value_to_brightness introduced in core 2023.12
-        return self._dimmer_attr.current_value * 2.55
+        return value_to_brightness(
+            (self._dimmer_attr.minimum + 1, self._dimmer_attr.maximum),
+            self._dimmer_attr.current_value,
+        )
 
     @property
     def hs_color(self):
@@ -208,7 +211,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
     def color_temp(self):
         """Return the color temperature of the light."""
         return color_temperature_kelvin_to_mired(
-            self.get_attribute(self._temp_attr.current_value)
+            self._temp_attr.current_value
         )
 
     @property
@@ -219,11 +222,13 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
     async def async_turn_on(self, **kwargs):
         """Instruct the light to turn on."""
         if ATTR_BRIGHTNESS in kwargs and self._dimmer_attr is not None:
-            await self.async_set_value_by_id(
-                self._dimmer_attr.id,
-                kwargs[ATTR_BRIGHTNESS] / 2.55,
-                # TODO use percentage_to_ranged_value introduced in core 2023.12
+            target_value = round(
+                brightness_to_value(
+                    (self._dimmer_attr.minimum, self._dimmer_attr.maximum),
+                    kwargs[ATTR_BRIGHTNESS],
+                )
             )
+            await self.async_set_value_by_id(self._dimmer_attr.id, target_value)
         else:
             # If no brightness value is given, just torn on.
             await self.async_set_value_by_id(self._on_off_attr.id, 1)
