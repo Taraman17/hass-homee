@@ -2,17 +2,17 @@
 
 import logging
 
-from pymee import Homee
-from pymee.const import AttributeType
-from pymee.model import HomeeAttribute, HomeeNode
-
 from homeassistant.components.alarm_control_panel import (
     AlarmControlPanelEntity,
     AlarmControlPanelEntityFeature,
+    AlarmControlPanelState,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
+from pymee import Homee
+from pymee.const import AttributeType
+from pymee.model import HomeeAttribute, HomeeNode
 
 from . import HomeeNodeEntity, helpers
 from .const import DOMAIN
@@ -29,6 +29,8 @@ def get_features(attribute) -> int:
             | AlarmControlPanelEntityFeature.ARM_NIGHT
             | AlarmControlPanelEntityFeature.ARM_VACATION
         )
+
+    return None
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
@@ -83,17 +85,15 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
         )
 
     @property
-    def state(self) -> str:
+    def alarm_state(self) -> str:
         """Return current state."""
         curr_state = int(self._alarm_panel_attribute.current_value)
-
         return {
-            0: "armed_home",
-            1: "armed_night",
-            2: "armed_away",
-            3: "armed_vacation",
+            0: AlarmControlPanelState.ARMED_HOME,
+            1: AlarmControlPanelState.ARMED_NIGHT,
+            2: AlarmControlPanelState.ARMED_AWAY,
+            3: AlarmControlPanelState.ARMED_VACATION,
         }.get(curr_state)
-        # return int(self._alarm_panel_attribute.current_value)
 
     async def async_alarm_disarm(self, code=None) -> None:
         """Send disarm command."""
