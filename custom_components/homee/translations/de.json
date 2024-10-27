@@ -112,14 +112,26 @@
       "heat_sensor": {
         "name": "Temperaturalarm"
       },
+      "load_alarm_sensor": {
+        "name": "Verbraucheralarm"
+      },
       "lock_sensor": {
         "name": "Schloss"
+      },
+      "malfunction_sensor": {
+        "name": "Fehleralarm"
       },
       "motion_sensor": {
         "name": "Bewegung"
       },
       "opening_sensor": {
         "name": "Opening"
+      },
+      "overcurrent_sensor": {
+        "name": "Überstromalarm"
+      },
+      "overload_sensor": {
+        "name": "Überlastungsalarm"
       },
       "plug_sensor": {
         "name": "Steckdose"
@@ -130,8 +142,14 @@
       "smoke_sensor": {
         "name": "Rauchalarm"
       },
+      "surge_sensor": {
+        "name": "Kurzschlussalarm"
+      },
       "tamper_sensor": {
         "name": "Manipulationsalarm"
+      },
+      "voltage_drop_sensor": {
+        "name": "Spannungsabfallalarm"
       },
       "window_sensor": {
         "name": "Fenster"
@@ -402,6 +420,9 @@
       "briefly_open_impulse": {
         "name": "Kurzzeitig öffnen Impuls"
       },
+      "external_binary_input": {
+        "name": "Kindersicherung"
+      },
       "identification_mode": {
         "name": "Erkennungsmodus"
       },
@@ -464,6 +485,9 @@
       },
       "restore_last_known_state": {
         "name": "Letzten Status wiederherstellen"
+      },
+      "switch_type": {
+        "name": "Schaltertyp"
       },
       "ventilate_ipulse": {
         "name": "Belüften Impuls"
