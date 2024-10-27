@@ -462,6 +462,9 @@
       "reset_meter_4": {
         "name": "Messwerte zurücksetzen 4"
       },
+      "restore_last_known_state": {
+        "name": "Letzten Status wiederherstellen"
+      },
       "ventilate_ipulse": {
         "name": "Belüften Impuls"
       },

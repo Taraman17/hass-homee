@@ -2,17 +2,16 @@
 
 import logging
 
-from pymee.const import AttributeType, NodeProfile
-from pymee.model import HomeeAttribute, HomeeNode
-
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from pymee.const import AttributeType, NodeProfile
+from pymee.model import HomeeAttribute, HomeeNode
 
 from . import HomeeNodeEntity
 from .const import CLIMATE_PROFILES, LIGHT_PROFILES
-from .helpers import get_name_for_enum, get_imported_nodes
+from .helpers import get_imported_nodes, get_name_for_enum
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,6 +34,7 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.ON_OFF,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
+    AttributeType.RESTORE_LAST_KNOWN_STATE,
     AttributeType.SIREN,
     AttributeType.VENTILATE_IMPULSE,
     AttributeType.WATCHDOG_ON_OFF,
@@ -50,11 +50,17 @@ DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
+    AttributeType.RESTORE_LAST_KNOWN_STATE,
     AttributeType.VENTILATE_IMPULSE,
     AttributeType.WATCHDOG_ON_OFF,
 ]
 
-CONFIG_ATTRIBUTES = [AttributeType.MOTOR_ROTATION, AttributeType.WATCHDOG_ON_OFF]
+CONFIG_ATTRIBUTES = [
+    AttributeType.MOTOR_ROTATION,
+    AttributeType.RESET_METER,
+    AttributeType.RESTORE_LAST_KNOWN_STATE,
+    AttributeType.WATCHDOG_ON_OFF,
+]
 DIAGNOSTIC_ATTRIBUTES = [AttributeType.IDENTIFICATION_MODE]
 
 
