@@ -45,9 +45,6 @@ LIGHT_PROFILES = [
     NodeProfile.WIFI_ON_OFF_DIMMABLE_METERING_SWITCH,
 ]
 
-HOMEE_LIGHT_MIN_MIRED = 153
-HOMEE_LIGHT_MAX_MIRED = 556
-
 # Options
 CONF_INITIAL_OPTIONS = "initial_options"
 CONF_ALL_DEVICES = "all_devices_or_groups"
