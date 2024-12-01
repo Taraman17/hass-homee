@@ -2,9 +2,9 @@
 
 import logging
 
-from pymee import Homee
-from pymee.const import AttributeType, NodeProtocol, NodeState
-from pymee.model import HomeeAttribute, HomeeNode
+from pyHomee import Homee
+from pyHomee.const import AttributeType, NodeProtocol, NodeState
+from pyHomee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,

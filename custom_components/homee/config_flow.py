@@ -1,7 +1,8 @@
 """Config flow for homee integration."""
+
 import logging
 
-from pymee import (
+from pyHomee import (
     AuthenticationFailedException as HomeeAuthenticationFailedException,
     Homee,
 )

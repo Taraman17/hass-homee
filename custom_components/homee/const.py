@@ -1,6 +1,6 @@
 """Constants for the homee integration."""
 
-from pymee.const import NodeProfile
+from pyHomee.const import NodeProfile
 
 # General
 DOMAIN = "homee"

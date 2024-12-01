@@ -6,8 +6,8 @@ from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
-from pymee.const import AttributeType, NodeProfile
-from pymee.model import HomeeAttribute, HomeeNode
+from pyHomee.const import AttributeType, NodeProfile
+from pyHomee.model import HomeeAttribute, HomeeNode
 
 from . import HomeeNodeEntity
 from .const import CLIMATE_PROFILES, LIGHT_PROFILES

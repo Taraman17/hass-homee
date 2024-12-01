@@ -2,7 +2,7 @@
 
 from unittest.mock import MagicMock, patch
 
-from pymee.model import HomeeGroup
+from pyHomee.model import HomeeGroup
 import pytest
 from typing_extensions import Generator
 import voluptuous as vol

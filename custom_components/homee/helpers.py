@@ -2,8 +2,8 @@
 
 import logging
 
-from pymee import Homee
-from pymee.model import HomeeNode
+from pyHomee import Homee
+from pyHomee.model import HomeeNode
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -52,4 +52,3 @@ def get_name_for_enum(att_class, att_id):
         return "Unknown"
 
     return attribute_name
-

@@ -9,8 +9,8 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
-from pymee.const import AttributeType
-from pymee.model import HomeeAttribute, HomeeNode
+from pyHomee.const import AttributeType
+from pyHomee.model import HomeeAttribute, HomeeNode
 
 from . import HomeeNodeEntity, helpers
 from .const import CONF_DOOR_GROUPS, CONF_GROUPS, CONF_WINDOW_GROUPS

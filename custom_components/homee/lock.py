@@ -2,8 +2,8 @@
 
 import logging
 
-from pymee.const import AttributeChangedBy, AttributeType
-from pymee.model import HomeeAttribute, HomeeNode
+from pyHomee.const import AttributeChangedBy, AttributeType
+from pyHomee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.lock import LockEntity
 from homeassistant.config_entries import ConfigEntry

@@ -4,6 +4,9 @@ import asyncio
 import logging
 import re
 
+from pyHomee import Homee
+from pyHomee.const import AttributeType, NodeProfile
+from pyHomee.model import HomeeAttribute, HomeeNode
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
@@ -12,9 +15,6 @@ from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import Entity
-from pymee import Homee
-from pymee.const import AttributeType, NodeProfile
-from pymee.model import HomeeAttribute, HomeeNode
 
 from .const import (
     ATTR_ATTRIBUTE,
@@ -61,7 +61,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up homee from a config entry."""
     # Create the Homee api object using host, user,
-    # password & pymee instance from the config
+    # password & pyHomee instance from the config
     homee = Homee(
         host=entry.data[CONF_HOST],
         user=entry.data[CONF_USERNAME],
@@ -166,7 +166,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
         # TODO: figure out how to derive the MAC address -
-        # will need to update pymee?
+        # will need to update pyHomee?
         # connections={(dr.CONNECTION_NETWORK_MAC, entry.mac)},
         identifiers={(DOMAIN, homee.device_id)},
         manufacturer="homee",
@@ -216,6 +216,7 @@ async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload homee integration after config change."""
     await hass.config_entries.async_reload(entry.entry_id)
 
+
 async def async_remove_config_entry_device(
     hass: HomeAssistant, config_entry: ConfigEntry, device_entry: dr.DeviceEntry
 ) -> bool:
@@ -224,12 +225,13 @@ async def async_remove_config_entry_device(
     model = NodeProfile[device_entry.model.upper()].value
     for node in homee.nodes:
         # 'identifiers' is a set of tuples, so we need to check for the tuple.
-        if ('homee', node.id) in device_entry.identifiers:
+        if ("homee", node.id) in device_entry.identifiers:
             if node.profile == model:
                 # If Node is still present in Homee, don't delete.
                 return False
 
     return True
+
 
 async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     """Migrate old entry."""

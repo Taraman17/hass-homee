@@ -10,9 +10,9 @@ from homeassistant.components.alarm_control_panel import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
-from pymee import Homee
-from pymee.const import AttributeType
-from pymee.model import HomeeAttribute, HomeeNode
+from pyHomee import Homee
+from pyHomee.const import AttributeType
+from pyHomee.model import HomeeAttribute, HomeeNode
 
 from . import HomeeNodeEntity, helpers
 from .const import DOMAIN

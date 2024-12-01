@@ -17,8 +17,8 @@ from homeassistant.util.color import (
     color_RGB_to_hs,
     value_to_brightness,
 )
-from pymee.const import AttributeType
-from pymee.model import HomeeNode
+from pyHomee.const import AttributeType
+from pyHomee.model import HomeeNode
 
 from . import HomeeNodeEntity, helpers
 from .const import LIGHT_PROFILES
@@ -139,9 +139,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 def is_light_node(node: HomeeNode):
     """Determine if a node is controllable as a homee light based on its profile and attributes."""
-    return (
-        node.profile in LIGHT_PROFILES and AttributeType.ON_OFF in node.attribute_map
-    )
+    return node.profile in LIGHT_PROFILES and AttributeType.ON_OFF in node.attribute_map
 
 
 class HomeeLight(HomeeNodeEntity, LightEntity):
@@ -231,8 +229,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
 
         if ATTR_COLOR_TEMP in kwargs and self._temp_attr is not None:
             await self.async_set_value_by_id(
-                self._temp_attr.id,
-                kwargs[ATTR_COLOR_TEMP]
+                self._temp_attr.id, kwargs[ATTR_COLOR_TEMP]
             )
         if ATTR_HS_COLOR in kwargs:
             color = kwargs[ATTR_HS_COLOR]
