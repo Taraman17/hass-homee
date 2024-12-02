@@ -3,7 +3,8 @@
 import logging
 
 from pyHomee import (
-    AuthenticationFailedException as HomeeAuthenticationFailedException,
+    HomeeAuthFailedException as HomeeAuthenticationFailedException,
+    HomeeConnectionFailedException,
     Homee,
 )
 import voluptuous as vol
@@ -65,8 +66,10 @@ async def validate_and_connect(hass: core.HomeAssistant, data) -> Homee:
         await homee.get_access_token()
         _LOGGER.info("Got access token for homee")
     except HomeeAuthenticationFailedException as exc:
+        _LOGGER.warning("Authentication to Homee failed: %s", exc.reason)
         raise InvalidAuth from exc
-    except TimeoutError as exc:
+    except HomeeConnectionFailedException as exc:
+        _LOGGER.warning("Connection to Homee failed: %s", exc.__cause__)
         raise CannotConnect from exc
 
     hass.loop.create_task(homee.run())
