@@ -165,9 +165,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     device_registry = dr.async_get(hass)
     device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
-        # TODO: figure out how to derive the MAC address -
-        # will need to update pyHomee?
-        # connections={(dr.CONNECTION_NETWORK_MAC, entry.mac)},
+        connections={
+            (dr.CONNECTION_NETWORK_MAC, dr.format_mac(homee.settings.mac_address))
+        },
         identifiers={(DOMAIN, homee.device_id)},
         manufacturer="homee",
         name=homee.settings.homee_name,
@@ -175,8 +175,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         sw_version=homee.settings.version,
         hw_version="TBD",
     )
-
-    # async_setup_devices(hass, homee, entry)
 
     # Forward entry setup to the platforms
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
