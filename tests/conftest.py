@@ -2,7 +2,6 @@
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from pyHomee.model import HomeeGroup
 import pytest
 from typing_extensions import Generator
 import voluptuous as vol
