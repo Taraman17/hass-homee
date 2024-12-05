@@ -15,15 +15,13 @@ from homeassistant.util.color import (
     brightness_to_value,
     color_hs_to_RGB,
     color_RGB_to_hs,
-    color_temperature_kelvin_to_mired,
-    color_temperature_mired_to_kelvin,
     value_to_brightness,
 )
-from pymee.const import AttributeType
-from pymee.model import HomeeNode
+from pyHomee.const import AttributeType
+from pyHomee.model import HomeeNode
 
 from . import HomeeNodeEntity, helpers
-from .const import HOMEE_LIGHT_MAX_MIRED, HOMEE_LIGHT_MIN_MIRED, LIGHT_PROFILES
+from .const import LIGHT_PROFILES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -141,9 +139,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 def is_light_node(node: HomeeNode):
     """Determine if a node is controllable as a homee light based on its profile and attributes."""
-    return (
-        node.profile in LIGHT_PROFILES and AttributeType.ON_OFF in node.attribute_map
-    )
+    return node.profile in LIGHT_PROFILES and AttributeType.ON_OFF in node.attribute_map
 
 
 class HomeeLight(HomeeNodeEntity, LightEntity):
@@ -198,21 +194,19 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
         return color_RGB_to_hs(rgb[0], rgb[1], rgb[2])
 
     @property
-    def min_mireds(self):
-        """Return the minimum mireds of the light."""
-        return HOMEE_LIGHT_MIN_MIRED
+    def min_color_temp_kelvin(self) -> int | None:
+        """Return the min color temperature the light supports."""
+        return self._temp_attr.minimum
 
     @property
-    def max_mireds(self):
-        """Return the maximum mireds of the light."""
-        return HOMEE_LIGHT_MAX_MIRED
+    def max_color_temp_kelvin(self) -> int | None:
+        """Return the max color temperature the light supports."""
+        return self._temp_attr.maximum
 
     @property
     def color_temp(self):
         """Return the color temperature of the light."""
-        return color_temperature_kelvin_to_mired(
-            self._temp_attr.current_value
-        )
+        return self._temp_attr.current_value
 
     @property
     def is_on(self):
@@ -235,8 +229,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
 
         if ATTR_COLOR_TEMP in kwargs and self._temp_attr is not None:
             await self.async_set_value_by_id(
-                self._temp_attr.id,
-                color_temperature_mired_to_kelvin(kwargs[ATTR_COLOR_TEMP]),
+                self._temp_attr.id, kwargs[ATTR_COLOR_TEMP]
             )
         if ATTR_HS_COLOR in kwargs:
             color = kwargs[ATTR_HS_COLOR]

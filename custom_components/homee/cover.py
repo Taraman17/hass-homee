@@ -3,8 +3,8 @@
 import logging
 from typing import cast
 
-from pymee.const import AttributeType, NodeProfile
-from pymee.model import HomeeNode
+from pyHomee.const import AttributeType, NodeProfile
+from pyHomee.model import HomeeNode
 
 from homeassistant.components.cover import (
     ATTR_POSITION,

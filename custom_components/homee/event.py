@@ -2,8 +2,8 @@
 
 import logging
 
-from pymee.const import AttributeType
-from pymee.model import HomeeAttribute, HomeeNode
+from pyHomee.const import AttributeType
+from pyHomee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.event import (
     EventDeviceClass,

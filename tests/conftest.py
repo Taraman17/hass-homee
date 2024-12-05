@@ -1,16 +1,12 @@
 """Fixtures for Homee integration tests."""
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
-from pymee.model import HomeeGroup
 import pytest
 from typing_extensions import Generator
 import voluptuous as vol
 
-from pytest_homeassistant_custom_component.common import (
-    load_json_object_fixture,
-    MockConfigEntry,
-)
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from homeassistant.const import CONF_HOST, CONF_USERNAME, CONF_PASSWORD
 import homeassistant.helpers.config_validation as cv
@@ -21,6 +17,11 @@ from custom_components.homee.const import (
     CONF_WINDOW_GROUPS,
     DOMAIN,
 )
+
+@pytest.fixture(autouse=True)
+def auto_enable_custom_integrations(enable_custom_integrations):  # pylint: disable=unused-argument
+    """Automatically enables custom integrations for tests."""
+    yield
 
 HOMEE_ID = "00055511EECC"
 HOMEE_IP = "192.168.1.11"
@@ -60,12 +61,6 @@ SCHEMA_IMPORT_ALL = vol.Schema(
 )
 
 
-@pytest.fixture(autouse=True)
-def auto_enable_custom_integrations(enable_custom_integrations):
-    """Automatically enables custom integrations for tests."""
-    yield
-
-
 @pytest.fixture
 def mock_config_entry() -> MockConfigEntry:
     """Return the default mocked config entry."""
@@ -84,10 +79,19 @@ def mock_config_entry() -> MockConfigEntry:
 
 
 @pytest.fixture
+def mock_setup_entry() -> Generator[AsyncMock]:
+    """Mock setting up a config entry."""
+    with patch(
+        "custom_components.homee.async_setup_entry", return_value=True
+    ) as mock_setup:
+        yield mock_setup
+
+
+@pytest.fixture
 def mock_homee() -> Generator[MagicMock]:
     """Return a mock Homee instance."""
     with patch(
-        "custom_components.homee.config_flow.validate_and_connect"
+        "custom_components.homee.config_flow.validate_and_connect", autospec=True
     ) as mocked_homee:
         homee = mocked_homee.return_value
 
@@ -100,9 +104,5 @@ def mock_homee() -> Generator[MagicMock]:
         homee.get_access_token.return_value = "test_token"
         homee.wait_until_connected.return_value = True
         homee.wait_until_disconnected.return_value = True
-
-        homee.groups = []
-        homee.groups.append(HomeeGroup(load_json_object_fixture("group1.json")))
-        homee.groups.append(HomeeGroup(load_json_object_fixture("group2.json")))
 
         yield homee

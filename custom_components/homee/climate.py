@@ -2,8 +2,8 @@
 
 import logging
 
-from pymee.const import AttributeType, NodeProfile
-from pymee.model import HomeeNode
+from pyHomee.const import AttributeType, NodeProfile
+from pyHomee.model import HomeeNode
 
 from homeassistant.components.climate import (
     ATTR_TEMPERATURE,
@@ -49,7 +49,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
         async_add_devices(devices)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry): # pylint: disable=unused-argument
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):  # pylint: disable=unused-argument
     """Unload a config entry."""
     return True
 

@@ -1,7 +1,7 @@
 """The homee number platform."""
 
-from pymee.const import AttributeType
-from pymee.model import HomeeAttribute, HomeeNode
+from pyHomee.const import AttributeType
+from pyHomee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.number import NumberDeviceClass, NumberEntity
 from homeassistant.config_entries import ConfigEntry

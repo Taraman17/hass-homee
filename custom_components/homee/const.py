@@ -1,6 +1,6 @@
 """Constants for the homee integration."""
 
-from pymee.const import NodeProfile
+from pyHomee.const import NodeProfile
 
 # General
 DOMAIN = "homee"
@@ -44,9 +44,6 @@ LIGHT_PROFILES = [
     NodeProfile.WIFI_DIMMABLE_LIGHT,
     NodeProfile.WIFI_ON_OFF_DIMMABLE_METERING_SWITCH,
 ]
-
-HOMEE_LIGHT_MIN_MIRED = 153
-HOMEE_LIGHT_MAX_MIRED = 556
 
 # Options
 CONF_INITIAL_OPTIONS = "initial_options"

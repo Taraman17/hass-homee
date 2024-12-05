@@ -2,17 +2,16 @@
 
 import logging
 
-from pymee.const import AttributeType, NodeProfile
-from pymee.model import HomeeAttribute, HomeeNode
-
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from pyHomee.const import AttributeType, NodeProfile
+from pyHomee.model import HomeeAttribute, HomeeNode
 
 from . import HomeeNodeEntity
 from .const import CLIMATE_PROFILES, LIGHT_PROFILES
-from .helpers import get_name_for_enum, get_imported_nodes
+from .helpers import get_imported_nodes, get_name_for_enum
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,6 +25,7 @@ HOMEE_PLUG_PROFILES = [
 HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.AUTOMATIC_MODE_IMPULSE,
     AttributeType.BRIEFLY_OPEN_IMPULSE,
+    AttributeType.EXTERNAL_BINARY_INPUT,
     AttributeType.IDENTIFICATION_MODE,
     AttributeType.IMPULSE,
     AttributeType.LIGHT_IMPULSE,
@@ -35,7 +35,9 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.ON_OFF,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
+    AttributeType.RESTORE_LAST_KNOWN_STATE,
     AttributeType.SIREN,
+    AttributeType.SWITCH_TYPE,
     AttributeType.VENTILATE_IMPULSE,
     AttributeType.WATCHDOG_ON_OFF,
 ]
@@ -43,6 +45,7 @@ HOMEE_SWITCH_ATTRIBUTES = [
 DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.AUTOMATIC_MODE_IMPULSE,
     AttributeType.BRIEFLY_OPEN_IMPULSE,
+    AttributeType.EXTERNAL_BINARY_INPUT,
     AttributeType.IDENTIFICATION_MODE,
     AttributeType.LIGHT_IMPULSE,
     AttributeType.MANUAL_OPERATION,
@@ -50,11 +53,20 @@ DESCRIPTIVE_ATTRIBUTES = [
     AttributeType.OPEN_PARTIAL_IMPULSE,
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
+    AttributeType.RESTORE_LAST_KNOWN_STATE,
+    AttributeType.SWITCH_TYPE,
     AttributeType.VENTILATE_IMPULSE,
     AttributeType.WATCHDOG_ON_OFF,
 ]
 
-CONFIG_ATTRIBUTES = [AttributeType.MOTOR_ROTATION, AttributeType.WATCHDOG_ON_OFF]
+CONFIG_ATTRIBUTES = [
+    AttributeType.EXTERNAL_BINARY_INPUT,
+    AttributeType.MOTOR_ROTATION,
+    AttributeType.RESET_METER,
+    AttributeType.RESTORE_LAST_KNOWN_STATE,
+    AttributeType.SWITCH_TYPE,
+    AttributeType.WATCHDOG_ON_OFF,
+]
 DIAGNOSTIC_ATTRIBUTES = [AttributeType.IDENTIFICATION_MODE]
 
 
@@ -136,7 +148,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         # it will be named and numbered.
         if self._on_off.instance > 0:
             translation_key = f"{attribute_name.lower()}_{self._on_off.instance}"
-        # Some switches should be named descriptive without an instance number..
+        # Some switches should be named descriptive without an instance number.
         elif self._on_off.type in DESCRIPTIVE_ATTRIBUTES:
             translation_key = attribute_name.lower()
 

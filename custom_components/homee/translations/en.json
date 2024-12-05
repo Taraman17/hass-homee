@@ -112,14 +112,26 @@
       "heat_sensor": {
         "name": "Temperature Alarm"
       },
+      "load_alarm_sensor": {
+        "name": "Load Alarm"
+      },
       "lock_sensor": {
         "name": "Lock"
+      },
+      "malfunction_sensor": {
+        "name": "Malfunction Alarm"
       },
       "motion_sensor": {
         "name": "Motion"
       },
       "opening_sensor": {
         "name": "Opening"
+      },
+      "overcurrent_sensor": {
+        "name": "Overcurrent Alarm"
+      },
+      "overload_sensor": {
+        "name": "Overload Alarm"
       },
       "plug_sensor": {
         "name": "Plug"
@@ -130,8 +142,14 @@
       "smoke_sensor": {
         "name": "Smoke"
       },
+      "surge_sensor": {
+        "name": "Surge Alarm"
+      },
       "tamper_sensor": {
         "name": "Tamper Alarm"
+      },
+      "voltage_drop_sensor": {
+        "name": "Voltage Drop Alarm"
       },
       "window_sensor": {
         "name": "Window"
@@ -402,6 +420,9 @@
       "briefly_open_impulse": {
         "name": "Briefly Open Impulse"
       },
+      "external_binary_input": {
+        "name": "Child Lock"
+      },
       "identification_mode": {
         "name": "Identification Mode"
       },
@@ -461,6 +482,12 @@
       },
       "reset_meter_4": {
         "name": "Reset Meter 4"
+      },
+      "restore_last_known_state": {
+        "name": "Restore last known state"
+      },
+      "switch_type": {
+        "name": "Switch Type"
       },
       "ventilate_ipulse": {
         "name": "Ventilate Impulse"
