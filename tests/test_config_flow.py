@@ -1,38 +1,24 @@
 """Test the Homee config flow."""
 
-from unittest.mock import AsyncMock, MagicMock, patch, ANY
-
-import json
-from pymee.model import HomeeGroup
-import pytest
-
-from homeassistant.config_entries import SOURCE_USER
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
-from homeassistant.core import HomeAssistant
-from homeassistant.data_entry_flow import FlowResultType
-from pytest_homeassistant_custom_component.common import (
-    load_fixture,
-    MockConfigEntry,
-)
+from unittest.mock import ANY, AsyncMock, MagicMock, patch
 
 from custom_components.homee import config_flow
 from custom_components.homee.config_flow import CannotConnect, InvalidAuth
 from custom_components.homee.const import (
     CONF_ADD_HOMEE_DATA,
-    CONF_ALL_DEVICES,
     CONF_DOOR_GROUPS,
     CONF_WINDOW_GROUPS,
     DOMAIN,
 )
+import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from .conftest import (
-    HOMEE_ID,
-    HOMEE_IP,
-    SCHEMA_IMPORT_ALL,
-    SCHEMA_IMPORT_GROUPS,
-    TESTPASS,
-    TESTUSER,
-)
+from homeassistant.config_entries import SOURCE_USER
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.core import HomeAssistant
+from homeassistant.data_entry_flow import FlowResultType
+
+from .conftest import HOMEE_ID, HOMEE_IP, SCHEMA_IMPORT_ALL, TESTPASS, TESTUSER
 
 
 async def test_config_flow(
@@ -66,7 +52,6 @@ async def test_config_flow(
             CONF_HOST: HOMEE_IP,
             CONF_USERNAME: TESTUSER,
             CONF_PASSWORD: TESTPASS,
-            CONF_ALL_DEVICES: "all",
             CONF_ADD_HOMEE_DATA: False,
         },
     )
@@ -95,52 +80,14 @@ async def test_config_flow(
         "title": f"{HOMEE_ID} ({HOMEE_IP})",
         "minor_version": 1,
         "options": {
-            "all_devices_or_groups": True,
             "add_homee_data": False,
             "groups": {"door_groups": [], "window_groups": []},
         },
-        "version": 2,
+        "version": 3,
         "result": ANY,
     }
 
     assert expected == final_result
-
-
-async def test_config_flow_only_groups(
-    hass: HomeAssistant, mock_homee: MagicMock
-) -> None:
-    """Test the Config Flow with "only groups" option."""
-    mock_homee.groups = []
-    mock_homee.groups.append(
-        HomeeGroup(json.loads(load_fixture("group1.json")))
-    )
-    mock_homee.groups.append(
-        HomeeGroup(json.loads(load_fixture("group2.json")))
-    )
-
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": SOURCE_USER}
-    )
-    flow_id = result["flow_id"]
-
-    groups_result = await hass.config_entries.flow.async_configure(
-        flow_id,
-        user_input={
-            CONF_HOST: HOMEE_IP,
-            CONF_USERNAME: TESTUSER,
-            CONF_PASSWORD: TESTPASS,
-            CONF_ALL_DEVICES: "groups",
-            CONF_ADD_HOMEE_DATA: False,
-        },
-    )
-
-    assert groups_result["type"] == FlowResultType.FORM
-    assert groups_result["step_id"] == "groups"
-    # we can't directly compare the schemas, since the objects differ if manually built here.
-    assert (
-        groups_result["data_schema"].schema.items.__sizeof__()
-        == SCHEMA_IMPORT_GROUPS.schema.items.__sizeof__()
-    )
 
 
 @pytest.mark.parametrize(
@@ -171,7 +118,6 @@ async def test_config_flow_errors(
                 CONF_HOST: HOMEE_IP,
                 CONF_USERNAME: TESTUSER,
                 CONF_PASSWORD: TESTPASS,
-                CONF_ALL_DEVICES: "all",
                 CONF_ADD_HOMEE_DATA: False,
             },
         )
@@ -200,9 +146,83 @@ async def test_flow_already_configured(
             CONF_HOST: HOMEE_IP,
             CONF_USERNAME: TESTUSER,
             CONF_PASSWORD: TESTPASS,
-            CONF_ALL_DEVICES: "all",
             CONF_ADD_HOMEE_DATA: False,
         },
     )
     assert result2["type"] is FlowResultType.ABORT
     assert result2["reason"] == "already_configured"
+
+async def test_reconfigure_success(
+    hass: HomeAssistant,
+    mock_homee: MagicMock,  # pylint: disable=unused-argument
+    mock_setup_entry: AsyncMock,  # pylint: disable=unused-argument
+    mock_config_entry: MockConfigEntry,
+) -> None:
+    """Test the reconfigure flow."""
+    mock_config_entry.add_to_hass(hass)
+    result = await mock_config_entry.start_reconfigure_flow(hass)
+
+    expected = {
+        "data_schema": config_flow.AUTH_SCHEMA,
+        "description_placeholders": None,
+        "errors": {},
+        "flow_id": ANY,
+        "handler": DOMAIN,
+        "step_id": "reconfigure",
+        "type": FlowResultType.FORM,
+        "last_step": None,
+        "preview": None,
+    }
+    assert result == expected
+
+    result2 = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        user_input={
+            CONF_HOST: HOMEE_IP,
+            CONF_USERNAME: TESTUSER,
+            CONF_PASSWORD: TESTPASS,
+            CONF_ADD_HOMEE_DATA: True,
+        },
+    )
+
+    assert result2["type"] is FlowResultType.ABORT
+    assert result2["reason"] == "reconfigure_successful"
+    assert mock_config_entry.options == {
+        CONF_ADD_HOMEE_DATA: True
+    }
+
+@pytest.mark.parametrize(
+    ("side_eff", "error"),
+    [
+        (InvalidAuth, {"base": "invalid_auth"}),
+        (CannotConnect, {"base": "cannot_connect"}),
+    ],
+)
+async def test_reconfigure_no_success(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    side_eff: Exception,
+    error: dict[str, str],
+) -> None:
+    """Test reconfigure flow errors."""
+    mock_config_entry.add_to_hass(hass)
+    result = await mock_config_entry.start_reconfigure_flow(hass)
+
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "reconfigure"
+
+    with patch(
+        "custom_components.homee.config_flow.validate_and_connect", side_effect=side_eff
+    ):
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={
+                CONF_HOST: HOMEE_IP,
+                CONF_USERNAME: TESTUSER,
+                CONF_PASSWORD: TESTPASS,
+                CONF_ADD_HOMEE_DATA: True,
+            },
+        )
+
+    assert result2["type"] == FlowResultType.FORM
+    assert result2["errors"] == error

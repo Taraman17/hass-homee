@@ -12,16 +12,18 @@ from homeassistant.const import CONF_HOST, CONF_USERNAME, CONF_PASSWORD
 import homeassistant.helpers.config_validation as cv
 
 from custom_components.homee.const import (
+    CONF_ADD_HOMEE_DATA,
     CONF_DOOR_GROUPS,
-    CONF_IMPORT_GROUPS,
     CONF_WINDOW_GROUPS,
     DOMAIN,
 )
+
 
 @pytest.fixture(autouse=True)
 def auto_enable_custom_integrations(enable_custom_integrations):  # pylint: disable=unused-argument
     """Automatically enables custom integrations for tests."""
     yield
+
 
 HOMEE_ID = "00055511EECC"
 HOMEE_IP = "192.168.1.11"
@@ -29,23 +31,6 @@ TESTUSER = "testuser"
 TESTPASS = "testpass"
 
 GROUPS_SELECTION = {"1": "Group1 (0)", "3": "Group2 (0)"}
-
-SCHEMA_IMPORT_GROUPS = vol.Schema(
-    {
-        vol.Required(
-            CONF_IMPORT_GROUPS,
-            default=["1", "3"],
-        ): cv.multi_select(GROUPS_SELECTION),
-        vol.Required(
-            CONF_WINDOW_GROUPS,
-            default=[],
-        ): cv.multi_select(GROUPS_SELECTION),
-        vol.Required(
-            CONF_DOOR_GROUPS,
-            default=[],
-        ): cv.multi_select(GROUPS_SELECTION),
-    }
-)
 
 SCHEMA_IMPORT_ALL = vol.Schema(
     {
@@ -72,8 +57,11 @@ def mock_config_entry() -> MockConfigEntry:
             CONF_USERNAME: TESTUSER,
             CONF_PASSWORD: TESTPASS,
         },
+        options={
+            CONF_ADD_HOMEE_DATA: False
+        },
         unique_id=HOMEE_ID,
-        version=2,
+        version=3,
         minor_version=1,
     )
 
