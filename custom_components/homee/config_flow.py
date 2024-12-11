@@ -1,6 +1,7 @@
 """Config flow for homee integration."""
 
 import logging
+from typing import Any
 
 from pyHomee import (
     HomeeAuthFailedException as HomeeAuthenticationFailedException,
@@ -10,15 +11,14 @@ from pyHomee import (
 import voluptuous as vol
 
 from homeassistant import config_entries, core, exceptions
+from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import AbortFlow
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig
 
 from .const import (
     CONF_ADD_HOMEE_DATA,
-    CONF_ALL_DEVICES,
     CONF_DOOR_GROUPS,
     CONF_GROUPS,
     CONF_IMPORT_GROUPS,
@@ -28,26 +28,13 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-default_options = {
-    "import_all_devices": True,
-    "add_homee_data": False,
-}
-
 AUTH_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
         vol.Required(CONF_USERNAME): str,
         vol.Required(CONF_PASSWORD): str,
-        vol.Required(CONF_ALL_DEVICES, default="all"): SelectSelector(
-            SelectSelectorConfig(
-                options=["all", "groups"],
-                translation_key="all_devices_or_groups",
-                multiple=False,
-            )
-        ),
         vol.Required(
             CONF_ADD_HOMEE_DATA,
-            default=default_options.get(CONF_ADD_HOMEE_DATA),
         ): bool,
     }
 )
@@ -87,7 +74,7 @@ async def validate_and_connect(hass: core.HomeAssistant, data) -> Homee:
 class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for homee."""
 
-    VERSION = 2
+    VERSION = 3
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
     @staticmethod
@@ -116,7 +103,6 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.info(
                     "Created new homee entry with ID %s", self.homee.settings.uid
                 )
-                self.all_devices = user_input[CONF_ALL_DEVICES] == "all"
                 self.debug_data = user_input[CONF_ADD_HOMEE_DATA]
                 return await self.async_step_groups()
             except CannotConnect:
@@ -137,43 +123,23 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_groups(self, user_input=None):
         """Configure groups options."""
-        groups = [str(g.id) for g in self.homee.groups]
         groups_selection = {
             str(g.id): f"{g.name} ({len(g.nodes)})" for g in self.homee.groups
         }
 
         # There doesn't seem to be a way to disable a field - so we need 2 seperate versions.
-        if self.all_devices:
-            # Omit the first option if we import all devices.
-            GROUPS_SCHEMA = vol.Schema(
-                {
-                    vol.Required(
-                        CONF_WINDOW_GROUPS,
-                        default=[],
-                    ): cv.multi_select(groups_selection),
-                    vol.Required(
-                        CONF_DOOR_GROUPS,
-                        default=[],
-                    ): cv.multi_select(groups_selection),
-                }
-            )
-        else:
-            GROUPS_SCHEMA = vol.Schema(
-                {
-                    vol.Required(
-                        CONF_IMPORT_GROUPS,
-                        default=groups,
-                    ): cv.multi_select(groups_selection),
-                    vol.Required(
-                        CONF_WINDOW_GROUPS,
-                        default=[],
-                    ): cv.multi_select(groups_selection),
-                    vol.Required(
-                        CONF_DOOR_GROUPS,
-                        default=[],
-                    ): cv.multi_select(groups_selection),
-                }
-            )
+        GROUPS_SCHEMA = vol.Schema(
+            {
+                vol.Required(
+                    CONF_WINDOW_GROUPS,
+                    default=[],
+                ): cv.multi_select(groups_selection),
+                vol.Required(
+                    CONF_DOOR_GROUPS,
+                    default=[],
+                ): cv.multi_select(groups_selection),
+            }
+        )
 
         if user_input is not None:
             return self.async_create_entry(
@@ -184,7 +150,6 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     CONF_PASSWORD: self.homee.password,
                 },
                 options={
-                    CONF_ALL_DEVICES: self.all_devices,
                     CONF_ADD_HOMEE_DATA: self.debug_data,
                     CONF_GROUPS: user_input,
                 },
@@ -192,6 +157,50 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(step_id="groups", data_schema=GROUPS_SCHEMA)
 
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Handle the reconfigure flow."""
+        errors = {}
+        reconfigure_entry = self._get_reconfigure_entry()
+        data = reconfigure_entry.data.copy()
+        options = reconfigure_entry.options.copy()
+        suggested_values = {
+            CONF_HOST: data.get(CONF_HOST),
+            CONF_USERNAME: data.get(CONF_USERNAME),
+            CONF_PASSWORD: data.get(CONF_PASSWORD),
+            CONF_ADD_HOMEE_DATA: options[CONF_ADD_HOMEE_DATA],
+        }
+
+        if user_input:
+            try:
+                self.homee = await validate_and_connect(self.hass, user_input)
+                await self.async_set_unique_id(self.homee.settings.uid)
+
+                data[CONF_HOST] = user_input.get(CONF_HOST)
+                data[CONF_USERNAME] = user_input.get(CONF_USERNAME)
+                data[CONF_PASSWORD] = user_input.get(CONF_PASSWORD)
+                options[CONF_ADD_HOMEE_DATA] = user_input.get(CONF_ADD_HOMEE_DATA)
+
+                _LOGGER.info("Updated homee entry with ID %s", self.homee.settings.uid)
+                return self.async_update_reload_and_abort(
+                    reconfigure_entry, data=data, options=options
+                )
+            except CannotConnect:
+                errors["base"] = "cannot_connect"
+            except InvalidAuth:
+                errors["base"] = "invalid_auth"
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.exception("Unexpected exception")
+                errors["base"] = "unknown"
+
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=self.add_suggested_values_to_schema(
+                AUTH_SCHEMA, suggested_values
+            ),
+            errors=errors,
+        )
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
     """Manage the options."""
@@ -207,7 +216,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             str(g.id): f"{g.name} ({len(g.nodes)})" for g in homee.groups
         }
 
-        # TODO: Add support for changing imported devices.
         CONFIG_SCHEMA = vol.Schema(
             {
                 vol.Required(
@@ -227,7 +235,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         if user_input is not None:
             input_data = {}
-            input_data[CONF_ALL_DEVICES] = self.entry.options[CONF_ALL_DEVICES]
             input_data[CONF_GROUPS] = {}
             input_data[CONF_GROUPS][CONF_IMPORT_GROUPS] = self.entry.options[
                 CONF_GROUPS

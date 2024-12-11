@@ -251,13 +251,28 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         conf_groups[CONF_WINDOW_GROUPS] = new_options.pop(CONF_WINDOW_GROUPS, [])
         conf_groups[CONF_DOOR_GROUPS] = new_options.pop(CONF_DOOR_GROUPS, [])
 
-        # initial options are dropped in v2 since the options
+        # Initial options are dropped in v2 since the options
         # can be changed later anyhow.
         del new_data[CONF_INITIAL_OPTIONS]
 
-        config_entry.version = 2
         hass.config_entries.async_update_entry(
-            config_entry, data=new_data, options=new_options
+            config_entry, data=new_data, options=new_options, version=2
+        )
+
+        _LOGGER.info("Migration to v%s successful", config_entry.version)
+
+    if config_entry.version == 2:
+        _LOGGER.debug("Migrating from version %s", config_entry.version)
+
+        new_data = {**config_entry.data}
+        new_options = {**config_entry.options}
+
+        # Remove options for import of only certain groups.
+        new_options.pop(CONF_ALL_DEVICES)
+        new_options[CONF_GROUPS].pop(CONF_IMPORT_GROUPS)
+
+        hass.config_entries.async_update_entry(
+            config_entry, data=new_data, options=new_options, version=3
         )
 
         _LOGGER.info("Migration to v%s successful", config_entry.version)

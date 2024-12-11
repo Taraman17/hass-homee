@@ -17,7 +17,6 @@
           "host": "Host",
           "password": "Kennwort",
           "username": "Benutzer",
-          "all_devices_or_groups": "Wählen Sie aus, welche Geräte importiert werden sollen:",
           "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
         }
       },
@@ -28,7 +27,6 @@
           "host": "Host",
           "password": "Kennwort",
           "username": "Benutzer",
-          "all_devices_or_groups": "Wählen Sie aus, welche Geräte importiert werden sollen:",
           "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
         }
       },
@@ -36,9 +34,18 @@
         "title": "Gruppen-Konfiguration",
         "description": "Konfigurieren Sie die Gruppen. Sie können Fenster- und Türgruppen auch später noch ändern.",
         "data": {
-          "import_groups": "Importieren Sie Geräte in die folgenden Gruppen:",
           "window_groups": "Gruppen, die Fenstersensoren enthalten:",
           "door_groups": "Gruppen, die Türsensoren enthalten:"
+        }
+      },
+      "reconfigure": {
+        "title": "homee rekonfigurieren",
+        "description": "Ändern sie die Einstellungen für ihren homee.",
+        "data": {
+          "host": "Host",
+          "password": "Kennwort",
+          "username": "Benutzer",
+          "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
         }
       }
     }
@@ -52,14 +59,6 @@
           "door_groups": "Gruppen, die Türsensoren enthalten:",
           "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
         }
-      }
-    }
-  },
-  "selector": {
-    "all_devices_or_groups": {
-      "options": {
-        "all": "Alle Geräte",
-        "groups": "Nur Geräte aus den im nächsten Schritt ausgewählten Gruppen."
       }
     }
   },
