@@ -79,9 +79,8 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return the device info."""
-        homee: Homee = self.hass.data[DOMAIN][self._entry.entry_id]
         return DeviceInfo(
-            identifiers={(DOMAIN, homee.device_id)},
+            identifiers={(DOMAIN, self._entry.unique_id)},
         )
 
     @property

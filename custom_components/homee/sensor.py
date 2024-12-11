@@ -329,10 +329,9 @@ class HomeeNodeSensor(SensorEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return the device info."""
-        homee: Homee = self.hass.data[DOMAIN][self._entry.entry_id]
         if self._node.id == -1:
             return DeviceInfo(
-                identifiers={(DOMAIN, homee.device_id)},
+                identifiers={(DOMAIN, self._entry.unique_id)},
             )
 
         return DeviceInfo(

@@ -168,7 +168,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         connections={
             (dr.CONNECTION_NETWORK_MAC, dr.format_mac(homee.settings.mac_address))
         },
-        identifiers={(DOMAIN, homee.device_id)},
+        identifiers={(DOMAIN, homee.settings.uid)},
         manufacturer="homee",
         name=homee.settings.homee_name,
         model="homee",
@@ -314,7 +314,7 @@ class HomeeNodeEntity:
                 NodeProfile, self._homee_data["profile"]
             ).lower(),
             "sw_version": sw_version,
-            "via_device": (DOMAIN, self._entry.entry_id),
+            "via_device": (DOMAIN, self._entry.unique_id),
         }
 
     @property
