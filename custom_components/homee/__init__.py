@@ -1,6 +1,7 @@
 """The homee integration."""
 
 import asyncio
+from dataclasses import dataclass
 import logging
 import re
 
@@ -15,6 +16,7 @@ from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     ATTR_ATTRIBUTE,
@@ -51,14 +53,22 @@ PLATFORMS = [
     "switch",
 ]
 
+@dataclass
+class HomeeRuntimeData:
+    """Homee data class."""
 
-async def async_setup(hass: HomeAssistant, config: dict):
+    homee: Homee
+
+type HomeeConfigEntry = ConfigEntry[HomeeRuntimeData]
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the homee component."""
-    hass.data[DOMAIN] = {}
+    if DOMAIN not in hass.data:
+        hass.data[DOMAIN] = {}
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+async def async_setup_entry(hass: HomeAssistant, entry: HomeeConfigEntry) -> bool:
     """Set up homee from a config entry."""
     # Create the Homee api object using host, user,
     # password & pyHomee instance from the config
@@ -87,7 +97,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
             node.raw_data,
         )
 
-    hass.data[DOMAIN][entry.entry_id] = homee
+    entry.runtime_data = HomeeRuntimeData(homee)
 
     # Register the set_value service that can be used
     # for debugging and custom automations.
@@ -184,7 +194,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
+async def async_unload_entry(hass: HomeAssistant, entry: HomeeConfigEntry):
     """Unload a homee config entry."""
     # Unload platforms
     unload_ok = all(
@@ -197,7 +207,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     )
     if unload_ok:
         # Get Homee object and remove it from data
-        homee: Homee = hass.data[DOMAIN][entry.entry_id]
+        homee: Homee = entry.runtime_data.homee
         hass.data[DOMAIN].pop(entry.entry_id)
 
         # Schedule homee disconnect
@@ -216,10 +226,10 @@ async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
 
 async def async_remove_config_entry_device(
-    hass: HomeAssistant, config_entry: ConfigEntry, device_entry: dr.DeviceEntry
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, device_entry: dr.DeviceEntry
 ) -> bool:
     """Remove a config entry from a device."""
-    homee = hass.data[DOMAIN][config_entry.entry_id]
+    homee = config_entry.runtime_data.homee
     model = NodeProfile[device_entry.model.upper()].value
     for node in homee.nodes:
         # 'identifiers' is a set of tuples, so we need to check for the tuple.

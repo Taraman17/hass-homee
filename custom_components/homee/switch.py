@@ -3,13 +3,12 @@
 import logging
 
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from pyHomee.const import AttributeType, NodeProfile
 from pyHomee.model import HomeeAttribute, HomeeNode
 
-from . import HomeeNodeEntity
+from . import HomeeConfigEntry, HomeeNodeEntity
 from .const import CLIMATE_PROFILES, LIGHT_PROFILES
 from .helpers import get_imported_nodes, get_name_for_enum
 
@@ -89,11 +88,13 @@ def get_entity_category(attribute) -> EntityCategory | None:
     return None
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
+) -> None:
     """Add the homee platform for the switch component."""
 
     devices = []
-    for node in get_imported_nodes(hass, config_entry):
+    for node in get_imported_nodes(config_entry):
         devices.extend(
             HomeeSwitch(node, config_entry, attribute)
             for attribute in node.attributes
@@ -111,11 +112,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
         async_add_devices(devices)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a config entry."""
-    return True
-
-
 class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
     """Representation of a homee switch."""
 
@@ -124,14 +120,14 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
     def __init__(
         self,
         node: HomeeNode,
-        entry: ConfigEntry,
+        entry: HomeeConfigEntry,
         on_off_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee switch entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._on_off = on_off_attribute
         self._switch_index = on_off_attribute.instance
-        self._device_class = get_device_class(node)
+        self._attr_device_class = get_device_class(node)
         self._attr_entity_category = get_entity_category(on_off_attribute)
 
         self._attr_unique_id = f"{self._node.id}-switch-{self._on_off.id}"
@@ -179,16 +175,16 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
 
         return None
 
-    async def async_turn_on(self, **kwargs):
+    async def async_turn_on(self, **kwargs) -> None:
         """Turn the entity on."""
         await self.async_set_value_by_id(self._on_off.id, 1)
 
-    async def async_turn_off(self, **kwargs):
+    async def async_turn_off(self, **kwargs) -> None:
         """Turn the entity off."""
         await self.async_set_value_by_id(self._on_off.id, 0)
 
     @property
-    def current_power_w(self):
+    def current_power_w(self) -> int | None:
         """Return the current power usage in W."""
         if self.has_attribute(AttributeType.CURRENT_ENERGY_USE):
             return self.attribute(AttributeType.CURRENT_ENERGY_USE)
@@ -196,14 +192,9 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         return None
 
     @property
-    def today_energy_kwh(self):
+    def today_energy_kwh(self) -> int | None:
         """Return the total power usage in kWh."""
         if self.has_attribute(AttributeType.ACCUMULATED_ENERGY_USE):
             return self.attribute(AttributeType.ACCUMULATED_ENERGY_USE)
 
         return None
-
-    @property
-    def device_class(self):
-        """Return the class of this node."""
-        return self._device_class

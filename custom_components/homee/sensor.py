@@ -2,7 +2,6 @@
 
 import logging
 
-from pyHomee import Homee
 from pyHomee.const import AttributeType, NodeProtocol, NodeState
 from pyHomee.model import HomeeAttribute, HomeeNode
 
@@ -11,12 +10,11 @@ from homeassistant.components.sensor import (
     SensorEntity,
     SensorStateClass,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 
-from . import HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, HomeeNodeEntity, helpers
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -86,7 +84,9 @@ TEXT_STATUS_ATTRIBUTES = [
 ]
 
 
-def get_device_properties(attribute: HomeeAttribute):
+def get_device_properties(
+    attribute: HomeeAttribute,
+) -> tuple[SensorDeviceClass | None, str | None, str, EntityCategory | None]:
     """Determine the device class of a homee entity based on it's attribute type."""
     device_class = None
     translation_key = None
@@ -203,11 +203,13 @@ def get_state_class(attribute: HomeeAttribute) -> int:
     return None
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
+) -> None:
     """Add the homee platform for the sensor components."""
 
     devices = []
-    for node in helpers.get_imported_nodes(hass, config_entry):
+    for node in helpers.get_imported_nodes(config_entry):
         props = ["state", "protocol"]
         devices.extend(HomeeNodeSensor(node, config_entry, item) for item in props)
         devices.extend(
@@ -219,11 +221,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
         async_add_devices(devices)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a config entry."""
-    return True
-
-
 class HomeeSensor(HomeeNodeEntity, SensorEntity):
     """Representation of a homee sensor."""
 
@@ -232,7 +229,7 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
     def __init__(
         self,
         node: HomeeNode,
-        entry: ConfigEntry,
+        entry: HomeeConfigEntry,
         measurement_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee sensor entity."""
@@ -260,7 +257,7 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         return self._translation_key
 
     @property
-    def native_value(self):
+    def native_value(self) -> int:
         """Return the native value of the sensor."""
         if self._measurement.type in TEXT_STATUS_ATTRIBUTES:
             return int(self._measurement.current_value)
@@ -272,7 +269,7 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         return self._measurement.current_value
 
     @property
-    def native_unit_of_measurement(self):
+    def native_unit_of_measurement(self) -> str:
         """Return the native unit of the sensor."""
         if self._measurement.unit == "n/a":
             return None
@@ -286,12 +283,12 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         return self._measurement.unit
 
     @property
-    def state_class(self):
+    def state_class(self) -> int:
         """Return the state class of the sensor."""
         return self._state_class
 
     @property
-    def device_class(self):
+    def device_class(self) -> SensorDeviceClass | None:
         """Return the class of this node."""
         return self._device_class
 
@@ -304,7 +301,7 @@ class HomeeNodeSensor(SensorEntity):
     def __init__(
         self,
         node: HomeeNode,
-        entry: ConfigEntry,
+        entry: HomeeConfigEntry,
         prop_name: str,
     ) -> None:
         """Initialize a homee node sensor entity."""

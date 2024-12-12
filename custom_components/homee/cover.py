@@ -13,10 +13,9 @@ from homeassistant.components.cover import (
     CoverEntity,
     CoverEntityFeature,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from . import HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, HomeeNodeEntity, helpers
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -92,12 +91,12 @@ def get_device_class(node: HomeeNode) -> int:
     return None
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices) -> None:
     """Add the homee platform for the cover integration."""
     # homee: Homee = hass.data[DOMAIN][config_entry.entry_id]
 
     devices = []
-    nodes = helpers.get_imported_nodes(hass, config_entry)
+    nodes = helpers.get_imported_nodes(config_entry)
     devices.extend(
         HomeeCover(node, config_entry) for node in nodes if is_cover_node(node)
     )
@@ -105,13 +104,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     if devices:
         async_add_devices(devices)
 
-
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a config entry."""
-    return True
-
-
-def is_cover_node(node: HomeeNode):
+def is_cover_node(node: HomeeNode) -> bool:
     """Determine if a node is controllable as a homee cover based on its profile and attributes."""
     return node.profile in [
         NodeProfile.ELECTRIC_MOTOR_METERING_SWITCH,
@@ -126,7 +119,7 @@ class HomeeCover(HomeeNodeEntity, CoverEntity):
 
     _attr_has_entity_name = True
 
-    def __init__(self, node: HomeeNode, entry: ConfigEntry) -> None:
+    def __init__(self, node: HomeeNode, entry: HomeeConfigEntry) -> None:
         """Initialize a homee cover entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         self._attr_supported_features, self._open_close_attribute = get_cover_features(

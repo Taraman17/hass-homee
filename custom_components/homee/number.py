@@ -4,12 +4,11 @@ from pyHomee.const import AttributeType
 from pyHomee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.number import NumberDeviceClass, NumberEntity
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 
-from . import HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, HomeeNodeEntity, helpers
 from .const import DOMAIN
 
 NUMBER_ATTRIBUTES = {
@@ -108,11 +107,11 @@ def get_device_properties(attribute: HomeeAttribute):
     return (device_class, translation_key, entity_category)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices):
     """Add the homee platform for the number components."""
 
     devices = []
-    for node in helpers.get_imported_nodes(hass, config_entry):
+    for node in helpers.get_imported_nodes(config_entry):
         devices.extend(
             HomeeNumber(node, config_entry, attribute)
             for attribute in node.attributes
@@ -120,12 +119,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
         )
     if devices:
         async_add_devices(devices)
-
-
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a config entry."""
-    return True
-
 
 class HomeeNumber(HomeeNodeEntity, NumberEntity):
     """Representation of a homee number."""
@@ -135,7 +128,7 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
     def __init__(
         self,
         node: HomeeNode,
-        entry: ConfigEntry,
+        entry: HomeeConfigEntry,
         number_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee number entity."""
@@ -161,7 +154,7 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
         return self._number.editable
 
     @property
-    def native_value(self):
+    def native_value(self) -> int:
         """Return the native value of the sensor."""
         # TODO: If HA supports klx as unit, remove.
         if self._number.unit == "klx":
@@ -170,7 +163,7 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
         return self._number.current_value
 
     @property
-    def native_unit_of_measurement(self):
+    def native_unit_of_measurement(self) -> str:
         """Return the native unit of the number entity."""
         if self._number.unit == "n/a":
             return None

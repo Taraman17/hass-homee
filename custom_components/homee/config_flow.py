@@ -17,6 +17,8 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import AbortFlow
 import homeassistant.helpers.config_validation as cv
 
+
+from . import HomeeConfigEntry
 from .const import (
     CONF_ADD_HOMEE_DATA,
     CONF_DOOR_GROUPS,
@@ -211,7 +213,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input=None):
         """Init the first step of the options flow."""
-        homee: Homee = self.hass.data[DOMAIN][self.entry.entry_id]
+        homee: Homee = self.entry.runtime_data.homee
         groups_selection = {
             str(g.id): f"{g.name} ({len(g.nodes)})" for g in homee.groups
         }

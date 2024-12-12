@@ -10,20 +10,21 @@ from homeassistant.components.event import (
     EventEntity,
     EventEntityDescription,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 
-from . import HomeeNodeEntity
+from . import HomeeConfigEntry, HomeeNodeEntity
 from .helpers import get_imported_nodes
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
+) -> None:
     """Add the homee platform for the event component."""
 
     devices = []
-    for node in get_imported_nodes(hass, config_entry):
+    for node in get_imported_nodes(config_entry):
         devices.extend(
             HomeeEvent(node, config_entry, attribute)
             for attribute in node.attributes
@@ -31,12 +32,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
         )
     if devices:
         async_add_devices(devices)
-
-
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a config entry."""
-    return True
-
 
 class HomeeEvent(HomeeNodeEntity, EventEntity):
     """Representation of a homee event."""
@@ -52,7 +47,7 @@ class HomeeEvent(HomeeNodeEntity, EventEntity):
     def __init__(
         self,
         node: HomeeNode,
-        entry: ConfigEntry,
+        entry: HomeeConfigEntry,
         event_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee event entity."""
@@ -69,5 +64,5 @@ class HomeeEvent(HomeeNodeEntity, EventEntity):
             self.async_write_ha_state()
 
     async def async_added_to_hass(self) -> None:
-        """Register callbacks with your device API/library."""
+        """Register callback for HomeeEvent."""
         self._node.add_on_changed_listener(self._async_handle_event)

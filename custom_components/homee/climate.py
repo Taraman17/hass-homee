@@ -15,11 +15,10 @@ from homeassistant.components.climate import (
     HVACAction,
     HVACMode,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
 
-from . import HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, HomeeNodeEntity, helpers
 from .const import CLIMATE_PROFILES, DOMAIN, PRESET_MANUAL
 
 _LOGGER = logging.getLogger(__name__)
@@ -36,25 +35,20 @@ ROOM_THERMOSTATS = {
 }
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry, async_add_devices
+) -> None:
     """Add the homee platform for the climate integration."""
-    # homee: Homee = hass.data[DOMAIN][config_entry.entry_id]
 
     devices = []
-    for node in helpers.get_imported_nodes(hass, config_entry):
+    for node in helpers.get_imported_nodes(config_entry):
         if not is_climate_node(node):
             continue
         devices.append(HomeeClimate(node, config_entry))
     if devices:
         async_add_devices(devices)
 
-
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):  # pylint: disable=unused-argument
-    """Unload a config entry."""
-    return True
-
-
-def is_climate_node(node: HomeeNode):
+def is_climate_node(node: HomeeNode) -> bool:
     """Determine if a node is controllable as a climate device based on it's profile."""
     return node.profile in CLIMATE_PROFILES
 
@@ -92,7 +86,7 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     # TODO: remove after release of HA 2025.01
     _enable_turn_on_off_backwards_compatibility = False
 
-    def __init__(self, node: HomeeNode, entry: ConfigEntry) -> None:
+    def __init__(self, node: HomeeNode, entry: HomeeConfigEntry) -> None:
         """Initialize a homee climate entity."""
         HomeeNodeEntity.__init__(self, node, self, entry)
         (

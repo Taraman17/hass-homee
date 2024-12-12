@@ -9,11 +9,10 @@ from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 
-from . import HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, HomeeNodeEntity, helpers
 from .const import CONF_DOOR_GROUPS, CONF_GROUPS, CONF_WINDOW_GROUPS
 
 _LOGGER = logging.getLogger(__name__)
@@ -142,11 +141,11 @@ def get_device_class(attribute: HomeeAttribute):
     return (device_class, state_attr, translation_key, entity_category)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices) -> None:
     """Add the homee platform for the binary sensor integration."""
 
     devices = []
-    for node in helpers.get_imported_nodes(hass, config_entry):
+    for node in helpers.get_imported_nodes(config_entry):
         devices.extend(
             HomeeBinarySensor(node, config_entry, attribute)
             for attribute in node.attributes
@@ -158,12 +157,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     if devices:
         async_add_devices(devices)
 
-
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a config entry."""
-    return True
-
-
 class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
     """Representation of a homee binary sensor device."""
 
@@ -172,7 +165,7 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
     def __init__(
         self,
         node: HomeeNode,
-        entry: ConfigEntry,
+        entry: HomeeConfigEntry,
         binary_sensor_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee binary sensor entity."""

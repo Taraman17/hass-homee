@@ -5,22 +5,15 @@ import logging
 from pyHomee import Homee
 from pyHomee.model import HomeeNode
 
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-
-from .const import DOMAIN
-
 _LOGGER = logging.getLogger(__name__)
 
 
-def get_imported_nodes(
-    hass: HomeAssistant, config_entry: ConfigEntry
-) -> list[HomeeNode]:
+def get_imported_nodes(config_entry) -> list[HomeeNode]:
     """Get a list of nodes that should be imported."""
-    homee: Homee = hass.data[DOMAIN][config_entry.entry_id]
+    homee: Homee = config_entry.runtime_data.homee
     return homee.nodes
 
-def get_name_for_enum(att_class, att_id):
+def get_name_for_enum(att_class, att_id) -> str:
     """Return the enum item name for a given integer."""
     try:
         attribute_name = att_class(att_id).name

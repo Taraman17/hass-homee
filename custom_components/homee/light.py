@@ -1,6 +1,7 @@
 """The homee light platform."""
 
 import logging
+from typing import Any
 
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
@@ -9,7 +10,6 @@ from homeassistant.components.light import (
     ColorMode,
     LightEntity,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.util.color import (
     brightness_to_value,
@@ -20,7 +20,7 @@ from homeassistant.util.color import (
 from pyHomee.const import AttributeType
 from pyHomee.model import HomeeNode
 
-from . import HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, HomeeNodeEntity, helpers
 from .const import LIGHT_PROFILES
 
 _LOGGER = logging.getLogger(__name__)
@@ -67,7 +67,9 @@ def get_color_mode(supported_modes) -> ColorMode:
     return ColorMode.UNKNOWN
 
 
-def get_light_attribute_sets(node: HomeeNodeEntity, index: int):
+def get_light_attribute_sets(
+    node: HomeeNodeEntity, index: int
+) -> dict[AttributeType, Any]:
     """Return a list with the attributes for each light entity to be created."""
     on_off_attributes = [
         i for i in node.attributes if i.type == AttributeType.ON_OFF and i.editable
@@ -111,11 +113,13 @@ def decimal_to_rgb_list(color):
     return [(color & 0xFF0000) >> 16, (color & 0x00FF00) >> 8, (color & 0x0000FF)]
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
+) -> None:
     """Add the homee platform for the light integration."""
 
     devices = []
-    for node in helpers.get_imported_nodes(hass, config_entry):
+    for node in helpers.get_imported_nodes(config_entry):
         if not is_light_node(node):
             continue
         index = 0
@@ -132,11 +136,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
         async_add_devices(devices)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a config entry."""
-    return True
-
-
 def is_light_node(node: HomeeNode):
     """Determine if a node is controllable as a homee light based on its profile and attributes."""
     return node.profile in LIGHT_PROFILES and AttributeType.ON_OFF in node.attribute_map
@@ -148,7 +147,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
     _attr_has_entity_name = True
 
     def __init__(
-        self, node: HomeeNode, light_set, light_index, entry: ConfigEntry
+        self, node: HomeeNode, light_set, light_index, entry: HomeeConfigEntry
     ) -> None:
         """Initialize a homee light."""
         HomeeNodeEntity.__init__(self, node, self, entry)

@@ -7,14 +7,12 @@ from homeassistant.components.alarm_control_panel import (
     AlarmControlPanelEntityFeature,
     AlarmControlPanelState,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
-from pyHomee import Homee
 from pyHomee.const import AttributeType
 from pyHomee.model import HomeeAttribute, HomeeNode
 
-from . import HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, HomeeNodeEntity, helpers
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,11 +31,13 @@ def get_features(attribute) -> int:
     return None
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
+) -> None:
     """Add the homee platform for the switch component."""
 
     devices = []
-    for node in helpers.get_imported_nodes(hass, config_entry):
+    for node in helpers.get_imported_nodes(config_entry):
         devices.extend(
             HomeeAlarmPanel(node, config_entry, attribute)
             for attribute in node.attributes
@@ -49,11 +49,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
         async_add_devices(devices)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a config entry."""
-    return True
-
-
 class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
     """Representation of a homee alarm control panel."""
 
@@ -62,7 +57,7 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
     def __init__(
         self,
         node: HomeeNode,
-        entry: ConfigEntry,
+        entry: HomeeConfigEntry,
         alarm_panel_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee alarm Control panel entity."""
