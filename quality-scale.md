@@ -23,7 +23,7 @@
 
 ## Silver
 
-- [ ] `config-entry-unloading` - Support config entry unloading
+- [x] `config-entry-unloading` - Support config entry unloading
 - [x] `log-when-unavailable` - If internet/device/service is unavailable, log once when unavailable and once when back connected
 - [x] `entity-unavailable` - Mark entity unavailable if appropriate
 - [x] `action-exceptions` - Service actions raise exceptions when encountering failures
