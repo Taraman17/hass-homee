@@ -194,17 +194,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: HomeeConfigEntry) -> boo
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: HomeeConfigEntry):
+async def async_unload_entry(hass: HomeAssistant, entry: HomeeConfigEntry) -> bool:
     """Unload a homee config entry."""
     # Unload platforms
-    unload_ok = all(
-        await asyncio.gather(
-            *[
-                hass.config_entries.async_forward_entry_unload(entry, component)
-                for component in PLATFORMS
-            ]
-        )
-    )
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
     if unload_ok:
         # Get Homee object and remove it from data
         homee: Homee = entry.runtime_data.homee
@@ -241,7 +235,7 @@ async def async_remove_config_entry_device(
     return True
 
 
-async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
+async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Migrate old entry."""
     if config_entry.version == 1:
         _LOGGER.debug("Migrating from version %s", config_entry.version)
