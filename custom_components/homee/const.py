@@ -11,6 +11,7 @@ SERVICE_UPDATE_ENTITY = "update_entity"
 
 # Attributes
 ATTR_ATTRIBUTE = "attribute"
+ATTR_CONFIG_ENTRY_ID = "config_entry_id"
 ATTR_HOMEE_DATA = "homee_data"
 ATTR_NODE = "node"
 ATTR_VALUE = "value"

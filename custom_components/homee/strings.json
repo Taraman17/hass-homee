@@ -68,23 +68,23 @@
       "name": "Set Value",
       "description": "Set an attribute value of a homee node.",
       "fields": {
+        "config_entry_id": {
+          "name": "Target Homee",
+          "description": "Homee on which the action will be executed."
+        },
         "node": {
           "name": "Node",
-          "description": "The node id."
+          "description": "The node ID."
         },
         "attribute": {
           "name": "Attribute",
-          "description": "The attribute id."
+          "description": "The attribute ID."
         },
         "value": {
           "name": "Value",
           "description": "The value to set."
         }
       }
-    },
-    "update_entity": {
-      "name": "Update Entity",
-      "description": "Request an update of the values of an entity"
     }
   },
   "entity": {

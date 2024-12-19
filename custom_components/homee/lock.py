@@ -9,7 +9,7 @@ from homeassistant.components.lock import LockEntity
 from homeassistant.core import HomeAssistant
 
 from . import HomeeConfigEntry, HomeeNodeEntity
-from .helpers import get_name_for_enum, get_imported_nodes
+from .helpers import get_imported_nodes, get_name_for_enum
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,6 +58,11 @@ class HomeeLock(HomeeNodeEntity, LockEntity):
         """Return by what the lock was last changed."""
         changed_by_name = get_name_for_enum(AttributeChangedBy, self._lock.changed_by)
         return f"{changed_by_name}-{self._lock.changed_by_id}"
+
+    async def async_update(self) -> None:
+        """Update entity from homee."""
+        homee = self._entry.runtime_data.homee
+        await homee.update_attribute(self._lock.node_id, self._lock.id)
 
     async def async_lock(self, **kwargs) -> None:
         """Lock all or specified locks. A code to lock the lock with may be specified."""

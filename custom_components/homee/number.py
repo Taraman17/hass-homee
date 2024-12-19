@@ -174,6 +174,11 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
 
         return self._number.unit
 
+    async def async_update(self) -> None:
+        """Update entity from homee."""
+        homee = self._entry.runtime_data.homee
+        await homee.update_attribute(self._number.node_id, self._number.id)
+
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
         if self._number.editable:

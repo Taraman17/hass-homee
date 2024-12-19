@@ -2,11 +2,12 @@
 
 import logging
 
+from pyHomee.const import AttributeType, NodeProfile
+from pyHomee.model import HomeeAttribute, HomeeNode
+
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
-from pyHomee.const import AttributeType, NodeProfile
-from pyHomee.model import HomeeAttribute, HomeeNode
 
 from . import HomeeConfigEntry, HomeeNodeEntity
 from .const import CLIMATE_PROFILES, LIGHT_PROFILES
@@ -174,6 +175,11 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
             return "mdi:hand-back-left"
 
         return None
+
+    async def async_update(self) -> None:
+        """Update entity from homee."""
+        homee = self._entry.runtime_data.homee
+        await homee.update_attribute(self._on_off.node_id, self._on_off.id)
 
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the entity on."""

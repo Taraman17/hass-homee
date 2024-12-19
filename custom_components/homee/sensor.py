@@ -292,6 +292,11 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         """Return the class of this node."""
         return self._device_class
 
+    async def async_update(self) -> None:
+        """Update entity from homee."""
+        homee = self._entry.runtime_data.homee
+        await homee.update_attribute(self._measurement.node_id, self._measurement.id)
+
 
 class HomeeNodeSensor(SensorEntity):
     """Represents a sensor based on a node's property."""

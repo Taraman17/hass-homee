@@ -213,3 +213,8 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
     def device_class(self) -> BinarySensorDeviceClass:
         """Return the class of this device, from component DEVICE_CLASSES."""
         return self._device_class
+
+    async def async_update(self) -> None:
+        """Update entity from homee."""
+        homee = self._entry.runtime_data.homee
+        await homee.update_attribute(self._on_off.node_id, self._on_off.id)

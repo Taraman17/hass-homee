@@ -2,6 +2,9 @@
 
 import logging
 
+from pyHomee.const import AttributeType
+from pyHomee.model import HomeeAttribute, HomeeNode
+
 from homeassistant.components.alarm_control_panel import (
     AlarmControlPanelEntity,
     AlarmControlPanelEntityFeature,
@@ -9,8 +12,6 @@ from homeassistant.components.alarm_control_panel import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
-from pyHomee.const import AttributeType
-from pyHomee.model import HomeeAttribute, HomeeNode
 
 from . import HomeeConfigEntry, HomeeNodeEntity, helpers
 from .const import DOMAIN
@@ -88,6 +89,13 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
             2: AlarmControlPanelState.ARMED_AWAY,
             3: AlarmControlPanelState.ARMED_VACATION,
         }.get(curr_state)
+
+    async def async_update(self) -> None:
+        """Update entity from homee."""
+        homee = self._entry.runtime_data.homee
+        await homee.update_attribute(
+            self._alarm_panel_attribute.node_id, self._alarm_panel_attribute.id
+        )
 
     async def async_alarm_disarm(self, code=None) -> None:
         """Send disarm command."""

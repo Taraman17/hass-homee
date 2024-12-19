@@ -67,23 +67,23 @@
       "name": "Wert einstellen",
       "description": "Attributwert eines homee-Knotens setzen.",
       "fields": {
+        "config_entry_id": {
+          "name": "Ziel-Homee",
+          "description": "Homee auf dem die Aktion ausgeführt wird."
+        },
         "node": {
           "name": "Node",
-          "description": "node id."
+          "description": "Node ID."
         },
         "attribute": {
           "name": "Attribut",
-          "description": "Attribut id."
+          "description": "Attribut ID."
         },
         "value": {
           "name": "Wert",
           "description": "Der einzustellende Wert."
         }
       }
-    },
-    "update_entity": {
-      "name": "Entität aktualisieren",
-      "description": "Anforderung zur Aktualisierung der Werte einer Entität."
     }
   },
   "entity": {

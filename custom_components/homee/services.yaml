@@ -1,15 +1,25 @@
 set_value:
   fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: homee
     node:
       required: true
+      selector:
+        number:
+          mode: box
       example: 36
     attribute:
       required: true
+      selector:
+        number:
+          mode: box
       example: 90
     value:
       required: true
+      selector:
+        number:
+          step: 0.1
       example: 1
-update_entity:
-  target:
-    entity:
-      integration: homee

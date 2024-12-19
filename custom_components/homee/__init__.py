@@ -1,16 +1,14 @@
 """The homee integration."""
 
-import asyncio
 from dataclasses import dataclass
 import logging
-import re
 
 from pyHomee import Homee
 from pyHomee.const import AttributeType, NodeProfile
 from pyHomee.model import HomeeAttribute, HomeeNode
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import ServiceValidationError
@@ -20,6 +18,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     ATTR_ATTRIBUTE,
+    ATTR_CONFIG_ENTRY_ID,
     ATTR_HOMEE_DATA,
     ATTR_NODE,
     ATTR_VALUE,
@@ -65,6 +64,33 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the homee component."""
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
+
+    # Register the set_value service that can be used
+    # for debugging and custom automations.
+    SET_VALUE_SCHEMA = vol.Schema({
+        vol.Required(ATTR_CONFIG_ENTRY_ID): str,
+        vol.Required(ATTR_NODE): int,
+        vol.Required(ATTR_ATTRIBUTE): int,
+        vol.Required(ATTR_VALUE): vol.Any(int, float, str)
+    })
+
+    async def async_handle_set_value(call: ServiceCall):
+        """Handle the set value service call."""
+
+        if not (entry := hass.config_entries.async_get_entry(call.data[ATTR_CONFIG_ENTRY_ID])):
+            raise ServiceValidationError("Entry not found")
+        if entry.state is not ConfigEntryState.LOADED:
+            raise ServiceValidationError("Entry not loaded")
+        homee = entry.runtime_data.homee
+
+        node = call.data.get(ATTR_NODE, 0)
+        attribute = call.data.get(ATTR_ATTRIBUTE, 0)
+        value = call.data.get(ATTR_VALUE, 0)
+
+        await homee.set_value(node, attribute, value)
+
+    hass.services.async_register(DOMAIN, SERVICE_SET_VALUE, async_handle_set_value, SET_VALUE_SCHEMA)
+
     return True
 
 
@@ -99,78 +125,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: HomeeConfigEntry) -> boo
 
     entry.runtime_data = HomeeRuntimeData(homee)
 
-    # Register the set_value service that can be used
-    # for debugging and custom automations.
-    async def handle_set_value(call: ServiceCall):
-        """Handle the service call."""
-
-        try:
-            node = int(call.data.get(ATTR_NODE, 0))
-        except ValueError as exc:
-            raise ServiceValidationError(
-                translation_domain=DOMAIN,
-                translation_key="no_integer",
-                translation_placeholders={"service_attr": "Node"},
-            ) from exc
-
-        try:
-            attribute = int(call.data.get(ATTR_ATTRIBUTE, 0))
-        except ValueError as exc:
-            raise ServiceValidationError(
-                translation_domain=DOMAIN,
-                translation_key="no_integer",
-                translation_placeholders={"service_attr": "Attribute"},
-            ) from exc
-
-        try:
-            value = float(call.data.get(ATTR_VALUE, 0))
-        except ValueError as exc:
-            raise ServiceValidationError(
-                translation_domain=DOMAIN,
-                translation_key="no_float",
-                translation_placeholders={"service_attr": "Value"},
-            ) from exc
-
-        hass.async_create_task(homee.set_value(node, attribute, value))
-
-    hass.services.async_register(DOMAIN, SERVICE_SET_VALUE, handle_set_value)
-
-    # Register the update_attribute service that can be used
-    # for debugging and custom automations.
-    async def handle_update_entity(call: ServiceCall):
-        """Handle the service call."""
-        if "entity_id" in call.data:
-            entity_registry = er.async_get(hass)
-            for entity in call.data["entity_id"]:
-                this_entity = entity_registry.async_get(entity)
-                matches = re.search(r"^(\d+)-\w+-(\d+)$", this_entity.unique_id)
-                if matches is not None:
-                    node_id, attribute_id = matches.group(1, 2)
-                    hass.async_create_task(
-                        homee.update_attribute(node_id, attribute_id)
-                    )
-                else:
-                    matches = re.search(r"^(\d{1,4})-\w{1,20}", this_entity.unique_id)
-                    node_id = matches.groups(1)
-                    hass.async_create_task(homee.update_node(node_id))
-
-        if "device_id" in call.data:
-            for device_id in call.data["device_id"]:
-                device_registry = dr.async_get(hass)
-                device = device_registry.async_get(device_id)
-                hass.async_create_task(
-                    homee.update_node(list(device.identifiers)[0][1])
-                )
-        if "area_id" in call.data:
-            for area_id in call.data["area_id"]:
-                area_devices = dr.async_entries_for_area(dr.async_get(hass), area_id)
-                for device in area_devices:
-                    hass.async_create_task(
-                        homee.update_node(list(device.identifiers)[0][1])
-                    )
-
-    hass.services.async_register(DOMAIN, SERVICE_UPDATE_ENTITY, handle_update_entity)
-
     # create device register entry
     device_registry = dr.async_get(hass)
     device_registry.async_get_or_create(
@@ -202,7 +156,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: HomeeConfigEntry) -> bo
     if unload_ok:
         # Get Homee object and remove it from data
         homee: Homee = entry.runtime_data.homee
-        hass.data[DOMAIN].pop(entry.entry_id)
 
         # Schedule homee disconnect
         homee.disconnect()
@@ -289,7 +242,7 @@ class HomeeNodeEntity:
 
     _unrecorded_attributes = frozenset({ATTR_HOMEE_DATA})
 
-    def __init__(self, node: HomeeNode, entity: Entity, entry: ConfigEntry) -> None:
+    def __init__(self, node: HomeeNode, entity: Entity, entry: HomeeConfigEntry) -> None:
         """Initialize the wrapper using a HomeeNode and target entity."""
         self._node = node
         self._entity = entity
@@ -363,7 +316,8 @@ class HomeeNodeEntity:
 
     async def async_update(self):
         """Fetch new state data for this node."""
-        self._node.remap_attributes()
+        homee = self._entry.runtime_data.homee
+        await homee.update_node(self._node.id)
 
     def register_listener(self):
         """Register the on_changed listener on the node."""
@@ -412,15 +366,8 @@ class HomeeNodeEntity:
 
     async def async_set_value_by_id(self, attribute_id: int, value: float):
         """Set an attribute value on the homee node."""
-        await self._entity.hass.services.async_call(
-            DOMAIN,
-            SERVICE_SET_VALUE,
-            {
-                ATTR_NODE: self._node.id,
-                ATTR_ATTRIBUTE: attribute_id,
-                ATTR_VALUE: value,
-            },
-        )
+        homee = self._entry.runtime_data.homee
+        await homee.set_value(self._node.id, attribute_id, value)
 
     def _on_node_updated(self, node: HomeeNode, attribute: HomeeAttribute):
         self._entity.schedule_update_ha_state()
