@@ -150,7 +150,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
         self, node: HomeeNode, light_set, light_index, entry: HomeeConfigEntry
     ) -> None:
         """Initialize a homee light."""
-        HomeeNodeEntity.__init__(self, node, self, entry)
+        HomeeNodeEntity.__init__(self, node, entry)
         self._attr_supported_color_modes = get_supported_color_modes(self)
         self._attr_color_mode = get_color_mode(self._attr_supported_color_modes)
         self._on_off_attr = light_set.get(AttributeType.ON_OFF, None)

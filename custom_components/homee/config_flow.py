@@ -1,7 +1,7 @@
 """Config flow for homee integration."""
 
 import logging
-from typing import Any
+from typing import cast, Any
 
 from pyHomee import (
     HomeeAuthFailedException as HomeeAuthenticationFailedException,
@@ -16,6 +16,11 @@ from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import AbortFlow
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.schema_config_entry_flow import (
+    SchemaCommonFlowHandler,
+    SchemaFlowFormStep,
+    SchemaOptionsFlowHandler,
+)
 
 
 from . import HomeeConfigEntry
@@ -40,6 +45,33 @@ AUTH_SCHEMA = vol.Schema(
         ): bool,
     }
 )
+
+
+async def _get_options_schema(handler: SchemaCommonFlowHandler) -> vol.Schema:
+    """Init the first step of the options flow."""
+    entry = cast(SchemaOptionsFlowHandler, handler.parent_handler).config_entry
+    homee: Homee = entry.runtime_data
+    groups_selection = {str(g.id): f"{g.name} ({len(g.nodes)})" for g in homee.groups}
+
+    return vol.Schema(
+        {
+            vol.Required(
+                CONF_WINDOW_GROUPS,
+                default=entry.options[CONF_GROUPS][CONF_WINDOW_GROUPS],
+            ): cv.multi_select(groups_selection),
+            vol.Required(
+                CONF_DOOR_GROUPS,
+                default=entry.options[CONF_GROUPS][CONF_DOOR_GROUPS],
+            ): cv.multi_select(groups_selection),
+            vol.Required(
+                CONF_ADD_HOMEE_DATA,
+                default=entry.options[CONF_ADD_HOMEE_DATA],
+            ): bool,
+        }
+    )
+
+
+OPTIONS_FLOW = {"init": SchemaFlowFormStep(_get_options_schema)}
 
 
 async def validate_and_connect(hass: core.HomeAssistant, data) -> Homee:
@@ -81,9 +113,11 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
+    def async_get_options_flow(
+        config_entry: HomeeConfigEntry,
+    ) -> SchemaOptionsFlowHandler:
         """Get the options flow handler."""
-        return OptionsFlowHandler(config_entry)
+        return SchemaOptionsFlowHandler(config_entry, OPTIONS_FLOW)
 
     def __init__(self) -> None:
         """Initialize the config flow."""
@@ -203,50 +237,6 @@ class ConfigFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             ),
             errors=errors,
         )
-
-class OptionsFlowHandler(config_entries.OptionsFlow):
-    """Manage the options."""
-
-    def __init__(self, entry: config_entries.ConfigEntry) -> None:
-        """Initialize the options flow."""
-        self.entry = entry
-
-    async def async_step_init(self, user_input=None):
-        """Init the first step of the options flow."""
-        homee: Homee = self.entry.runtime_data.homee
-        groups_selection = {
-            str(g.id): f"{g.name} ({len(g.nodes)})" for g in homee.groups
-        }
-
-        CONFIG_SCHEMA = vol.Schema(
-            {
-                vol.Required(
-                    CONF_WINDOW_GROUPS,
-                    default=self.entry.options[CONF_GROUPS][CONF_WINDOW_GROUPS],
-                ): cv.multi_select(groups_selection),
-                vol.Required(
-                    CONF_DOOR_GROUPS,
-                    default=self.entry.options[CONF_GROUPS][CONF_DOOR_GROUPS],
-                ): cv.multi_select(groups_selection),
-                vol.Required(
-                    CONF_ADD_HOMEE_DATA,
-                    default=self.entry.options[CONF_ADD_HOMEE_DATA],
-                ): bool,
-            }
-        )
-
-        if user_input is not None:
-            input_data = {}
-            input_data[CONF_GROUPS] = {}
-            input_data[CONF_GROUPS][CONF_IMPORT_GROUPS] = self.entry.options[
-                CONF_GROUPS
-            ].get(CONF_IMPORT_GROUPS, [])
-            input_data[CONF_GROUPS][CONF_WINDOW_GROUPS] = user_input[CONF_WINDOW_GROUPS]
-            input_data[CONF_GROUPS][CONF_DOOR_GROUPS] = user_input[CONF_DOOR_GROUPS]
-            input_data[CONF_ADD_HOMEE_DATA] = user_input[CONF_ADD_HOMEE_DATA]
-            return self.async_create_entry(title="", data=input_data)
-
-        return self.async_show_form(step_id="init", data_schema=CONFIG_SCHEMA)
 
 
 class CannotConnect(exceptions.HomeAssistantError):

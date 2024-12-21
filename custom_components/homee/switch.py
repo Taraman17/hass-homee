@@ -125,7 +125,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         on_off_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee switch entity."""
-        HomeeNodeEntity.__init__(self, node, self, entry)
+        HomeeNodeEntity.__init__(self, node, entry)
         self._on_off = on_off_attribute
         self._switch_index = on_off_attribute.instance
         self._attr_device_class = get_device_class(node)
@@ -178,7 +178,7 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
 
     async def async_update(self) -> None:
         """Update entity from homee."""
-        homee = self._entry.runtime_data.homee
+        homee = self._entry.runtime_data
         await homee.update_attribute(self._on_off.node_id, self._on_off.id)
 
     async def async_turn_on(self, **kwargs) -> None:

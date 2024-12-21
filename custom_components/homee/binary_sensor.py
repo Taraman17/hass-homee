@@ -141,7 +141,9 @@ def get_device_class(attribute: HomeeAttribute):
     return (device_class, state_attr, translation_key, entity_category)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry, async_add_devices
+) -> None:
     """Add the homee platform for the binary sensor integration."""
 
     devices = []
@@ -157,6 +159,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
     if devices:
         async_add_devices(devices)
 
+
 class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
     """Representation of a homee binary sensor device."""
 
@@ -169,7 +172,7 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
         binary_sensor_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee binary sensor entity."""
-        HomeeNodeEntity.__init__(self, node, self, entry)
+        HomeeNodeEntity.__init__(self, node, entry)
 
         self._on_off = binary_sensor_attribute
         self._configure_device_class()
@@ -216,5 +219,5 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
 
     async def async_update(self) -> None:
         """Update entity from homee."""
-        homee = self._entry.runtime_data.homee
+        homee = self._entry.runtime_data
         await homee.update_attribute(self._on_off.node_id, self._on_off.id)

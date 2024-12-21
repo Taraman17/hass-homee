@@ -51,7 +51,7 @@ class HomeeEvent(HomeeNodeEntity, EventEntity):
         event_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee event entity."""
-        HomeeNodeEntity.__init__(self, node, self, entry)
+        HomeeNodeEntity.__init__(self, node, entry)
         self._event = event_attribute
         self._switch_index = event_attribute.instance
         self._attr_unique_id = f"{self._node.id}-event-{self._event.id}"

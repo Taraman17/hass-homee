@@ -233,7 +233,7 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         measurement_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee sensor entity."""
-        HomeeNodeEntity.__init__(self, node, self, entry)
+        HomeeNodeEntity.__init__(self, node, entry)
         self._measurement = measurement_attribute
         (
             self._device_class,
@@ -294,7 +294,7 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
 
     async def async_update(self) -> None:
         """Update entity from homee."""
-        homee = self._entry.runtime_data.homee
+        homee = self._entry.runtime_data
         await homee.update_attribute(self._measurement.node_id, self._measurement.id)
 
 

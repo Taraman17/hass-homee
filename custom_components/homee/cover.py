@@ -121,7 +121,7 @@ class HomeeCover(HomeeNodeEntity, CoverEntity):
 
     def __init__(self, node: HomeeNode, entry: HomeeConfigEntry) -> None:
         """Initialize a homee cover entity."""
-        HomeeNodeEntity.__init__(self, node, self, entry)
+        HomeeNodeEntity.__init__(self, node, entry)
         self._attr_supported_features, self._open_close_attribute = get_cover_features(
             self
         )

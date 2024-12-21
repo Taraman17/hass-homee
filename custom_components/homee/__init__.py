@@ -1,6 +1,5 @@
 """The homee integration."""
 
-from dataclasses import dataclass
 import logging
 
 from pyHomee import Homee
@@ -31,13 +30,10 @@ from .const import (
     CONF_WINDOW_GROUPS,
     DOMAIN,
     SERVICE_SET_VALUE,
-    SERVICE_UPDATE_ENTITY,
 )
 from .helpers import get_name_for_enum
 
 _LOGGER = logging.getLogger(__name__)
-
-CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})}, extra=vol.ALLOW_EXTRA)
 
 PLATFORMS = [
     "alarm_control_panel",
@@ -52,13 +48,8 @@ PLATFORMS = [
     "switch",
 ]
 
-@dataclass
-class HomeeRuntimeData:
-    """Homee data class."""
+type HomeeConfigEntry = ConfigEntry[Homee]
 
-    homee: Homee
-
-type HomeeConfigEntry = ConfigEntry[HomeeRuntimeData]
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the homee component."""
@@ -67,21 +58,27 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     # Register the set_value service that can be used
     # for debugging and custom automations.
-    SET_VALUE_SCHEMA = vol.Schema({
-        vol.Required(ATTR_CONFIG_ENTRY_ID): str,
-        vol.Required(ATTR_NODE): int,
-        vol.Required(ATTR_ATTRIBUTE): int,
-        vol.Required(ATTR_VALUE): vol.Any(int, float, str)
-    })
+    SET_VALUE_SCHEMA = vol.Schema(
+        {
+            vol.Required(ATTR_CONFIG_ENTRY_ID): str,
+            vol.Required(ATTR_NODE): int,
+            vol.Required(ATTR_ATTRIBUTE): int,
+            vol.Required(ATTR_VALUE): vol.Any(int, float, str),
+        }
+    )
 
     async def async_handle_set_value(call: ServiceCall):
         """Handle the set value service call."""
 
-        if not (entry := hass.config_entries.async_get_entry(call.data[ATTR_CONFIG_ENTRY_ID])):
+        if not (
+            entry := hass.config_entries.async_get_entry(
+                call.data[ATTR_CONFIG_ENTRY_ID]
+            )
+        ):
             raise ServiceValidationError("Entry not found")
         if entry.state is not ConfigEntryState.LOADED:
             raise ServiceValidationError("Entry not loaded")
-        homee = entry.runtime_data.homee
+        homee = entry.runtime_data
 
         node = call.data.get(ATTR_NODE, 0)
         attribute = call.data.get(ATTR_ATTRIBUTE, 0)
@@ -89,7 +86,9 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
         await homee.set_value(node, attribute, value)
 
-    hass.services.async_register(DOMAIN, SERVICE_SET_VALUE, async_handle_set_value, SET_VALUE_SCHEMA)
+    hass.services.async_register(
+        DOMAIN, SERVICE_SET_VALUE, async_handle_set_value, SET_VALUE_SCHEMA
+    )
 
     return True
 
@@ -123,7 +122,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: HomeeConfigEntry) -> boo
             node.raw_data,
         )
 
-    entry.runtime_data = HomeeRuntimeData(homee)
+    entry.runtime_data = homee
 
     # create device register entry
     device_registry = dr.async_get(hass)
@@ -155,14 +154,13 @@ async def async_unload_entry(hass: HomeAssistant, entry: HomeeConfigEntry) -> bo
 
     if unload_ok:
         # Get Homee object and remove it from data
-        homee: Homee = entry.runtime_data.homee
+        homee: Homee = entry.runtime_data
 
         # Schedule homee disconnect
         homee.disconnect()
 
         # Remove services
         hass.services.async_remove(DOMAIN, SERVICE_SET_VALUE)
-        hass.services.async_remove(DOMAIN, SERVICE_UPDATE_ENTITY)
 
     return unload_ok
 
@@ -176,7 +174,7 @@ async def async_remove_config_entry_device(
     hass: HomeAssistant, config_entry: HomeeConfigEntry, device_entry: dr.DeviceEntry
 ) -> bool:
     """Remove a config entry from a device."""
-    homee = config_entry.runtime_data.homee
+    homee = config_entry.runtime_data
     model = NodeProfile[device_entry.model.upper()].value
     for node in homee.nodes:
         # 'identifiers' is a set of tuples, so we need to check for the tuple.
@@ -242,10 +240,11 @@ class HomeeNodeEntity:
 
     _unrecorded_attributes = frozenset({ATTR_HOMEE_DATA})
 
-    def __init__(self, node: HomeeNode, entity: Entity, entry: HomeeConfigEntry) -> None:
+    def __init__(
+        self, node: HomeeNode, entry: HomeeConfigEntry
+    ) -> None:
         """Initialize the wrapper using a HomeeNode and target entity."""
         self._node = node
-        self._entity = entity
         self._clear_node_listener = None
         self._attr_unique_id = node.id
         self._entry = entry
@@ -316,7 +315,7 @@ class HomeeNodeEntity:
 
     async def async_update(self):
         """Fetch new state data for this node."""
-        homee = self._entry.runtime_data.homee
+        homee = self._entry.runtime_data
         await homee.update_node(self._node.id)
 
     def register_listener(self):
@@ -366,11 +365,11 @@ class HomeeNodeEntity:
 
     async def async_set_value_by_id(self, attribute_id: int, value: float):
         """Set an attribute value on the homee node."""
-        homee = self._entry.runtime_data.homee
+        homee = self._entry.runtime_data
         await homee.set_value(self._node.id, attribute_id, value)
 
     def _on_node_updated(self, node: HomeeNode, attribute: HomeeAttribute):
-        self._entity.schedule_update_ha_state()
+        self.schedule_update_ha_state()
 
 
 class AttributeNotFoundException(Exception):

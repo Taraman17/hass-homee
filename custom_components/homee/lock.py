@@ -43,7 +43,7 @@ class HomeeLock(HomeeNodeEntity, LockEntity):
         lock_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee switch entity."""
-        HomeeNodeEntity.__init__(self, node, self, entry)
+        HomeeNodeEntity.__init__(self, node, entry)
         self._lock = lock_attribute
         self._switch_index = lock_attribute.instance
         self._attr_unique_id = f"{self._node.id}-lock-{self._lock.id}"
@@ -61,7 +61,7 @@ class HomeeLock(HomeeNodeEntity, LockEntity):
 
     async def async_update(self) -> None:
         """Update entity from homee."""
-        homee = self._entry.runtime_data.homee
+        homee = self._entry.runtime_data
         await homee.update_attribute(self._lock.node_id, self._lock.id)
 
     async def async_lock(self, **kwargs) -> None:

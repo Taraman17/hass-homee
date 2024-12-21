@@ -62,7 +62,7 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
         alarm_panel_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee alarm Control panel entity."""
-        HomeeNodeEntity.__init__(self, node, self, entry)
+        HomeeNodeEntity.__init__(self, node, entry)
         self._attr_code_arm_required = False
         self._alarm_panel_attribute = alarm_panel_attribute
         self._attr_supported_features = get_features(alarm_panel_attribute)
@@ -92,7 +92,7 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
 
     async def async_update(self) -> None:
         """Update entity from homee."""
-        homee = self._entry.runtime_data.homee
+        homee = self._entry.runtime_data
         await homee.update_attribute(
             self._alarm_panel_attribute.node_id, self._alarm_panel_attribute.id
         )

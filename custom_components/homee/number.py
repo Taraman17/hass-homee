@@ -107,7 +107,9 @@ def get_device_properties(attribute: HomeeAttribute):
     return (device_class, translation_key, entity_category)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices):
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
+):
     """Add the homee platform for the number components."""
 
     devices = []
@@ -119,6 +121,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: HomeeConfigEntry,
         )
     if devices:
         async_add_devices(devices)
+
 
 class HomeeNumber(HomeeNodeEntity, NumberEntity):
     """Representation of a homee number."""
@@ -132,7 +135,7 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
         number_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee number entity."""
-        HomeeNodeEntity.__init__(self, node, self, entry)
+        HomeeNodeEntity.__init__(self, node, entry)
         self._number = number_attribute
         (
             self._attr_device_class,
@@ -176,7 +179,7 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
 
     async def async_update(self) -> None:
         """Update entity from homee."""
-        homee = self._entry.runtime_data.homee
+        homee = self._entry.runtime_data
         await homee.update_attribute(self._number.node_id, self._number.id)
 
     async def async_set_native_value(self, value: float) -> None:
