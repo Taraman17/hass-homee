@@ -18,7 +18,8 @@ from homeassistant.components.climate import (
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
 
-from . import HomeeConfigEntry, HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, helpers
+from .entity import HomeeNodeEntity
 from .const import CLIMATE_PROFILES, DOMAIN, PRESET_MANUAL
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,6 +48,7 @@ async def async_setup_entry(
         devices.append(HomeeClimate(node, config_entry))
     if devices:
         async_add_devices(devices)
+
 
 def is_climate_node(node: HomeeNode) -> bool:
     """Determine if a node is controllable as a climate device based on it's profile."""

@@ -12,7 +12,8 @@ from homeassistant.components.event import (
 )
 from homeassistant.core import HomeAssistant, callback
 
-from . import HomeeConfigEntry, HomeeNodeEntity
+from . import HomeeConfigEntry
+from .entity import HomeeNodeEntity
 from .helpers import get_imported_nodes
 
 _LOGGER = logging.getLogger(__name__)

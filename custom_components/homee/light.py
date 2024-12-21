@@ -20,7 +20,8 @@ from homeassistant.util.color import (
 from pyHomee.const import AttributeType
 from pyHomee.model import HomeeNode
 
-from . import HomeeConfigEntry, HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, helpers
+from .entity import HomeeNodeEntity
 from .const import LIGHT_PROFILES
 
 _LOGGER = logging.getLogger(__name__)

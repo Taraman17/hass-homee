@@ -12,7 +12,8 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 
-from . import HomeeConfigEntry, HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, helpers
+from .entity import HomeeNodeEntity
 from .const import CONF_DOOR_GROUPS, CONF_GROUPS, CONF_WINDOW_GROUPS
 
 _LOGGER = logging.getLogger(__name__)

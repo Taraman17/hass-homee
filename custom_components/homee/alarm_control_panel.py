@@ -13,7 +13,8 @@ from homeassistant.components.alarm_control_panel import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 
-from . import HomeeConfigEntry, HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, helpers
+from .entity import HomeeNodeEntity
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)

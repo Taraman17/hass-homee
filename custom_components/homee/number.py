@@ -8,7 +8,8 @@ from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 
-from . import HomeeConfigEntry, HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, helpers
+from .entity import HomeeNodeEntity
 from .const import DOMAIN
 
 NUMBER_ATTRIBUTES = {

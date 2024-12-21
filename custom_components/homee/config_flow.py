@@ -28,7 +28,6 @@ from .const import (
     CONF_ADD_HOMEE_DATA,
     CONF_DOOR_GROUPS,
     CONF_GROUPS,
-    CONF_IMPORT_GROUPS,
     CONF_WINDOW_GROUPS,
     DOMAIN,
 )

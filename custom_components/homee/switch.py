@@ -9,7 +9,8 @@ from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 
-from . import HomeeConfigEntry, HomeeNodeEntity
+from . import HomeeConfigEntry
+from .entity import HomeeNodeEntity
 from .const import CLIMATE_PROFILES, LIGHT_PROFILES
 from .helpers import get_imported_nodes, get_name_for_enum
 

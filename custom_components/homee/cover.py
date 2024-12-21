@@ -15,7 +15,8 @@ from homeassistant.components.cover import (
 )
 from homeassistant.core import HomeAssistant
 
-from . import HomeeConfigEntry, HomeeNodeEntity, helpers
+from . import HomeeConfigEntry, helpers
+from .entity import HomeeNodeEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -91,7 +92,9 @@ def get_device_class(node: HomeeNode) -> int:
     return None
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry, async_add_devices
+) -> None:
     """Add the homee platform for the cover integration."""
     # homee: Homee = hass.data[DOMAIN][config_entry.entry_id]
 
@@ -103,6 +106,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices
 
     if devices:
         async_add_devices(devices)
+
 
 def is_cover_node(node: HomeeNode) -> bool:
     """Determine if a node is controllable as a homee cover based on its profile and attributes."""
