@@ -73,7 +73,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             raise ServiceValidationError("Entry not found")
         if entry.state is not ConfigEntryState.LOADED:
             raise ServiceValidationError("Entry not loaded")
-        homee = entry.runtime_data
+        homee: Homee = entry.runtime_data
 
         node = call.data.get(ATTR_NODE, 0)
         attribute = call.data.get(ATTR_ATTRIBUTE, 0)
