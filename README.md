@@ -34,36 +34,16 @@ Integration is in HACS Default Repositories now!
 
 ![homee][homee_logo]
 
-## :information_source: Upgrade from previous Repository
-
-:warning: **Backup homee and Home Assistant!**
-
-1. In HACS click on the homee integration.
-2. In the top right menu click "remove"
-   ![grafik](https://github.com/FreshlyBrewedCode/hacs-homee/assets/4706817/af69b1da-6f81-4c31-b051-4a58fc264a54)
-
-3. click "ignore". This way, the integration will be deleted, but the config will stay.
-   ![grafik](https://github.com/FreshlyBrewedCode/hacs-homee/assets/4706817/29de90d1-2bf4-49ae-8ec4-b48eab737269)
-
-4. !WITHOUT RESTART! Add [this repository] to HACS and install.
-5. Now restart.
-
-If you want to use the new feature to import all devicess from homee, you have to remove the integration and reinstall.
-
 ## Installation
 
 > :warning: **Backup homee and Home Assistant!**
 
 ### HACS (recommended)
 
-Integration is available as default repository in HACS.
-
 1. Make sure the [HACS integration](https://hacs.xyz/) is properly installed for your instance of home assistant.
-2. In the HACS UI go to "Integrations", click on "+" in the lower right corner".
-3. Paste `https://github.com/Taraman17/hass-homee` into the field that says "Add custom repository URL", select "Integration" from "Category" dropdown and click "Add".
-4. You should now see a card with the homee integration in the HACS -> "Integrations" section. Click "Install".
-5. Select the latest version from the dropdown and click "Install".
-6. Restart Home Assistant.
+2. In the HACS UI search for "homee".
+3. Click on the entry and then choose "download" in the lower right corner of the screen.
+4. Continue with [Configuration](https://github.com/Taraman17/hass-homee?tab=readme-ov-file#configuration)
 
 ### Manual installation
 
@@ -73,19 +53,18 @@ Integration is available as default repository in HACS.
 4. Download _all_ the files from the `custom_components/homee/` directory (folder) in this repository.
 5. Place the files you downloaded in the new directory (folder) you created.
 6. Restart Home Assistant.
+7. Continue with [Configuration](https://github.com/Taraman17/hass-homee?tab=readme-ov-file#configuration)
 
 ## Configuration
 
-> :information_source: Because of a bug (#5) configuring **more than one** homee in Home Assistant can cause strange behavour - feedback is appreciated.
+> :information_source: Because of a bug (#5) configuring **more than one** homee in Home Assistant can cause strange behaviour - feedback is appreciated.
 
-The integration will attempt to discover homee cubes in your network. Discovered cubes should show up in the "Configuration" -> "Integrations" section along with the associated homee id and host ip address.
-
-1. In the HA UI go to "Configuration" -> "Integrations", click "Configure" on a discovered homee or click "+", search for "homee", and select the "homee" integration from the list.
+1. In the HA UI go to "Configuration" -> "Integrations" and click "+", search for "homee", and select the "homee" integration from the list.
    Or click here: [![Start Config Flow](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=homee)
-2. In the dialog enter the username and password of a homee account that can access your cube, as well as the host (ip address of the homee cube) if you are not configuring a discovered cube.
-   As well choose if you want to import all devices into HA or only ones from certain homee-groups
-   Click submit.
-3. If the connection was successful you will see the "Group Configuration" section. if you chose "only devices from groups" in the first step, you can select the groups from which you want to import devices here.
+2. In the dialog enter the ip-address of the cube and username / password of a homee account that can access your cube.
+   Then click submit.
+3. If the connection was successful you will see the "Group Configuration" section.
+   Since door & window sensors don't have data to identify them from homee, you have to manually put them in repective groups in homee and mark these here.
    These options for door/window sensors can also be changed later from by clicking on the "Options" button on the homee integration. For more details on the available options check the [Options section](#Options).
 4. Click submit. Your devices will be automatically added to Home Assistant.
 
@@ -95,7 +74,6 @@ The following table shows the available options that can be configured in the "I
 
 | Option                                                                       | Default    | Description                                                                                                                                                                                                                                                                                                |
 | ---------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `The groups that should be imported`                                         | all groups | The integration will only import devices that are in any of the selected groups if you chose so in the first config step. Use this option to limit the devices that you want to import.                                                                                                                    |
 | `Groups that contain window sensors`                                         | empty      | Any `binary_sensor` that is in any of the selected groups will use the `window` device class. You should select a homee group that contains all of your window sensors.                                                                                                                                    |
 | `Groups that contain door sensors`                                           | empty      | Any `binary_sensor` that is in any of the selected groups will use the `door` device class. You should select a homee group that contains all of your door sensors.                                                                                                                                        |
 | `Add (debug) information about the homee node and attributes to each entity` | `False`    | Enabling this option will add the `homee_data` attribute to every entity created by this integration. The attribute contains information about the homee node (name, id, profile) and the attributes (id, type). This option can be useful for debugging or advanced automations when used with templates. |

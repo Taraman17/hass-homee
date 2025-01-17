@@ -9,12 +9,12 @@ from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
 )
-from homeassistant.const import EntityCategory
+from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 
 from . import HomeeConfigEntry, helpers
 from .entity import HomeeNodeEntity
-from .const import CONF_DOOR_GROUPS, CONF_GROUPS, CONF_WINDOW_GROUPS
+from .helpers import migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -158,6 +158,7 @@ async def async_setup_entry(
             )
         )
     if devices:
+        await migrate_old_unique_ids(hass, devices, Platform.BINARY_SENSOR)
         async_add_devices(devices)
 
 
@@ -177,7 +178,9 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
 
         self._on_off = binary_sensor_attribute
         self._configure_device_class()
-        self._attr_unique_id = f"{self._node.id}-binary_sensor-{self._on_off.id}"
+        self._attr_unique_id = (
+            f"{entry.runtime_data.settings.uid}-{self._node.id}-{self._on_off.id}"
+        )
 
     def _configure_device_class(self):
         """Configure the device class of the sensor."""
@@ -190,23 +193,13 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
             self._attr_entity_category,
         ) = get_device_class(self._on_off)
 
-        # Set Window/Door device class based on configured groups
-        if any(
-            str(group.id)
-            in self._entry.options[CONF_GROUPS].get(CONF_WINDOW_GROUPS, [])
-            for group in self._node.groups
-        ):
-            self._device_class = BinarySensorDeviceClass.WINDOW
-            self._attr_translation_key = "window_sensor"
-        elif any(
-            str(group.id) in self._entry.options[CONF_GROUPS].get(CONF_DOOR_GROUPS, [])
-            for group in self._node.groups
-        ):
-            self._device_class = BinarySensorDeviceClass.DOOR
-            self._attr_translation_key = "door_sensor"
-
         if self.translation_key is None:
             self._attr_name = None
+
+    @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the climate entity."""
+        return f"{self._node.id}-binary_sensor-{self._on_off.id}"
 
     @property
     def is_on(self) -> bool:

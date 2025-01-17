@@ -1,30 +1,23 @@
-""""Base Entities for Homee integration."""
-
-from typing import Any
+"""Base Entities for Homee integration."""
 
 from pyHomee.const import AttributeType, NodeProfile
-from pyHomee.model import HomeeAttribute, HomeeNode
+from pyHomee.model import HomeeNode
 
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.entity import Entity
 
-from . import HomeeConfigEntry
-from .const import ATTR_HOMEE_DATA, CONF_ADD_HOMEE_DATA, DOMAIN
-from .helpers import get_name_for_enum
+from . import helpers, HomeeConfigEntry
+from .const import DOMAIN
 
 
 class HomeeNodeEntity(Entity):
     """Representation of a Node in Homee."""
 
-    _unrecorded_attributes = frozenset({ATTR_HOMEE_DATA})
-
-    def __init__(
-        self, node: HomeeNode, entry: HomeeConfigEntry
-    ) -> None:
+    def __init__(self, node: HomeeNode, entry: HomeeConfigEntry) -> None:
         """Initialize the wrapper using a HomeeNode and target entity."""
         self._node = node
         self._clear_node_listener = None
-        self._attr_unique_id = node.id
+        self._attr_unique_id = f"{entry.runtime_data.settings.uid}-{node.id}"
         self._entry = entry
 
         self._homee_data = {
@@ -37,16 +30,19 @@ class HomeeNodeEntity(Entity):
             identifiers={(DOMAIN, self._node.id)},
             name=self._node.name,
             manufacturer="unknown",
-            model=get_name_for_enum(NodeProfile, self._homee_data["profile"]),
+            model=helpers.get_name_for_enum(NodeProfile, self._homee_data["profile"]),
             sw_version=self._get_software_version(),
             via_device=(DOMAIN, self._entry.unique_id),
         )
 
     async def async_added_to_hass(self) -> None:
         """Add the homee binary sensor device to home assistant."""
-        self.async_on_remove = self._node.add_on_changed_listener(
-            self._on_node_updated
-        )
+        self.async_on_remove = self._node.add_on_changed_listener(self._on_node_updated)
+
+    @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the climate entity."""
+        return f"{self._node.id}"
 
     @property
     def available(self) -> bool:
@@ -63,31 +59,10 @@ class HomeeNodeEntity(Entity):
         """Return the raw data of the node."""
         return self._node.raw_data
 
-    @property
-    def extra_state_attributes(self) -> dict[str, dict[str, Any]] | None:
-        """Return entity specific state attributes."""
-        data = {}
-
-        if self._entry.options.get(CONF_ADD_HOMEE_DATA, False):
-            data[ATTR_HOMEE_DATA] = self._homee_data
-
-        return data if data else None
-
     async def async_update(self):
         """Fetch new state data for this node."""
         homee = self._entry.runtime_data
         await homee.update_node(self._node.id)
-
-    def register_listener(self):
-        """Register the on_changed listener on the node."""
-        self._clear_node_listener = self._node.add_on_changed_listener(
-            self._on_node_updated
-        )
-
-    def clear_listener(self):
-        """Clear the on_changed listener on the node."""
-        if self._clear_node_listener is not None:
-            self._clear_node_listener()
 
     def attribute(self, attribute_type):
         """Try to get the current value of the attribute of the given type."""
@@ -105,43 +80,32 @@ class HomeeNodeEntity(Entity):
     def _get_software_version(self) -> str:
         """Return the software version of the node."""
         if self.has_attribute(AttributeType.FIRMWARE_REVISION):
-            sw_version = self.attribute(AttributeType.FIRMWARE_REVISION)
-        elif self.has_attribute(AttributeType.SOFTWARE_REVISION):
-            sw_version = self.attribute(AttributeType.SOFTWARE_REVISION)
-        else:
-            sw_version = "undefined"
-
-        return sw_version
-
-    def get_attribute(self, attribute_type):
-        """Get the attribute object of the given type."""
-        return self._node.get_attribute_by_type(attribute_type)
+            return self._node.get_attribute_by_type(
+                AttributeType.FIRMWARE_REVISION
+            ).get_value()
+        if self.has_attribute(AttributeType.SOFTWARE_REVISION):
+            return self._node.get_attribute_by_type(
+                AttributeType.SOFTWARE_REVISION
+            ).get_value()
+        return None
 
     def has_attribute(self, attribute_type):
         """Check if an attribute of the given type exists."""
         return attribute_type in self._node.attribute_map
 
-    def is_reversed(self, attribute_type) -> bool:
-        """Check if movement direction is reversed."""
-        attribute = self._node.get_attribute_by_type(attribute_type)
-        if hasattr(attribute.options, "reverse_control_ui"):
-            if attribute.options.reverse_control_ui:
-                return True
-
-        return False
-
     async def async_set_value(self, attribute_type: int, value: float):
         """Set an attribute value on the homee node."""
-        await self.async_set_value_by_id(self.get_attribute(attribute_type).id, value)
+        await self.async_set_value_by_id(
+            self._node.get_attribute_by_type(attribute_type).id, value
+        )
 
     async def async_set_value_by_id(self, attribute_id: int, value: float):
         """Set an attribute value on the homee node."""
         homee = self._entry.runtime_data
         await homee.set_value(self._node.id, attribute_id, value)
 
-    def _on_node_updated(self, node: HomeeNode, attribute: HomeeAttribute):
+    def _on_node_updated(self, node: HomeeNode) -> None:
         self.schedule_update_ha_state()
-
 
 class AttributeNotFoundException(Exception):
     """Raised if a requested attribute does not exist on a homee node."""
@@ -149,4 +113,3 @@ class AttributeNotFoundException(Exception):
     def __init__(self, attributeType) -> None:
         """Initialize the exception."""
         self.attributeType = attributeType
-        

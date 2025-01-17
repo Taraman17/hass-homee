@@ -3,13 +3,17 @@
 import logging
 from typing import Any
 
+from pyHomee.const import AttributeType
+from pyHomee.model import HomeeAttribute, HomeeNode
+
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
-    ATTR_COLOR_TEMP,
+    ATTR_COLOR_TEMP_KELVIN,
     ATTR_HS_COLOR,
     ColorMode,
     LightEntity,
 )
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.util.color import (
     brightness_to_value,
@@ -17,12 +21,11 @@ from homeassistant.util.color import (
     color_RGB_to_hs,
     value_to_brightness,
 )
-from pyHomee.const import AttributeType
-from pyHomee.model import HomeeNode
 
 from . import HomeeConfigEntry, helpers
 from .entity import HomeeNodeEntity
 from .const import LIGHT_PROFILES
+from .helpers import migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -134,6 +137,7 @@ async def async_setup_entry(
                 attributes_exhausted = True
 
     if devices:
+        await migrate_old_unique_ids(hass, devices, Platform.LIGHT)
         async_add_devices(devices)
 
 
@@ -148,20 +152,35 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
     _attr_has_entity_name = True
 
     def __init__(
-        self, node: HomeeNode, light_set, light_index, entry: HomeeConfigEntry
+        self,
+        node: HomeeNode,
+        light_set: dict[AttributeType, Any],
+        light_index,
+        entry: HomeeConfigEntry,
     ) -> None:
         """Initialize a homee light."""
         HomeeNodeEntity.__init__(self, node, entry)
         self._attr_supported_color_modes = get_supported_color_modes(self)
         self._attr_color_mode = get_color_mode(self._attr_supported_color_modes)
-        self._on_off_attr = light_set.get(AttributeType.ON_OFF, None)
-        self._dimmer_attr = light_set.get(AttributeType.DIMMING_LEVEL, None)
-        self._hue_attr = light_set.get(AttributeType.HUE, None)
-        self._col_attr = light_set.get(AttributeType.COLOR, None)
-        self._temp_attr = light_set.get(AttributeType.COLOR_TEMPERATURE, None)
-        self._mode_attr = light_set.get(AttributeType.COLOR_MODE, None)
+        self._on_off_attr: HomeeAttribute = light_set.get(AttributeType.ON_OFF, None)
+        self._dimmer_attr: HomeeAttribute = light_set.get(
+            AttributeType.DIMMING_LEVEL, None
+        )
+        self._hue_attr: HomeeAttribute = light_set.get(AttributeType.HUE, None)
+        self._col_attr: HomeeAttribute = light_set.get(AttributeType.COLOR, None)
+        self._temp_attr: HomeeAttribute = light_set.get(
+            AttributeType.COLOR_TEMPERATURE, None
+        )
+        self._mode_attr: HomeeAttribute = light_set.get(AttributeType.COLOR_MODE, None)
         self._light_index = light_index
-        self._attr_unique_id = f"{self._node.id}-light-{self._on_off_attr.id}"
+        self._attr_unique_id = (
+            f"{entry.runtime_data.settings.uid}-{self._node.id}-{self._on_off_attr.id}"
+        )
+
+    @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the climate entity."""
+        return f"{self._node.id}-light-{self._on_off_attr.id}"
 
     @property
     def name(self):
@@ -227,9 +246,9 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
             # If no brightness value is given, just torn on.
             await self.async_set_value_by_id(self._on_off_attr.id, 1)
 
-        if ATTR_COLOR_TEMP in kwargs and self._temp_attr is not None:
+        if ATTR_COLOR_TEMP_KELVIN in kwargs and self._temp_attr is not None:
             await self.async_set_value_by_id(
-                self._temp_attr.id, kwargs[ATTR_COLOR_TEMP]
+                self._temp_attr.id, kwargs[ATTR_COLOR_TEMP_KELVIN]
             )
         if ATTR_HS_COLOR in kwargs:
             color = kwargs[ATTR_HS_COLOR]

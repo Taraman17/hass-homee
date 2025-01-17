@@ -215,14 +215,9 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
         _LOGGER.debug("Migrating from version %s", config_entry.version)
 
         new_data = {**config_entry.data}
-        new_options = {**config_entry.options}
-
-        # Remove options for import of only certain groups.
-        new_options.pop(CONF_ALL_DEVICES)
-        new_options[CONF_GROUPS].pop(CONF_IMPORT_GROUPS)
 
         hass.config_entries.async_update_entry(
-            config_entry, data=new_data, options=new_options, version=3
+            config_entry, data=new_data, version=3
         )
 
         _LOGGER.info("Migration to v%s successful", config_entry.version)
@@ -249,6 +244,7 @@ async def _migrate_old_unique_ids(hass: HomeAssistant, entry_id: str) -> None:
                 return None
             _LOGGER.info("Fixing non string unique id %s", entity_entry.unique_id)
             return {"new_unique_id": new_unique_id}
+
         return None
 
     await er.async_migrate_entries(hass, entry_id, _async_migrator)

@@ -10,12 +10,14 @@ from homeassistant.components.alarm_control_panel import (
     AlarmControlPanelEntityFeature,
     AlarmControlPanelState,
 )
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 
 from . import HomeeConfigEntry, helpers
-from .entity import HomeeNodeEntity
 from .const import DOMAIN
+from .entity import HomeeNodeEntity
+from .helpers import migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -38,7 +40,7 @@ async def async_setup_entry(
 ) -> None:
     """Add the homee platform for the switch component."""
 
-    devices = []
+    devices: HomeeAlarmPanel = []
     for node in helpers.get_imported_nodes(config_entry):
         devices.extend(
             HomeeAlarmPanel(node, config_entry, attribute)
@@ -48,6 +50,7 @@ async def async_setup_entry(
             and node.id == -1
         )
     if devices:
+        await migrate_old_unique_ids(hass, devices, Platform.ALARM_CONTROL_PANEL)
         async_add_devices(devices)
 
 
@@ -70,8 +73,14 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
         self._attr_translation_key = "homee_status"
 
         self._attr_unique_id = (
-            f"{self._node.id}-alarm_panel-{self._alarm_panel_attribute.id}"
+            f"{entry.runtime_data.settings.uid}-{node.id}-{self._alarm_panel_attribute.id}"
         )
+
+    @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the climate entity."""
+        return f"{self._node.id}-alarm_panel-{self._alarm_panel_attribute.id}"
+
 
     @property
     def device_info(self) -> DeviceInfo:

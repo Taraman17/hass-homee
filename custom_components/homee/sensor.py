@@ -10,13 +10,14 @@ from homeassistant.components.sensor import (
     SensorEntity,
     SensorStateClass,
 )
-from homeassistant.const import EntityCategory
+from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 
 from . import HomeeConfigEntry, helpers
-from .entity import HomeeNodeEntity
 from .const import DOMAIN
+from .entity import HomeeNodeEntity
+from .helpers import migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -219,6 +220,7 @@ async def async_setup_entry(
             if attribute.type in SENSOR_ATTRIBUTES
         )
     if devices:
+        await migrate_old_unique_ids(hass, devices, Platform.SENSOR)
         async_add_devices(devices)
 
 
@@ -247,12 +249,17 @@ class HomeeSensor(HomeeNodeEntity, SensorEntity):
         if self._translation_key is None:
             self._attr_name = None
 
-        self._attr_unique_id = f"{self._node.id}-sensor-{self._measurement.id}"
+        self._attr_unique_id = f"{entry.runtime_data.settings.uid}-{self._node.id}-{self._measurement.id}"
+
+    @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the climate entity."""
+        return f"{self._node.id}-sensor-{self._measurement.id}"
 
     @property
     def translation_key(self) -> str:
         """Return the translation key of the sensor entity."""
-        if self.is_reversed(self._measurement.type):
+        if self._measurement.is_reversed:
             return f"{self._translation_key}_rev"
 
         return self._translation_key
@@ -318,7 +325,12 @@ class HomeeNodeSensor(SensorEntity):
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_translation_key = f"node_sensor_{prop_name}"
 
-        self._attr_unique_id = f"{node.id}-sensor-{prop_name}"
+        self._attr_unique_id = f"{entry.runtime_data.settings.uid}-{node.id}-{prop_name}"
+
+    @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the climate entity."""
+        return f"{self._node.id}-sensor-{self._prop_name}"
 
     @property
     def native_value(self) -> str:

@@ -12,8 +12,7 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/Taraman17/hass-homee/issues",
   "requirements": [
-    "pyHomee==1.0.2",
-    "websockets==13.1"
+    "pyHomee==1.2.0"
   ],
   "ssdp": [],
   "version": "2.12.0"

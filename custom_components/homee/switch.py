@@ -6,13 +6,13 @@ from pyHomee.const import AttributeType, NodeProfile
 from pyHomee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
-from homeassistant.const import EntityCategory
+from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 
 from . import HomeeConfigEntry
 from .entity import HomeeNodeEntity
 from .const import CLIMATE_PROFILES, LIGHT_PROFILES
-from .helpers import get_imported_nodes, get_name_for_enum
+from .helpers import get_imported_nodes, get_name_for_enum, migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -111,6 +111,7 @@ async def async_setup_entry(
             )
         )
     if devices:
+        await migrate_old_unique_ids(hass, devices, Platform.SWITCH)
         async_add_devices(devices)
 
 
@@ -132,7 +133,14 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         self._attr_device_class = get_device_class(node)
         self._attr_entity_category = get_entity_category(on_off_attribute)
 
-        self._attr_unique_id = f"{self._node.id}-switch-{self._on_off.id}"
+        self._attr_unique_id = (
+            f"{entry.runtime_data.settings.uid}-{self._node.id}-{self._on_off.id}"
+        )
+
+    @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the climate entity."""
+        return f"{self._node.id}-switch-{self._on_off.id}"
 
     @property
     def translation_key(self) -> str | None:

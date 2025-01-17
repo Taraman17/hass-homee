@@ -6,11 +6,12 @@ from pyHomee.const import AttributeChangedBy, AttributeType
 from pyHomee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.lock import LockEntity
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
 from . import HomeeConfigEntry
 from .entity import HomeeNodeEntity
-from .helpers import get_imported_nodes, get_name_for_enum
+from .helpers import get_imported_nodes, get_name_for_enum, migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,6 +29,7 @@ async def async_setup_entry(
             if (attribute.type == AttributeType.LOCK_STATE and attribute.editable)
         )
     if devices:
+        await migrate_old_unique_ids(hass, devices, Platform.LOCK)
         async_add_devices(devices)
 
 
@@ -47,7 +49,14 @@ class HomeeLock(HomeeNodeEntity, LockEntity):
         HomeeNodeEntity.__init__(self, node, entry)
         self._lock = lock_attribute
         self._switch_index = lock_attribute.instance
-        self._attr_unique_id = f"{self._node.id}-lock-{self._lock.id}"
+        self._attr_unique_id = (
+            f"{entry.runtime_data.settings.uid}-{self._node.id}-{self._lock.id}"
+        )
+
+    @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the climate entity."""
+        return f"{self._node.id}-lock-{self._lock.id}"
 
     @property
     def is_locked(self) -> int:

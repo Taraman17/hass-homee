@@ -4,13 +4,14 @@ from pyHomee.const import AttributeType
 from pyHomee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.number import NumberDeviceClass, NumberEntity
-from homeassistant.const import EntityCategory
+from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 
 from . import HomeeConfigEntry, helpers
-from .entity import HomeeNodeEntity
 from .const import DOMAIN
+from .entity import HomeeNodeEntity
+from .helpers import migrate_old_unique_ids
 
 NUMBER_ATTRIBUTES = {
     AttributeType.CURRENT_VALVE_POSITION,
@@ -121,6 +122,7 @@ async def async_setup_entry(
             if attribute.type in NUMBER_ATTRIBUTES
         )
     if devices:
+        await migrate_old_unique_ids(hass, devices, Platform.NUMBER)
         async_add_devices(devices)
 
 
@@ -150,7 +152,14 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
         if self.translation_key is None:
             self._attr_name = None
 
-        self._attr_unique_id = f"{self._node.id}-number-{self._number.id}"
+        self._attr_unique_id = (
+            f"{entry.runtime_data.settings.uid}-{self._node.id}-{self._number.id}"
+        )
+
+    @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the climate entity."""
+        return f"{self._node.id}-number-{self._number.id}"
 
     @property
     def available(self) -> bool:
