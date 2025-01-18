@@ -118,6 +118,12 @@
       "lock_sensor": {
         "name": "Lock"
       },
+      "maximum_sensor": {
+        "name": "Maximum alarm"
+      },
+      "minimum_alarm": {
+        "name": "Minimum alarm"
+      },
       "malfunction_sensor": {
         "name": "Malfunction Alarm"
       },
@@ -312,6 +318,9 @@
       "relative_humidity_sensor": {
         "name": "Relative Humidity"
       },
+      "level_sensor": {
+        "name": "Level"
+      },
       "link_quality_sensor": {
         "name": "Link Quality"
       },
@@ -400,6 +409,9 @@
       },
       "voltage_sensor_4": {
         "name": "Voltage 4"
+      },
+      "wake_up_interval_sensor": {
+        "name": "Wake up interval"
       },
       "wind_speed_sensor": {
         "name": "Wind Speed"

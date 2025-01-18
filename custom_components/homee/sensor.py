@@ -31,6 +31,7 @@ SENSOR_ATTRIBUTES = [
     AttributeType.CURRENT_VALVE_POSITION,
     AttributeType.DAWN,
     AttributeType.DEVICE_TEMPERATURE,
+    AttributeType.LEVEL,
     AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
     AttributeType.RELATIVE_HUMIDITY,
@@ -62,6 +63,7 @@ MEASUREMENT_ATTRIBUTES = [
     AttributeType.CURRENT_VALVE_POSITION,
     AttributeType.DAWN,
     AttributeType.DEVICE_TEMPERATURE,
+    AttributeType.LEVEL,
     AttributeType.LINK_QUALITY,
     AttributeType.POSITION,
     AttributeType.RAIN_FALL,
@@ -84,7 +86,6 @@ TEXT_STATUS_ATTRIBUTES = [
     AttributeType.UP_DOWN,
     AttributeType.WINDOW_POSITION,
 ]
-
 
 def get_device_properties(
     attribute: HomeeAttribute,
@@ -130,6 +131,10 @@ def get_device_properties(
         device_class = SensorDeviceClass.HUMIDITY
         translation_key = "relative_humidity_sensor"
 
+    if attribute.type == AttributeType.LEVEL:
+        translation_key = "level_sensor"
+        device_class = SensorDeviceClass.VOLUME
+
     if attribute.type == AttributeType.LINK_QUALITY:
         translation_key = "link_quality_sensor"
         icon = "mdi:signal"
@@ -171,6 +176,11 @@ def get_device_properties(
     if attribute.type in [AttributeType.VOLTAGE, AttributeType.TOTAL_VOLTAGE]:
         device_class = SensorDeviceClass.VOLTAGE
         translation_key = "voltage_sensor"
+
+    if attribute.type == AttributeType.WAKE_UP_INTERVAL:
+        device_class = SensorDeviceClass.DURATION
+        translation_key = "wake_up_interval_sensor"
+        entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.WIND_SPEED:
         translation_key = "wind_speed_sensor"
@@ -217,7 +227,7 @@ async def async_setup_entry(
         devices.extend(
             HomeeSensor(node, config_entry, attribute)
             for attribute in node.attributes
-            if attribute.type in SENSOR_ATTRIBUTES
+            if attribute.type in SENSOR_ATTRIBUTES and not attribute.editable
         )
     if devices:
         await migrate_old_unique_ids(hass, devices, Platform.SENSOR)

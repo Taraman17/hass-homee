@@ -117,6 +117,12 @@
       "lock_sensor": {
         "name": "Schloss"
       },
+      "maximum_sensor": {
+        "name": "Maximumalarm"
+      },
+      "minimum_alarm": {
+        "name": "Minimumalarm"
+      },
       "malfunction_sensor": {
         "name": "Fehleralarm"
       },
@@ -311,6 +317,9 @@
       "relative_humidity_sensor": {
         "name": "Relative Luftfeuchte"
       },
+      "level_sensor": {
+        "name": "Füllstand"
+      },
       "link_quality_sensor": {
         "name": "Signalstärke"
       },
@@ -399,6 +408,9 @@
       },
       "voltage_sensor_4": {
         "name": "Spannung 4"
+      },
+      "wake_up_interval_sensor": {
+        "name": "Aufwachintervall"
       },
       "wind_speed_sensor": {
         "name": "Windgeschwindigkeit"

@@ -107,19 +107,25 @@
         "name": "Door"
       },
       "flood_sensor": {
-        "name": "Flood Alarm"
+        "name": "Flood alarm"
       },
       "heat_sensor": {
-        "name": "Temperature Alarm"
+        "name": "Temperature alarm"
       },
       "load_alarm_sensor": {
-        "name": "Load Alarm"
+        "name": "Load alarm"
       },
       "lock_sensor": {
         "name": "Lock"
       },
+      "maximum_sensor": {
+        "name": "Maximum alarm"
+      },
+      "minimum_alarm": {
+        "name": "Minimum alarm"
+      },
       "malfunction_sensor": {
-        "name": "Malfunction Alarm"
+        "name": "Malfunction alarm"
       },
       "motion_sensor": {
         "name": "Motion"
@@ -128,10 +134,10 @@
         "name": "Opening"
       },
       "overcurrent_sensor": {
-        "name": "Overcurrent Alarm"
+        "name": "Overcurrent alarm"
       },
       "overload_sensor": {
-        "name": "Overload Alarm"
+        "name": "Overload alarm"
       },
       "plug_sensor": {
         "name": "Plug"
@@ -143,13 +149,13 @@
         "name": "Smoke"
       },
       "surge_sensor": {
-        "name": "Surge Alarm"
+        "name": "Surge alarm"
       },
       "tamper_sensor": {
-        "name": "Tamper Alarm"
+        "name": "Tamper alarm"
       },
       "voltage_drop_sensor": {
-        "name": "Voltage Drop Alarm"
+        "name": "Voltage Drop alarm"
       },
       "window_sensor": {
         "name": "Window"
@@ -200,7 +206,7 @@
         "name": "End position"
       },
       "number_motion_alarm_cancelation_delay": {
-        "name": "Motion Alarm Delay"
+        "name": "Motion alarm Delay"
       },
       "number_open_window_detection_sensibility": {
         "name": "Window Open Sensibility"
@@ -312,6 +318,9 @@
       "relative_humidity_sensor": {
         "name": "Relative Humidity"
       },
+      "level_sensor": {
+        "name": "Level"
+      },
       "link_quality_sensor": {
         "name": "Link Quality"
       },
@@ -400,6 +409,9 @@
       },
       "voltage_sensor_4": {
         "name": "Voltage 4"
+      },
+      "wake_up_interval_sensor": {
+        "name": "Wake up interval"
       },
       "wind_speed_sensor": {
         "name": "Wind Speed"

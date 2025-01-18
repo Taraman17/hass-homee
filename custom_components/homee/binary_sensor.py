@@ -79,6 +79,18 @@ def get_device_class(attribute: HomeeAttribute):
         translation_key = "malfunction_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
+    if attribute.type == AttributeType.MAXIMUM_ALARM:
+        state_attr = AttributeType.MAXIMUM_ALARM
+        device_class = BinarySensorDeviceClass.PROBLEM
+        translation_key = "maximum_sensor"
+        entity_category = EntityCategory.DIAGNOSTIC
+
+    if attribute.type == AttributeType.MINIMUM_ALARM:
+        state_attr = AttributeType.MINIMUM_ALARM
+        device_class = BinarySensorDeviceClass.PROBLEM
+        translation_key = "minimum_sensor"
+        entity_category = EntityCategory.DIAGNOSTIC
+
     if attribute.type == AttributeType.MOTION_ALARM:
         state_attr = AttributeType.MOTION_ALARM
         device_class = BinarySensorDeviceClass.MOTION
