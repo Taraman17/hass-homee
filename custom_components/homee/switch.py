@@ -12,7 +12,7 @@ from homeassistant.core import HomeAssistant
 from . import HomeeConfigEntry
 from .entity import HomeeNodeEntity
 from .const import CLIMATE_PROFILES, LIGHT_PROFILES
-from .helpers import get_imported_nodes, get_name_for_enum, migrate_old_unique_ids
+from .helpers import get_name_for_enum, migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -96,7 +96,7 @@ async def async_setup_entry(
     """Add the homee platform for the switch component."""
 
     devices = []
-    for node in get_imported_nodes(config_entry):
+    for node in config_entry.runtime_data.nodes:
         devices.extend(
             HomeeSwitch(node, config_entry, attribute)
             for attribute in node.attributes
@@ -192,17 +192,19 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the entity on."""
-        await self.async_set_value_by_id(self._on_off.id, 1)
+        await self.async_set_value(self._on_off, 1)
 
     async def async_turn_off(self, **kwargs) -> None:
         """Turn the entity off."""
-        await self.async_set_value_by_id(self._on_off.id, 0)
+        await self.async_set_value(self._on_off, 0)
 
     @property
     def current_power_w(self) -> int | None:
         """Return the current power usage in W."""
         if self.has_attribute(AttributeType.CURRENT_ENERGY_USE):
-            return self.attribute(AttributeType.CURRENT_ENERGY_USE)
+            return self._node.get_attribute_by_type(
+                AttributeType.CURRENT_ENERGY_USE
+            ).get_value()
 
         return None
 
@@ -210,6 +212,8 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
     def today_energy_kwh(self) -> int | None:
         """Return the total power usage in kWh."""
         if self.has_attribute(AttributeType.ACCUMULATED_ENERGY_USE):
-            return self.attribute(AttributeType.ACCUMULATED_ENERGY_USE)
+            return self._node.get_attribute_by_type(
+                AttributeType.ACCUMULATED_ENERGY_USE
+            ).get_value()
 
         return None

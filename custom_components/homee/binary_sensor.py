@@ -3,7 +3,7 @@
 import logging
 
 from pyHomee.const import AttributeType
-from pyHomee.model import HomeeAttribute, HomeeNode
+from pyHomee.model import HomeeAttribute
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -12,8 +12,8 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 
-from . import HomeeConfigEntry, helpers
-from .entity import HomeeNodeEntity
+from . import HomeeConfigEntry
+from .entity import HomeeEntity
 from .helpers import migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
@@ -41,128 +41,108 @@ HOMEE_BINARY_SENSOR_ATTRIBUTES = [
 
 def get_device_class(attribute: HomeeAttribute):
     """Determine the device class a homee node based on the available attributes."""
-    state_attr = None
     device_class = None
     translation_key = ""
     entity_category = None
 
     if attribute.type == AttributeType.BATTERY_LOW_ALARM:
-        state_attr = AttributeType.BATTERY_LOW_ALARM
         device_class = BinarySensorDeviceClass.BATTERY
         translation_key = "battery_low_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.FLOOD_ALARM:
-        state_attr = AttributeType.FLOOD_ALARM
         device_class = BinarySensorDeviceClass.MOISTURE
         translation_key = "flood_sensor"
 
     if attribute.type == AttributeType.HIGH_TEMPERATURE_ALARM:
-        state_attr = AttributeType.HIGH_TEMPERATURE_ALARM
         device_class = BinarySensorDeviceClass.HEAT
         translation_key = "heat_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.LOAD_ALARM:
-        state_attr = AttributeType.LOAD_ALARM
         translation_key = "load_alarm_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.LOCK_STATE:
-        state_attr = AttributeType.LOCK_STATE
         device_class = BinarySensorDeviceClass.LOCK
         translation_key = "lock_sensor"
 
     if attribute.type == AttributeType.MALFUNCTION_ALARM:
-        state_attr = AttributeType.MALFUNCTION_ALARM
         device_class = BinarySensorDeviceClass.PROBLEM
         translation_key = "malfunction_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.MAXIMUM_ALARM:
-        state_attr = AttributeType.MAXIMUM_ALARM
         device_class = BinarySensorDeviceClass.PROBLEM
         translation_key = "maximum_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.MINIMUM_ALARM:
-        state_attr = AttributeType.MINIMUM_ALARM
         device_class = BinarySensorDeviceClass.PROBLEM
         translation_key = "minimum_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.MOTION_ALARM:
-        state_attr = AttributeType.MOTION_ALARM
         device_class = BinarySensorDeviceClass.MOTION
         translation_key = "motion_sensor"
 
     if attribute.type == AttributeType.ON_OFF:
-        state_attr = AttributeType.ON_OFF
         device_class = BinarySensorDeviceClass.PLUG
         translation_key = "plug_sensor"
 
     if attribute.type == AttributeType.OPEN_CLOSE:
-        state_attr = AttributeType.OPEN_CLOSE
         device_class = BinarySensorDeviceClass.OPENING
         translation_key = "opening_sensor"
 
     if attribute.type == AttributeType.OVER_CURRENT_ALARM:
-        state_attr = AttributeType.OVER_CURRENT_ALARM
         device_class = BinarySensorDeviceClass.PROBLEM
         translation_key = "overcurrent_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.OVERLOAD_ALARM:
-        state_attr = AttributeType.OVERLOAD_ALARM
         device_class = BinarySensorDeviceClass.PROBLEM
         translation_key = "overload_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.PRESENCE_ALARM:
-        state_attr = AttributeType.PRESENCE_ALARM
         device_class = BinarySensorDeviceClass.MOTION
         translation_key = "motion_sensor"
 
     if attribute.type == AttributeType.RAIN_FALL:
-        state_attr = AttributeType.RAIN_FALL
         device_class = BinarySensorDeviceClass.MOISTURE
         translation_key = "rain_sensor"
 
     if attribute.type == AttributeType.SMOKE_ALARM:
-        state_attr = AttributeType.SMOKE_ALARM
         device_class = BinarySensorDeviceClass.SMOKE
         translation_key = "smoke_sensor"
 
     if attribute.type == AttributeType.SURGE_ALARM:
-        state_attr = AttributeType.SURGE_ALARM
         device_class = BinarySensorDeviceClass.PROBLEM
         translation_key = "surge_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.TAMPER_ALARM:
-        state_attr = AttributeType.TAMPER_ALARM
         device_class = BinarySensorDeviceClass.TAMPER
         translation_key = "tamper_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
     if attribute.type == AttributeType.VOLTAGE_DROP_ALARM:
-        state_attr = AttributeType.VOLTAGE_DROP_ALARM
         device_class = BinarySensorDeviceClass.PROBLEM
         translation_key = "voltage_drop_sensor"
         entity_category = EntityCategory.DIAGNOSTIC
 
-    return (device_class, state_attr, translation_key, entity_category)
+    return (device_class, translation_key, entity_category)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, config_entry, async_add_devices
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
 ) -> None:
     """Add the homee platform for the binary sensor integration."""
 
     devices = []
-    for node in helpers.get_imported_nodes(config_entry):
+    for node in config_entry.runtime_data.nodes:
         devices.extend(
-            HomeeBinarySensor(node, config_entry, attribute)
+            HomeeBinarySensor(attribute, config_entry)
             for attribute in node.attributes
             if (
                 attribute.type in HOMEE_BINARY_SENSOR_ATTRIBUTES
@@ -174,24 +154,22 @@ async def async_setup_entry(
         async_add_devices(devices)
 
 
-class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
+class HomeeBinarySensor(HomeeEntity, BinarySensorEntity):
     """Representation of a homee binary sensor device."""
 
     _attr_has_entity_name = True
 
     def __init__(
         self,
-        node: HomeeNode,
+        binary_sensor_attribute: HomeeAttribute,
         entry: HomeeConfigEntry,
-        binary_sensor_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee binary sensor entity."""
-        HomeeNodeEntity.__init__(self, node, entry)
+        HomeeEntity.__init__(self, binary_sensor_attribute, entry)
 
-        self._on_off = binary_sensor_attribute
         self._configure_device_class()
         self._attr_unique_id = (
-            f"{entry.runtime_data.settings.uid}-{node.id}-{self._on_off.id}"
+            f"{entry.runtime_data.settings.uid}-{self._attribute.node_id}-{self._attribute.id}"
         )
 
     def _configure_device_class(self):
@@ -200,10 +178,9 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
         # Get the initial device class and state attribute
         (
             self._device_class,
-            self._state_attr,
             self._attr_translation_key,
             self._attr_entity_category,
-        ) = get_device_class(self._on_off)
+        ) = get_device_class(self._attribute)
 
         if self.translation_key is None:
             self._attr_name = None
@@ -211,12 +188,12 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
     @property
     def old_unique_id(self) -> str:
         """Return the old not so unique id of the climate entity."""
-        return f"{self._node.id}-binary_sensor-{self._on_off.id}"
+        return f"{self._attribute.node_id}-binary_sensor-{self._attribute.id}"
 
     @property
     def is_on(self) -> bool:
         """Return true if the binary sensor is on."""
-        return bool(self.attribute(self._state_attr))
+        return bool(self._attribute.get_value())
 
     @property
     def device_class(self) -> BinarySensorDeviceClass:
@@ -226,4 +203,4 @@ class HomeeBinarySensor(HomeeNodeEntity, BinarySensorEntity):
     async def async_update(self) -> None:
         """Update entity from homee."""
         homee = self._entry.runtime_data
-        await homee.update_attribute(self._on_off.node_id, self._on_off.id)
+        await homee.update_attribute(self._attribute.node_id, self._attribute.id)

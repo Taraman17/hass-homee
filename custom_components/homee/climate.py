@@ -18,7 +18,7 @@ from homeassistant.components.climate import (
 from homeassistant.const import Platform, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 
-from . import HomeeConfigEntry, helpers
+from . import HomeeConfigEntry
 from .const import CLIMATE_PROFILES, DOMAIN, PRESET_MANUAL
 from .entity import HomeeNodeEntity
 from .helpers import migrate_old_unique_ids
@@ -38,12 +38,12 @@ ROOM_THERMOSTATS = {
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, config_entry, async_add_devices
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
 ) -> None:
     """Add the homee platform for the climate integration."""
 
     devices = []
-    for node in helpers.get_imported_nodes(config_entry):
+    for node in config_entry.runtime_data.nodes:
         if not is_climate_node(node):
             continue
         devices.append(HomeeClimate(node, config_entry))
@@ -122,7 +122,12 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
                 return HVACAction.OFF
 
         if self.has_attribute(AttributeType.CURRENT_VALVE_POSITION):
-            if self.attribute(AttributeType.CURRENT_VALVE_POSITION) == 0:
+            if (
+                self._node.get_attribute_by_type(
+                    AttributeType.CURRENT_VALVE_POSITION
+                ).get_value()
+                == 0
+            ):
                 return HVACAction.IDLE
 
         if self.current_temperature >= self.target_temperature:
@@ -134,11 +139,20 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     def preset_mode(self) -> str:
         """Return the present preset mode."""
         if ClimateEntityFeature.PRESET_MODE in self.supported_features:
-            if self.attribute(AttributeType.HEATING_MODE) == 2:
+            if (
+                self._node.get_attribute_by_type(AttributeType.HEATING_MODE).get_value()
+                == 2
+            ):
                 return PRESET_ECO
-            if self.attribute(AttributeType.HEATING_MODE) == 3:
+            if (
+                self._node.get_attribute_by_type(AttributeType.HEATING_MODE).get_value()
+                == 3
+            ):
                 return PRESET_BOOST
-            if self.attribute(AttributeType.HEATING_MODE) == 4:
+            if (
+                self._node.get_attribute_by_type(AttributeType.HEATING_MODE).get_value()
+                == 4
+            ):
                 return PRESET_MANUAL
 
         return PRESET_NONE
@@ -146,18 +160,22 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     @property
     def current_temperature(self) -> float:
         """Return the current temperature."""
-        return self.attribute(AttributeType.TEMPERATURE)
+        return self._node.get_attribute_by_type(AttributeType.TEMPERATURE).get_value()
 
     @property
     def target_temperature(self) -> float:
         """Return the temperature we try to reach."""
-        return self.attribute(AttributeType.TARGET_TEMPERATURE)
+        return self._node.get_attribute_by_type(
+            AttributeType.TARGET_TEMPERATURE
+        ).get_value()
 
     @property
     def min_temp(self) -> float:
         """Return the lowest settable target temperature."""
         if self.has_attribute(AttributeType.TARGET_TEMPERATURE_LOW):
-            return self.attribute(AttributeType.TARGET_TEMPERATURE_LOW)
+            return self._node.get_attribute_by_type(
+                AttributeType.TARGET_TEMPERATURE_LOW
+            ).get_value()
 
         return self._node.get_attribute_by_type(
             AttributeType.TARGET_TEMPERATURE
@@ -167,7 +185,9 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     def max_temp(self) -> float:
         """Return the lowest settable target temperature."""
         if self.has_attribute(AttributeType.TARGET_TEMPERATURE_HIGH):
-            return self.attribute(AttributeType.TARGET_TEMPERATURE_HIGH)
+            return self._node.get_attribute_by_type(
+                AttributeType.TARGET_TEMPERATURE_HIGH
+            ).get_value()
 
         return self._node.get_attribute_by_type(
             AttributeType.TARGET_TEMPERATURE

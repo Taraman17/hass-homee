@@ -14,7 +14,7 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 
-from . import HomeeConfigEntry, helpers
+from . import HomeeConfigEntry
 from .const import DOMAIN
 from .entity import HomeeNodeEntity
 from .helpers import migrate_old_unique_ids
@@ -41,7 +41,7 @@ async def async_setup_entry(
     """Add the homee platform for the switch component."""
 
     devices: HomeeAlarmPanel = []
-    for node in helpers.get_imported_nodes(config_entry):
+    for node in config_entry.runtime_data.nodes:
         devices.extend(
             HomeeAlarmPanel(node, config_entry, attribute)
             for attribute in node.attributes
@@ -114,16 +114,16 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
 
     async def async_alarm_arm_home(self, code=None) -> None:
         """Send arm home command."""
-        await self.async_set_value_by_id(self._alarm_panel_attribute.id, 0)
-
-    async def async_alarm_arm_away(self, code=None) -> None:
-        """Send arm away command."""
-        await self.async_set_value_by_id(self._alarm_panel_attribute.id, 2)
+        await self.async_set_value(self._alarm_panel_attribute, 0)
 
     async def async_alarm_arm_night(self, code=None) -> None:
         """Send arm night command."""
-        await self.async_set_value_by_id(self._alarm_panel_attribute.id, 1)
+        await self.async_set_value(self._alarm_panel_attribute, 1)
+
+    async def async_alarm_arm_away(self, code=None) -> None:
+        """Send arm away command."""
+        await self.async_set_value(self._alarm_panel_attribute, 2)
 
     async def async_alarm_arm_vacation(self, code=None) -> None:
         """Send arm vacation command."""
-        await self.async_set_value_by_id(self._alarm_panel_attribute.id, 3)
+        await self.async_set_value(self._alarm_panel_attribute, 3)

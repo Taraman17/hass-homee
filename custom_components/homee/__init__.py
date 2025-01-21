@@ -7,7 +7,7 @@ from pyHomee.const import NodeProfile
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr, entity_registry as er
@@ -31,16 +31,16 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = [
-    "alarm_control_panel",
-    "binary_sensor",
-    "climate",
-    "cover",
-    "event",
-    "light",
-    "lock",
-    "number",
-    "sensor",
-    "switch",
+    Platform.ALARM_CONTROL_PANEL,
+    Platform.BINARY_SENSOR,
+    Platform.CLIMATE,
+    Platform.COVER,
+    Platform.EVENT,
+    Platform.LIGHT,
+    Platform.LOCK,
+    Platform.NUMBER,
+    Platform.SENSOR,
+    Platform.SWITCH,
 ]
 
 type HomeeConfigEntry = ConfigEntry[Homee]

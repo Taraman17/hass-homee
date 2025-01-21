@@ -22,7 +22,7 @@ from homeassistant.util.color import (
     value_to_brightness,
 )
 
-from . import HomeeConfigEntry, helpers
+from . import HomeeConfigEntry
 from .entity import HomeeNodeEntity
 from .const import LIGHT_PROFILES
 from .helpers import migrate_old_unique_ids
@@ -123,7 +123,7 @@ async def async_setup_entry(
     """Add the homee platform for the light integration."""
 
     devices = []
-    for node in helpers.get_imported_nodes(config_entry):
+    for node in config_entry.runtime_data.nodes:
         if not is_light_node(node):
             continue
         index = 0
@@ -241,28 +241,28 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
                     kwargs[ATTR_BRIGHTNESS],
                 )
             )
-            await self.async_set_value_by_id(self._dimmer_attr.id, target_value)
+            await self.async_set_value(self._dimmer_attr, target_value)
         else:
             # If no brightness value is given, just torn on.
-            await self.async_set_value_by_id(self._on_off_attr.id, 1)
+            await self.async_set_value(self._on_off_attr, 1)
 
         if ATTR_COLOR_TEMP_KELVIN in kwargs and self._temp_attr is not None:
-            await self.async_set_value_by_id(
-                self._temp_attr.id, kwargs[ATTR_COLOR_TEMP_KELVIN]
+            await self.async_set_value(
+                self._temp_attr, kwargs[ATTR_COLOR_TEMP_KELVIN]
             )
         if ATTR_HS_COLOR in kwargs:
             color = kwargs[ATTR_HS_COLOR]
             if self._hue_attr is None:
-                await self.async_set_value_by_id(
-                    self._col_attr.id,
+                await self.async_set_value(
+                    self._col_attr,
                     rgb_list_to_decimal(color_hs_to_RGB(*color)),
                 )
             elif self._col_attr is None:
-                await self.async_set_value_by_id(
-                    self._hue_attr.id,
+                await self.async_set_value(
+                    self._hue_attr,
                     rgb_list_to_decimal(color_hs_to_RGB(*color)),
                 )
 
     async def async_turn_off(self, **kwargs):
         """Instruct the light to turn off."""
-        await self.async_set_value_by_id(self._on_off_attr.id, 0)
+        await self.async_set_value(self._on_off_attr, 0)

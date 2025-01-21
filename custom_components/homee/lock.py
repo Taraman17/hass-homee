@@ -11,7 +11,7 @@ from homeassistant.core import HomeAssistant
 
 from . import HomeeConfigEntry
 from .entity import HomeeNodeEntity
-from .helpers import get_imported_nodes, get_name_for_enum, migrate_old_unique_ids
+from .helpers import get_name_for_enum, migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ async def async_setup_entry(
     """Add the homee platform for the lock component."""
 
     devices = []
-    for node in get_imported_nodes(config_entry):
+    for node in config_entry.runtime_data.nodes:
         devices.extend(
             HomeeLock(node, config_entry, attribute)
             for attribute in node.attributes
@@ -76,8 +76,8 @@ class HomeeLock(HomeeNodeEntity, LockEntity):
 
     async def async_lock(self, **kwargs) -> None:
         """Lock all or specified locks. A code to lock the lock with may be specified."""
-        await self.async_set_value_by_id(self._lock.id, 0)
+        await self.async_set_value(self._lock, 0)
 
     async def async_unlock(self, **kwargs) -> None:
         """Unlock all or specified locks. A code to unlock the lock with may be specified."""
-        await self.async_set_value_by_id(self._lock.id, 1)
+        await self.async_set_value(self._lock, 1)

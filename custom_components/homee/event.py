@@ -3,7 +3,7 @@
 import logging
 
 from pyHomee.const import AttributeType
-from pyHomee.model import HomeeAttribute, HomeeNode
+from pyHomee.model import HomeeAttribute
 
 from homeassistant.components.event import (
     EventDeviceClass,
@@ -14,8 +14,8 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
 
 from . import HomeeConfigEntry
-from .entity import HomeeNodeEntity
-from .helpers import get_imported_nodes, migrate_old_unique_ids
+from .entity import HomeeEntity
+from .helpers import migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,9 +26,9 @@ async def async_setup_entry(
     """Add the homee platform for the event component."""
 
     devices = []
-    for node in get_imported_nodes(config_entry):
+    for node in config_entry.runtime_data.nodes:
         devices.extend(
-            HomeeEvent(node, config_entry, attribute)
+            HomeeEvent(attribute, config_entry)
             for attribute in node.attributes
             if (attribute.type == AttributeType.UP_DOWN_REMOTE)
         )
@@ -37,7 +37,7 @@ async def async_setup_entry(
         async_add_devices(devices)
 
 
-class HomeeEvent(HomeeNodeEntity, EventEntity):
+class HomeeEvent(HomeeEntity, EventEntity):
     """Representation of a homee event."""
 
     entity_description = EventEntityDescription(
@@ -50,31 +50,28 @@ class HomeeEvent(HomeeNodeEntity, EventEntity):
 
     def __init__(
         self,
-        node: HomeeNode,
+        event_attribute: HomeeAttribute,
         entry: HomeeConfigEntry,
-        event_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee event entity."""
-        HomeeNodeEntity.__init__(self, node, entry)
-        self._event = event_attribute
+        HomeeEntity.__init__(self, event_attribute, entry)
         self._switch_index = event_attribute.instance
         self._attr_unique_id = (
-            f"{entry.runtime_data.settings.uid}-{self._node.id}-{self._event.id}"
+            f"{entry.runtime_data.settings.uid}-{self._attribute.node_id}-{self._attribute.id}"
         )
 
     @property
     def old_unique_id(self) -> str:
         """Return the old not so unique id of the climate entity."""
-        return f"{self._node.id}-event-{self._event.id}"
+        return f"{self._attribute.node_id}-event-{self._attribute.id}"
 
     @callback
-    def _async_handle_event(self, node: HomeeNode) -> None:
+    def _async_handle_event(self, event: HomeeAttribute) -> None:
         """Handle a homee event."""
-        event = node.get_attribute_by_type(AttributeType.UP_DOWN_REMOTE)
         if event.type == AttributeType.UP_DOWN_REMOTE:
             self._trigger_event(str(int(event.current_value)))
             self.async_write_ha_state()
 
     async def async_added_to_hass(self) -> None:
         """Register callback for HomeeEvent."""
-        self._node.add_on_changed_listener(self._async_handle_event)
+        self._attribute.add_on_changed_listener(self._async_handle_event)

@@ -1,16 +1,16 @@
 """The homee number platform."""
 
 from pyHomee.const import AttributeType
-from pyHomee.model import HomeeAttribute, HomeeNode
+from pyHomee.model import HomeeAttribute
 
 from homeassistant.components.number import NumberDeviceClass, NumberEntity
 from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 
-from . import HomeeConfigEntry, helpers
+from . import HomeeConfigEntry
 from .const import DOMAIN
-from .entity import HomeeNodeEntity
+from .entity import HomeeEntity
 from .helpers import migrate_old_unique_ids
 
 NUMBER_ATTRIBUTES = {
@@ -115,9 +115,9 @@ async def async_setup_entry(
     """Add the homee platform for the number components."""
 
     devices = []
-    for node in helpers.get_imported_nodes(config_entry):
+    for node in config_entry.runtime_data.nodes:
         devices.extend(
-            HomeeNumber(node, config_entry, attribute)
+            HomeeNumber(attribute, config_entry)
             for attribute in node.attributes
             if attribute.type in NUMBER_ATTRIBUTES
         )
@@ -126,20 +126,18 @@ async def async_setup_entry(
         async_add_devices(devices)
 
 
-class HomeeNumber(HomeeNodeEntity, NumberEntity):
+class HomeeNumber(HomeeEntity, NumberEntity):
     """Representation of a homee number."""
 
     _attr_has_entity_name = True
 
     def __init__(
         self,
-        node: HomeeNode,
+        number_attribute: HomeeAttribute,
         entry: HomeeConfigEntry,
-        number_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee number entity."""
-        HomeeNodeEntity.__init__(self, node, entry)
-        self._number = number_attribute
+        HomeeEntity.__init__(self, number_attribute, entry)
         (
             self._attr_device_class,
             self._attr_translation_key,
@@ -152,50 +150,48 @@ class HomeeNumber(HomeeNodeEntity, NumberEntity):
         if self.translation_key is None:
             self._attr_name = None
 
-        self._attr_unique_id = (
-            f"{entry.runtime_data.settings.uid}-{self._node.id}-{self._number.id}"
-        )
+        self._attr_unique_id = f"{entry.runtime_data.settings.uid}-{self._attribute.node_id}-{self._attribute.id}"
 
     @property
     def old_unique_id(self) -> str:
         """Return the old not so unique id of the climate entity."""
-        return f"{self._node.id}-number-{self._number.id}"
+        return f"{self._attribute.node_id}-number-{self._attribute.id}"
 
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        return self._number.editable
+        return self._attribute.editable
 
     @property
     def native_value(self) -> int:
         """Return the native value of the sensor."""
         # TODO: If HA supports klx as unit, remove.
-        if self._number.unit == "klx":
-            return self._number.current_value * 1000
+        if self._attribute.unit == "klx":
+            return self._attribute.current_value * 1000
 
-        return self._number.current_value
+        return self._attribute.current_value
 
     @property
     def native_unit_of_measurement(self) -> str:
         """Return the native unit of the number entity."""
-        if self._number.unit == "n/a":
+        if self._attribute.unit == "n/a":
             return None
 
         # TODO: If HA supports klx as unit, remove.
-        if self._number.unit == "klx":
+        if self._attribute.unit == "klx":
             return "lx"
 
-        return self._number.unit
+        return self._attribute.unit
 
     async def async_update(self) -> None:
         """Update entity from homee."""
         homee = self._entry.runtime_data
-        await homee.update_attribute(self._number.node_id, self._number.id)
+        await homee.update_attribute(self._attribute.node_id, self._attribute.id)
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
-        if self._number.editable:
-            await self.async_set_value_by_id(self._number.id, value)
+        if self._attribute.editable:
+            await self.async_set_value(value)
         else:
             raise ServiceValidationError(
                 translation_domain=DOMAIN,
