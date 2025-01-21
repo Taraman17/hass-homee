@@ -17,22 +17,15 @@ Based on the intial work of [FreshlyBrewedCode]
 
 Integration is in HACS Default Repositories now!
 
-**This component will set up the following platforms.**
+:warning: ## Moving Homee integration into HA Core
+I'm in the process of making this integration a part of Homeassistant Core. The first step will be made with **HA 2025.02**. At this point not all functionality will be transferred, so please keepo using this integration for the time being.
+You will see a warning in HA:
 
-| Platform              | Description                                                                                                                          |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `alarm-control-panel` | Integrate the homee status.                                                                                                          |
-| `binary_sensor`       | Integrate homee devices that provide binary state information like `on`/`off` or `open`/`close`.                                     |
-| `climate`             | Integrate homee devices that provide temperature and can set a target temperature. Currently only heating thermostats are supported. |
-| `cover`               | Integrate homee devices that provide motor and position functions such as blinds and shutter actuators                               |
-| `event`               | Integrate events from button remots from homee.                                                                                      |
-| `light`               | Integrate lights from homee.                                                                                                         |
-| `lock`                | Integrate locks from homee.                                                                                                          |
-| `number`              | Integrate number entities - usually settings of some kind.                                                                           |
-| `sensor`              | Integrate homee devices that provide readings.                                                                                       |
-| `switch`              | Integrate homee devices that can be turned `on`/`off` and can optionally provide information about the current power consumption.    |
+please ignore that.
 
-![homee][homee_logo]
+When all functionality is ported to HA Core, steps for migration will be added here.
+
+[![homee]][homee_logo]
 
 ## Installation
 
@@ -63,20 +56,22 @@ Integration is in HACS Default Repositories now!
    Or click here: [![Start Config Flow](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=homee)
 2. In the dialog enter the ip-address of the cube and username / password of a homee account that can access your cube.
    Then click submit.
-3. If the connection was successful you will see the "Group Configuration" section.
-   Since door & window sensors don't have data to identify them from homee, you have to manually put them in repective groups in homee and mark these here.
-   These options for door/window sensors can also be changed later from by clicking on the "Options" button on the homee integration. For more details on the available options check the [Options section](#Options).
-4. Click submit. Your devices will be automatically added to Home Assistant.
+3. Click submit. Your devices will be automatically added to Home Assistant.
 
-## Options
+**This component will set up the following platforms.**
 
-The following table shows the available options that can be configured in the "Initial Configuration" step or using the "Options" button on an existing configuration. Please note that you have to restart Home Assistant after changing the options using the "Options" button.
-
-| Option                                                                       | Default    | Description                                                                                                                                                                                                                                                                                                |
-| ---------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Groups that contain window sensors`                                         | empty      | Any `binary_sensor` that is in any of the selected groups will use the `window` device class. You should select a homee group that contains all of your window sensors.                                                                                                                                    |
-| `Groups that contain door sensors`                                           | empty      | Any `binary_sensor` that is in any of the selected groups will use the `door` device class. You should select a homee group that contains all of your door sensors.                                                                                                                                        |
-| `Add (debug) information about the homee node and attributes to each entity` | `False`    | Enabling this option will add the `homee_data` attribute to every entity created by this integration. The attribute contains information about the homee node (name, id, profile) and the attributes (id, type). This option can be useful for debugging or advanced automations when used with templates. |
+| Platform              | Description                                                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `alarm-control-panel` | Integrate the homee status.                                                                                                          |
+| `binary_sensor`       | Integrate homee devices that provide binary state information like `on`/`off` or `open`/`close`.                                     |
+| `climate`             | Integrate homee devices that provide temperature and can set a target temperature. Currently only heating thermostats are supported. |
+| `cover`               | Integrate homee devices that provide motor and position functions such as blinds and shutter actuators                               |
+| `event`               | Integrate events from button remots from homee.                                                                                      |
+| `light`               | Integrate lights from homee.                                                                                                         |
+| `lock`                | Integrate locks from homee.                                                                                                          |
+| `number`              | Integrate number entities - usually settings of some kind.                                                                           |
+| `sensor`              | Integrate homee devices that provide readings.                                                                                       |
+| `switch`              | Integrate homee devices that can be turned `on`/`off` and can optionally provide information about the current power consumption.    |
 
 ## Homee device not working correctly?
 
