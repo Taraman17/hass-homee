@@ -12,20 +12,20 @@
 ![][usage]
 
 _Component to integrate with [homee][homee]._
+![grafik][homee_logo]
 
 Based on the intial work of [FreshlyBrewedCode]
 
 Integration is in HACS Default Repositories now!
 
-:warning: ## Moving Homee integration into HA Core
+## :warning: Moving Homee integration into HA Core
 I'm in the process of making this integration a part of Homeassistant Core. The first step will be made with **HA 2025.02**. At this point not all functionality will be transferred, so please keepo using this integration for the time being.
 You will see a warning in HA:
+![grafik](https://github.com/user-attachments/assets/bc825b13-7a69-4a50-b9c7-b57ffb84067a)
 
 please ignore that.
 
 When all functionality is ported to HA Core, steps for migration will be added here.
-
-[![homee]][homee_logo]
 
 ## Installation
 
@@ -106,7 +106,7 @@ Home Assistant encourages developers of integrations to use a separate python pa
 [commits]: https://github.com/Taraman17/hass-homee/commits/master
 [hacs]: https://github.com/custom-components/hacs
 [hacsbadge]: https://img.shields.io/badge/HACS-Default-green.svg?style=for-the-badge
-[homee_logo]: https://raw.githubusercontent.com/Taraman17/brands/master/custom_integrations/homee/logo.png
+[homee_logo]: https://github.com/home-assistant/brands/blob/master/core_integrations/homee/logo.png
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
 [forum]: https://community.home-assistant.io/
 [license-shield]: https://img.shields.io/github/license/custom-components/blueprint.svg?style=for-the-badge
