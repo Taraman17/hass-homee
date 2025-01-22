@@ -10,7 +10,11 @@ from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import ServiceValidationError
-from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers import (
+    config_validation as cv,
+    device_registry as dr,
+    entity_registry as er,
+)
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
@@ -43,8 +47,9 @@ PLATFORMS = [
     Platform.SWITCH,
 ]
 
-type HomeeConfigEntry = ConfigEntry[Homee]
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
+type HomeeConfigEntry = ConfigEntry[Homee]
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the homee component."""
@@ -216,13 +221,12 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
 
         new_data = {**config_entry.data}
 
-        hass.config_entries.async_update_entry(
-            config_entry, data=new_data, version=3
-        )
+        hass.config_entries.async_update_entry(config_entry, data=new_data, version=3)
 
         _LOGGER.info("Migration to v%s successful", config_entry.version)
 
     return True
+
 
 async def _migrate_old_unique_ids(hass: HomeAssistant, entry_id: str) -> None:
     entity_registry = er.async_get(hass)

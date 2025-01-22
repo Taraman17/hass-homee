@@ -3,7 +3,7 @@
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from typing_extensions import Generator
+from collections.abc import Generator
 import voluptuous as vol
 
 from pytest_homeassistant_custom_component.common import MockConfigEntry

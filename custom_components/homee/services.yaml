@@ -21,5 +21,5 @@ set_value:
       required: true
       selector:
         number:
-          step: 0.1
-      example: 1
+          mode: box
+      example: 1.0
