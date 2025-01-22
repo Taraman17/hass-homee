@@ -3,15 +3,15 @@
 import logging
 
 from pyHomee.const import AttributeType, NodeProfile
-from pyHomee.model import HomeeAttribute, HomeeNode
+from pyHomee.model import HomeeAttribute
 
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 
 from . import HomeeConfigEntry
-from .entity import HomeeNodeEntity
 from .const import CLIMATE_PROFILES, LIGHT_PROFILES
+from .entity import HomeeEntity
 from .helpers import get_name_for_enum, migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
@@ -71,8 +71,12 @@ CONFIG_ATTRIBUTES = [
 DIAGNOSTIC_ATTRIBUTES = [AttributeType.IDENTIFICATION_MODE]
 
 
-def get_device_class(node: HomeeNode) -> SwitchDeviceClass:
+def get_device_class(
+    attribute: HomeeAttribute, entry: HomeeConfigEntry
+) -> SwitchDeviceClass:
     """Determine the device class a homee node based on the node profile."""
+    homee = entry.runtime_data
+    node = homee.get_node_by_id(attribute.node_id)
     if node.profile in HOMEE_PLUG_PROFILES:
         return SwitchDeviceClass.OUTLET
 
@@ -98,7 +102,7 @@ async def async_setup_entry(
     devices = []
     for node in config_entry.runtime_data.nodes:
         devices.extend(
-            HomeeSwitch(node, config_entry, attribute)
+            HomeeSwitch(attribute, config_entry)
             for attribute in node.attributes
             if (attribute.type in HOMEE_SWITCH_ATTRIBUTES and attribute.editable)
             and not (
@@ -115,32 +119,23 @@ async def async_setup_entry(
         async_add_devices(devices)
 
 
-class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
+class HomeeSwitch(HomeeEntity, SwitchEntity):
     """Representation of a homee switch."""
-
-    _attr_has_entity_name = True
 
     def __init__(
         self,
-        node: HomeeNode,
+        attribute: HomeeAttribute,
         entry: HomeeConfigEntry,
-        on_off_attribute: HomeeAttribute = None,
     ) -> None:
         """Initialize a homee switch entity."""
-        HomeeNodeEntity.__init__(self, node, entry)
-        self._on_off = on_off_attribute
-        self._switch_index = on_off_attribute.instance
-        self._attr_device_class = get_device_class(node)
-        self._attr_entity_category = get_entity_category(on_off_attribute)
-
-        self._attr_unique_id = (
-            f"{entry.runtime_data.settings.uid}-{self._node.id}-{self._on_off.id}"
-        )
+        super().__init__(attribute, entry)
+        self._attr_device_class = get_device_class(attribute, entry)
+        self._attr_entity_category = get_entity_category(attribute)
 
     @property
     def old_unique_id(self) -> str:
         """Return the old not so unique id of the climate entity."""
-        return f"{self._node.id}-switch-{self._on_off.id}"
+        return f"{self._attribute.node_id}-switch-{self._attribute.id}"
 
     @property
     def translation_key(self) -> str | None:
@@ -148,17 +143,17 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
         # If a switch is the main feature of a device it will get its name.
         translation_key = None
 
-        attribute_name = get_name_for_enum(AttributeType, self._on_off.type)
+        attribute_name = get_name_for_enum(AttributeType, self._attribute.type)
 
         # If a switch type has more than one instance,
         # it will be named and numbered.
-        if self._on_off.instance > 0:
-            translation_key = f"{attribute_name.lower()}_{self._on_off.instance}"
+        if self._attribute.instance > 0:
+            translation_key = f"{attribute_name.lower()}_{self._attribute.instance}"
         # Some switches should be named descriptive without an instance number.
-        elif self._on_off.type in DESCRIPTIVE_ATTRIBUTES:
+        elif self._attribute.type in DESCRIPTIVE_ATTRIBUTES:
             translation_key = attribute_name.lower()
 
-        if self._on_off.instance > 4:
+        if self._attribute.instance > 4:
             _LOGGER.error(
                 "Did get more than 4 switches of a type,"
                 "please report at"
@@ -173,47 +168,22 @@ class HomeeSwitch(HomeeNodeEntity, SwitchEntity):
     @property
     def is_on(self) -> bool:
         """Return True if entity is on."""
-        return bool(self._on_off.current_value)
+        return bool(self._attribute.current_value)
 
     @property
     def icon(self) -> str | None:
         """Return icon if different from main feature."""
-        if self._on_off.type == AttributeType.WATCHDOG_ON_OFF:
+        if self._attribute.type == AttributeType.WATCHDOG_ON_OFF:
             return "mdi:dog"
-        if self._on_off.type == AttributeType.MANUAL_OPERATION:
+        if self._attribute.type == AttributeType.MANUAL_OPERATION:
             return "mdi:hand-back-left"
 
         return None
 
-    async def async_update(self) -> None:
-        """Update entity from homee."""
-        homee = self._entry.runtime_data
-        await homee.update_attribute(self._on_off.node_id, self._on_off.id)
-
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the entity on."""
-        await self.async_set_value(self._on_off, 1)
+        await self.async_set_value(1)
 
     async def async_turn_off(self, **kwargs) -> None:
         """Turn the entity off."""
-        await self.async_set_value(self._on_off, 0)
-
-    @property
-    def current_power_w(self) -> int | None:
-        """Return the current power usage in W."""
-        if self.has_attribute(AttributeType.CURRENT_ENERGY_USE):
-            return self._node.get_attribute_by_type(
-                AttributeType.CURRENT_ENERGY_USE
-            ).get_value()
-
-        return None
-
-    @property
-    def today_energy_kwh(self) -> int | None:
-        """Return the total power usage in kWh."""
-        if self.has_attribute(AttributeType.ACCUMULATED_ENERGY_USE):
-            return self._node.get_attribute_by_type(
-                AttributeType.ACCUMULATED_ENERGY_USE
-            ).get_value()
-
-        return None
+        await self.async_set_value(0)

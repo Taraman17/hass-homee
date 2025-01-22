@@ -1,6 +1,5 @@
 """The homee light platform."""
 
-import logging
 from typing import Any
 
 from pyHomee.const import AttributeType
@@ -23,11 +22,9 @@ from homeassistant.util.color import (
 )
 
 from . import HomeeConfigEntry
-from .entity import HomeeNodeEntity
 from .const import LIGHT_PROFILES
+from .entity import HomeeNodeEntity
 from .helpers import migrate_old_unique_ids
-
-_LOGGER = logging.getLogger(__name__)
 
 LIGHT_ATTRIBUTES = [
     AttributeType.COLOR,
@@ -72,7 +69,7 @@ def get_color_mode(supported_modes) -> ColorMode:
 
 
 def get_light_attribute_sets(
-    node: HomeeNodeEntity, index: int
+    node: HomeeNode, index: int
 ) -> dict[AttributeType, Any]:
     """Return a list with the attributes for each light entity to be created."""
     on_off_attributes = [
@@ -149,8 +146,6 @@ def is_light_node(node: HomeeNode):
 class HomeeLight(HomeeNodeEntity, LightEntity):
     """Representation of a homee light."""
 
-    _attr_has_entity_name = True
-
     def __init__(
         self,
         node: HomeeNode,
@@ -159,7 +154,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
         entry: HomeeConfigEntry,
     ) -> None:
         """Initialize a homee light."""
-        HomeeNodeEntity.__init__(self, node, entry)
+        super().__init__(node, entry)
         self._attr_supported_color_modes = get_supported_color_modes(self)
         self._attr_color_mode = get_color_mode(self._attr_supported_color_modes)
         self._on_off_attr: HomeeAttribute = light_set.get(AttributeType.ON_OFF, None)
@@ -223,7 +218,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
         return self._temp_attr.maximum
 
     @property
-    def color_temp(self):
+    def color_temp_kelvin(self):
         """Return the color temperature of the light."""
         return self._temp_attr.current_value
 

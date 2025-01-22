@@ -1,7 +1,5 @@
 """The homee climate platform."""
 
-import logging
-
 from pyHomee.const import AttributeType, NodeProfile
 from pyHomee.model import HomeeNode
 
@@ -23,8 +21,6 @@ from .const import CLIMATE_PROFILES, DOMAIN, PRESET_MANUAL
 from .entity import HomeeNodeEntity
 from .helpers import migrate_old_unique_ids
 
-_LOGGER = logging.getLogger(__name__)
-
 HOMEE_UNIT_TO_HA_UNIT = {
     "°C": UnitOfTemperature.CELSIUS,
     "°F": UnitOfTemperature.FAHRENHEIT,
@@ -42,11 +38,11 @@ async def async_setup_entry(
 ) -> None:
     """Add the homee platform for the climate integration."""
 
-    devices = []
-    for node in config_entry.runtime_data.nodes:
-        if not is_climate_node(node):
-            continue
-        devices.append(HomeeClimate(node, config_entry))
+    devices = [
+        HomeeClimate(node, config_entry)
+        for node in config_entry.runtime_data.nodes
+        if is_climate_node(node)
+    ]
     if devices:
         await migrate_old_unique_ids(hass, devices, Platform.CLIMATE)
         async_add_devices(devices)
@@ -60,12 +56,8 @@ def is_climate_node(node: HomeeNode) -> bool:
 class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     """Representation of a homee climate device."""
 
-    _attr_has_entity_name = True
     _attr_name = None
     _attr_translation_key = DOMAIN
-
-    # TODO: remove after release of HA 2025.01
-    _enable_turn_on_off_backwards_compatibility = False
 
     def __init__(self, node: HomeeNode, entry: HomeeConfigEntry) -> None:
         """Initialize a homee climate entity."""

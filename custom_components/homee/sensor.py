@@ -269,8 +269,9 @@ class HomeeSensor(HomeeEntity, SensorEntity):
         """Initialize a homee sensor entity."""
         super().__init__(attribute, entry)
         self.entity_description = description
+        self._attr_translation_key = description.key
         if attribute.instance > 0:
-            self._attr_translation_key = f"{description.translation_key}_instance"
+            self._attr_translation_key = f"{self._attr_translation_key}_instance"
             self._attr_translation_placeholders = {"instance": str(attribute.instance)}
 
     @property

@@ -1,7 +1,5 @@
 """The homee event platform."""
 
-import logging
-
 from pyHomee.const import AttributeType
 from pyHomee.model import HomeeAttribute
 
@@ -16,8 +14,6 @@ from homeassistant.core import HomeAssistant, callback
 from . import HomeeConfigEntry
 from .entity import HomeeEntity
 from .helpers import migrate_old_unique_ids
-
-_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -48,18 +44,6 @@ class HomeeEvent(HomeeEntity, EventEntity):
         has_entity_name=True,
     )
 
-    def __init__(
-        self,
-        event_attribute: HomeeAttribute,
-        entry: HomeeConfigEntry,
-    ) -> None:
-        """Initialize a homee event entity."""
-        HomeeEntity.__init__(self, event_attribute, entry)
-        self._switch_index = event_attribute.instance
-        self._attr_unique_id = (
-            f"{entry.runtime_data.settings.uid}-{self._attribute.node_id}-{self._attribute.id}"
-        )
-
     @property
     def old_unique_id(self) -> str:
         """Return the old not so unique id of the climate entity."""
@@ -71,7 +55,3 @@ class HomeeEvent(HomeeEntity, EventEntity):
         if event.type == AttributeType.UP_DOWN_REMOTE:
             self._trigger_event(str(int(event.current_value)))
             self.async_write_ha_state()
-
-    async def async_added_to_hass(self) -> None:
-        """Register callback for HomeeEvent."""
-        self._attribute.add_on_changed_listener(self._async_handle_event)

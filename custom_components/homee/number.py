@@ -129,38 +129,29 @@ async def async_setup_entry(
 class HomeeNumber(HomeeEntity, NumberEntity):
     """Representation of a homee number."""
 
-    _attr_has_entity_name = True
-
     def __init__(
         self,
-        number_attribute: HomeeAttribute,
+        attribute: HomeeAttribute,
         entry: HomeeConfigEntry,
     ) -> None:
         """Initialize a homee number entity."""
-        HomeeEntity.__init__(self, number_attribute, entry)
+        super().__init__(attribute, entry)
         (
             self._attr_device_class,
             self._attr_translation_key,
             self._attr_entity_category,
-        ) = get_device_properties(number_attribute)
-        self._attr_native_min_value = number_attribute.minimum
-        self._attr_native_max_value = number_attribute.maximum
-        self._attr_native_step = number_attribute.step_value
+        ) = get_device_properties(attribute)
+        self._attr_native_min_value = attribute.minimum
+        self._attr_native_max_value = attribute.maximum
+        self._attr_native_step = attribute.step_value
 
         if self.translation_key is None:
             self._attr_name = None
-
-        self._attr_unique_id = f"{entry.runtime_data.settings.uid}-{self._attribute.node_id}-{self._attribute.id}"
 
     @property
     def old_unique_id(self) -> str:
         """Return the old not so unique id of the climate entity."""
         return f"{self._attribute.node_id}-number-{self._attribute.id}"
-
-    @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        return self._attribute.editable
 
     @property
     def native_value(self) -> int:
@@ -183,15 +174,12 @@ class HomeeNumber(HomeeEntity, NumberEntity):
 
         return self._attribute.unit
 
-    async def async_update(self) -> None:
-        """Update entity from homee."""
-        homee = self._entry.runtime_data
-        await homee.update_attribute(self._attribute.node_id, self._attribute.id)
-
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
         if self._attribute.editable:
-            await self.async_set_value(value)
+            await self._entry.runtime_data.set_value(
+                self._attribute.node_id, self._attribute.id, value
+            )
         else:
             raise ServiceValidationError(
                 translation_domain=DOMAIN,

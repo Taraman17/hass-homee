@@ -245,178 +245,75 @@
       }
     },
     "sensor": {
-      "battery_sensor": {
-        "name": "Batterie"
+      "brightness_instance": {
+        "name": "Beleuchtungsstärke {instance}"
       },
-      "brightness_sensor": {
-        "name": "Beleuchtungsstärke"
+      "current_instance": {
+        "name": "Stromstärke {instance}"
       },
-      "brightness_sensor_1": {
-        "name": "Beleuchtungsstärke 1"
-      },
-      "brightness_sensor_2": {
-        "name": "Beleuchtungsstärke 2"
-      },
-      "brightness_sensor_3": {
-        "name": "Beleuchtungsstärke 3"
-      },
-      "brightness_sensor_4": {
-        "name": "Beleuchtungsstärke 4"
-      },
-      "button_state_sensor": {
-        "name": "Schalterstellung"
-      },
-      "button_state_sensor_1": {
-        "name": "Schalterstellung 1"
-      },
-      "button_state_sensor_2": {
-        "name": "Schalterstellung 2"
-      },
-      "button_state_sensor_3": {
-        "name": "Schalterstellung 3"
-      },
-      "button_state_sensor_4": {
-        "name": "Schalterstellung 4"
-      },
-      "current_sensor": {
-        "name": "Stromstärke"
-      },
-      "current_sensor_1": {
-        "name": "Stromstärke 1"
-      },
-      "current_sensor_2": {
-        "name": "Stromstärke 2"
-      },
-      "current_sensor_3": {
-        "name": "Stromstärke 3"
-      },
-      "current_sensor_4": {
-        "name": "Stromstärke 4"
-      },
-      "dawn_sensor": {
+      "dawn": {
         "name": "Dämmerung"
       },
-      "device_temperature_sensor": {
+      "device_temperature": {
         "name": "Gerätetemperatur"
       },
-      "energy_sensor": {
-        "name": "Energie"
+      "energy_instance": {
+        "name": "Energie {instance}"
       },
-      "energy_sensor_1": {
-        "name": "Energie 1"
-      },
-      "energy_sensor_2": {
-        "name": "Energie 2"
-      },
-      "energy_sensor_3": {
-        "name": "Energie 3"
-      },
-      "energy_sensor_4": {
-        "name": "Energie 4"
-      },
-      "relative_humidity_sensor": {
-        "name": "Relative Luftfeuchte"
-      },
-      "level_sensor": {
+      "level": {
         "name": "Füllstand"
       },
-      "link_quality_sensor": {
+      "link_quality": {
         "name": "Signalstärke"
       },
-      "node_sensor_protocol": {
-        "name": "Node Protokoll"
-      },
-      "node_sensor_state": {
+      "node_sstate": {
         "name": "Node Status"
       },
-      "position_sensor": {
+      "position": {
         "name": "Position"
       },
-      "power_sensor": {
-        "name": "Leistung"
+      "power_instance": {
+        "name": "Leistung {instance}"
       },
-      "power_sensor_1": {
-        "name": "Leistung 1"
+      "rainfall_hour": {
+        "name": "Niederschlag letzte Stunde"
       },
-      "power_sensor_2": {
-        "name": "Leistung 2"
+      "rainfall_day": {
+        "name": "Niederschlag heute"
       },
-      "power_sensor_3": {
-        "name": "Leistung 3"
+      "total_current": {
+        "name": "Gesamtstromstärke"
       },
-      "power_sensor_4": {
-        "name": "Leistung 4"
+      "total_energy": {
+        "name": "Gesamtenergie"
       },
-      "rainfall_hour_sensor": {
-        "name": "Niederschlag Letzte Stunde"
+      "total_power": {
+        "name": "Gesamtleistung"
       },
-      "rainfall_day_sensor": {
-        "name": "Niederschlag Heute"
+      "total_voltage": {
+        "name": "Gesamtspannung"
       },
-      "temperature_sensor": {
-        "name": "Temperatur"
-      },
-      "total_current_sensor": {
-        "name": "Gesamt Stromstärke"
-      },
-      "total_energy_sensor": {
-        "name": "Gesamt Energie"
-      },
-      "total_power_sensor": {
-        "name": "Gesamt Leistung"
-      },
-      "total_voltage_sensor": {
-        "name": "Gesamt Spannung"
-      },
-      "up_down_sensor": {
-        "name": "Zustand",
+      "up_down": {
+        "name": "Status",
         "state": {
-          "0": "Offen",
-          "1": "Geschlossen",
-          "2": "Teilgeöffnet",
-          "3": "Öffnet",
-          "4": "Schließt"
+          "open": "Offen",
+          "closed": "Geschlossen",
+          "partial": "Teilweise offen",
+          "opening": "Öffnet",
+          "closing": "Schließt"
         }
       },
-      "up_down_sensor_rev": {
-        "name": "State",
-        "state": {
-          "0": "Geschlossen",
-          "1": "Offen",
-          "2": "Teilgeöffnet",
-          "3": "Schließt",
-          "4": "Öffnet"
-        }
-      },
-      "uv_sensor": {
+      "uv": {
         "name": "UV Strahlung"
       },
-      "valve_position_sensor": {
+      "valve_position": {
         "name": "Ventilöffnung"
       },
-      "voltage_sensor": {
-        "name": "Spannung"
+      "voltage_instance": {
+        "name": "Spannung {instance}"
       },
-      "voltage_sensor_1": {
-        "name": "Spannung 1"
-      },
-      "voltage_sensor_2": {
-        "name": "Spannung 2"
-      },
-      "voltage_sensor_3": {
-        "name": "Spannung 3"
-      },
-      "voltage_sensor_4": {
-        "name": "Spannung 4"
-      },
-      "wake_up_interval_sensor": {
-        "name": "Aufwachintervall"
-      },
-      "wind_speed_sensor": {
-        "name": "Windgeschwindigkeit"
-      },
-      "window_position_sensor": {
-        "name": "Window Position",
+      "window_position": {
+        "name": "Fensterstellung",
         "state": {
           "0": "Geschlossen",
           "1": "Offen",

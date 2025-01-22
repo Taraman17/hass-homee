@@ -157,20 +157,15 @@ async def async_setup_entry(
 class HomeeBinarySensor(HomeeEntity, BinarySensorEntity):
     """Representation of a homee binary sensor device."""
 
-    _attr_has_entity_name = True
-
     def __init__(
         self,
-        binary_sensor_attribute: HomeeAttribute,
+        attribute: HomeeAttribute,
         entry: HomeeConfigEntry,
     ) -> None:
         """Initialize a homee binary sensor entity."""
-        HomeeEntity.__init__(self, binary_sensor_attribute, entry)
+        super().__init__(attribute, entry)
 
         self._configure_device_class()
-        self._attr_unique_id = (
-            f"{entry.runtime_data.settings.uid}-{self._attribute.node_id}-{self._attribute.id}"
-        )
 
     def _configure_device_class(self):
         """Configure the device class of the sensor."""
@@ -200,7 +195,3 @@ class HomeeBinarySensor(HomeeEntity, BinarySensorEntity):
         """Return the class of this device, from component DEVICE_CLASSES."""
         return self._device_class
 
-    async def async_update(self) -> None:
-        """Update entity from homee."""
-        homee = self._entry.runtime_data
-        await homee.update_attribute(self._attribute.node_id, self._attribute.id)
