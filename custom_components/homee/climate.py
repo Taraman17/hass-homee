@@ -84,7 +84,7 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     def temperature_unit(self) -> UnitOfTemperature:
         """Return the temperature unit of the device."""
         return HOMEE_UNIT_TO_HA_UNIT[
-            self._node.get_attribute_by_type(AttributeType.TEMPERATURE).unit
+            self._node.get_attribute_by_type(AttributeType.TARGET_TEMPERATURE).unit
         ]
 
     @property
@@ -150,9 +150,11 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
         return PRESET_NONE
 
     @property
-    def current_temperature(self) -> float:
+    def current_temperature(self) -> float | None:
         """Return the current temperature."""
-        return self._node.get_attribute_by_type(AttributeType.TEMPERATURE).get_value()
+        if (temp := self._node.get_attribute_by_type(AttributeType.TEMPERATURE)) is not None:
+            return temp.get_value()
+        return None
 
     @property
     def target_temperature(self) -> float:
