@@ -8,9 +8,11 @@ from pyHomee.model import HomeeAttribute
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
+    BinarySensorEntityDescription,
 )
 from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import HomeeConfigEntry
 from .entity import HomeeEntity
@@ -39,115 +41,109 @@ HOMEE_BINARY_SENSOR_ATTRIBUTES = [
 ]
 
 
-def get_device_class(attribute: HomeeAttribute):
-    """Determine the device class a homee node based on the available attributes."""
-    device_class = None
-    translation_key = ""
-    entity_category = None
-
-    if attribute.type == AttributeType.BATTERY_LOW_ALARM:
-        device_class = BinarySensorDeviceClass.BATTERY
-        translation_key = "battery_low_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
-    if attribute.type == AttributeType.FLOOD_ALARM:
-        device_class = BinarySensorDeviceClass.MOISTURE
-        translation_key = "flood_sensor"
-
-    if attribute.type == AttributeType.HIGH_TEMPERATURE_ALARM:
-        device_class = BinarySensorDeviceClass.HEAT
-        translation_key = "heat_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
-    if attribute.type == AttributeType.LOAD_ALARM:
-        translation_key = "load_alarm_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
-    if attribute.type == AttributeType.LOCK_STATE:
-        device_class = BinarySensorDeviceClass.LOCK
-        translation_key = "lock_sensor"
-
-    if attribute.type == AttributeType.MALFUNCTION_ALARM:
-        device_class = BinarySensorDeviceClass.PROBLEM
-        translation_key = "malfunction_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
-    if attribute.type == AttributeType.MAXIMUM_ALARM:
-        device_class = BinarySensorDeviceClass.PROBLEM
-        translation_key = "maximum_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
-    if attribute.type == AttributeType.MINIMUM_ALARM:
-        device_class = BinarySensorDeviceClass.PROBLEM
-        translation_key = "minimum_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
-    if attribute.type == AttributeType.MOTION_ALARM:
-        device_class = BinarySensorDeviceClass.MOTION
-        translation_key = "motion_sensor"
-
-    if attribute.type == AttributeType.ON_OFF:
-        device_class = BinarySensorDeviceClass.PLUG
-        translation_key = "plug_sensor"
-
-    if attribute.type == AttributeType.OPEN_CLOSE:
-        device_class = BinarySensorDeviceClass.OPENING
-        translation_key = "opening_sensor"
-
-    if attribute.type == AttributeType.OVER_CURRENT_ALARM:
-        device_class = BinarySensorDeviceClass.PROBLEM
-        translation_key = "overcurrent_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
-    if attribute.type == AttributeType.OVERLOAD_ALARM:
-        device_class = BinarySensorDeviceClass.PROBLEM
-        translation_key = "overload_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
-    if attribute.type == AttributeType.PRESENCE_ALARM:
-        device_class = BinarySensorDeviceClass.MOTION
-        translation_key = "motion_sensor"
-
-    if attribute.type == AttributeType.RAIN_FALL:
-        device_class = BinarySensorDeviceClass.MOISTURE
-        translation_key = "rain_sensor"
-
-    if attribute.type == AttributeType.SMOKE_ALARM:
-        device_class = BinarySensorDeviceClass.SMOKE
-        translation_key = "smoke_sensor"
-
-    if attribute.type == AttributeType.SURGE_ALARM:
-        device_class = BinarySensorDeviceClass.PROBLEM
-        translation_key = "surge_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
-    if attribute.type == AttributeType.TAMPER_ALARM:
-        device_class = BinarySensorDeviceClass.TAMPER
-        translation_key = "tamper_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
-    if attribute.type == AttributeType.VOLTAGE_DROP_ALARM:
-        device_class = BinarySensorDeviceClass.PROBLEM
-        translation_key = "voltage_drop_sensor"
-        entity_category = EntityCategory.DIAGNOSTIC
-
-    return (device_class, translation_key, entity_category)
+BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] = {
+    AttributeType.BATTERY_LOW_ALARM: BinarySensorEntityDescription(
+        key="battery_low",
+        device_class=BinarySensorDeviceClass.BATTERY,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.FLOOD_ALARM: BinarySensorEntityDescription(
+        key="flood",
+        device_class=BinarySensorDeviceClass.MOISTURE,
+    ),
+    AttributeType.HIGH_TEMPERATURE_ALARM: BinarySensorEntityDescription(
+        key="heat",
+        device_class=BinarySensorDeviceClass.HEAT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.LOAD_ALARM: BinarySensorEntityDescription(
+        key="load_alarm",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.LOCK_STATE: BinarySensorEntityDescription(
+        key="lock",
+        device_class=BinarySensorDeviceClass.LOCK,
+    ),
+    AttributeType.MALFUNCTION_ALARM: BinarySensorEntityDescription(
+        key="malfunction",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.MAXIMUM_ALARM: BinarySensorEntityDescription(
+        key="maximum",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.MINIMUM_ALARM: BinarySensorEntityDescription(
+        key="minimum",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.MOTION_ALARM: BinarySensorEntityDescription(
+        key="motion",
+        device_class=BinarySensorDeviceClass.MOTION,
+    ),
+    AttributeType.ON_OFF: BinarySensorEntityDescription(
+        key="plug",
+        device_class=BinarySensorDeviceClass.PLUG,
+    ),
+    AttributeType.OPEN_CLOSE: BinarySensorEntityDescription(
+        key="opening",
+        device_class=BinarySensorDeviceClass.OPENING,
+    ),
+    AttributeType.OVER_CURRENT_ALARM: BinarySensorEntityDescription(
+        key="overcurrent",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.OVERLOAD_ALARM: BinarySensorEntityDescription(
+        key="overload",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.PRESENCE_ALARM: BinarySensorEntityDescription(
+        key="motion",
+        device_class=BinarySensorDeviceClass.MOTION,
+    ),
+    AttributeType.RAIN_FALL: BinarySensorEntityDescription(
+        key="rain",
+        device_class=BinarySensorDeviceClass.MOISTURE,
+    ),
+    AttributeType.SMOKE_ALARM: BinarySensorEntityDescription(
+        key="smoke",
+        device_class=BinarySensorDeviceClass.SMOKE,
+    ),
+    AttributeType.SURGE_ALARM: BinarySensorEntityDescription(
+        key="surge",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.TAMPER_ALARM: BinarySensorEntityDescription(
+        key="tamper",
+        device_class=BinarySensorDeviceClass.TAMPER,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.VOLTAGE_DROP_ALARM: BinarySensorEntityDescription(
+        key="voltage_drop",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+}
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices: AddEntitiesCallback
 ) -> None:
     """Add the homee platform for the binary sensor integration."""
 
-    devices = []
+    devices: list[HomeeBinarySensor] = []
     for node in config_entry.runtime_data.nodes:
         devices.extend(
-            HomeeBinarySensor(attribute, config_entry)
-            for attribute in node.attributes
-            if (
-                attribute.type in HOMEE_BINARY_SENSOR_ATTRIBUTES
-                and not attribute.editable
+            HomeeBinarySensor(
+                attribute, config_entry, BINARY_SENSOR_DESCRIPTIONS[attribute.type]
             )
+            for attribute in node.attributes
+            if attribute.type in BINARY_SENSOR_DESCRIPTIONS and not attribute.editable
         )
     if devices:
         await migrate_old_unique_ids(hass, devices, Platform.BINARY_SENSOR)
@@ -161,37 +157,20 @@ class HomeeBinarySensor(HomeeEntity, BinarySensorEntity):
         self,
         attribute: HomeeAttribute,
         entry: HomeeConfigEntry,
+        description: BinarySensorEntityDescription,
     ) -> None:
         """Initialize a homee binary sensor entity."""
         super().__init__(attribute, entry)
 
-        self._configure_device_class()
-
-    def _configure_device_class(self):
-        """Configure the device class of the sensor."""
-
-        # Get the initial device class and state attribute
-        (
-            self._device_class,
-            self._attr_translation_key,
-            self._attr_entity_category,
-        ) = get_device_class(self._attribute)
-
-        if self.translation_key is None:
-            self._attr_name = None
+        self.entity_description = description
+        self._attr_translation_key = description.key
 
     @property
     def old_unique_id(self) -> str:
-        """Return the old not so unique id of the climate entity."""
+        """Return the old not so unique id of the binary-sensor entity."""
         return f"{self._attribute.node_id}-binary_sensor-{self._attribute.id}"
 
     @property
     def is_on(self) -> bool:
         """Return true if the binary sensor is on."""
         return bool(self._attribute.get_value())
-
-    @property
-    def device_class(self) -> BinarySensorDeviceClass:
-        """Return the class of this device, from component DEVICE_CLASSES."""
-        return self._device_class
-

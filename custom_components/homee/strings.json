@@ -100,64 +100,64 @@
       }
     },
     "binary_sensor": {
-      "battery_low_sensor": {
+      "battery_low": {
         "name": "Battery Low"
       },
-      "door_sensor": {
+      "door": {
         "name": "Door"
       },
-      "flood_sensor": {
+      "flood": {
         "name": "Flood alarm"
       },
-      "heat_sensor": {
+      "heat": {
         "name": "Temperature alarm"
       },
-      "load_alarm_sensor": {
+      "load_alarm": {
         "name": "Load alarm"
       },
-      "lock_sensor": {
+      "lock": {
         "name": "Lock"
       },
-      "maximum_sensor": {
+      "maximum": {
         "name": "Maximum alarm"
       },
       "minimum_alarm": {
         "name": "Minimum alarm"
       },
-      "malfunction_sensor": {
+      "malfunction": {
         "name": "Malfunction alarm"
       },
-      "motion_sensor": {
+      "motion": {
         "name": "Motion"
       },
-      "opening_sensor": {
+      "opening": {
         "name": "Opening"
       },
-      "overcurrent_sensor": {
+      "overcurrent": {
         "name": "Overcurrent alarm"
       },
-      "overload_sensor": {
+      "overload": {
         "name": "Overload alarm"
       },
-      "plug_sensor": {
+      "plug": {
         "name": "Plug"
       },
-      "rain_sensor": {
+      "rain": {
         "name": "Rain"
       },
-      "smoke_sensor": {
+      "smoke": {
         "name": "Smoke"
       },
-      "surge_sensor": {
+      "surge": {
         "name": "Surge alarm"
       },
-      "tamper_sensor": {
+      "tamper": {
         "name": "Tamper alarm"
       },
-      "voltage_drop_sensor": {
+      "voltage_drop": {
         "name": "Voltage Drop alarm"
       },
-      "window_sensor": {
+      "window": {
         "name": "Window"
       }
     },

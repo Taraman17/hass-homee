@@ -275,6 +275,11 @@ class HomeeSensor(HomeeEntity, SensorEntity):
             self._attr_translation_placeholders = {"instance": str(attribute.instance)}
 
     @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the sensor entity."""
+        return f"{self._attribute.node_id}-sensor-{self._attribute.id}"
+
+    @property
     def native_value(self) -> float | str | None:
         """Return the native value of the sensor."""
         return self.entity_description.value_fn(self._attribute)
