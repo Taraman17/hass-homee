@@ -1,7 +1,5 @@
 """The homee binary sensor platform."""
 
-import logging
-
 from pyHomee.const import AttributeType
 from pyHomee.model import HomeeAttribute
 
@@ -17,29 +15,6 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import HomeeConfigEntry
 from .entity import HomeeEntity
 from .helpers import migrate_old_unique_ids
-
-_LOGGER = logging.getLogger(__name__)
-
-HOMEE_BINARY_SENSOR_ATTRIBUTES = [
-    AttributeType.BATTERY_LOW_ALARM,
-    AttributeType.FLOOD_ALARM,
-    AttributeType.HIGH_TEMPERATURE_ALARM,
-    AttributeType.LOAD_ALARM,
-    AttributeType.LOCK_STATE,
-    AttributeType.MALFUNCTION_ALARM,
-    AttributeType.MOTION_ALARM,
-    AttributeType.ON_OFF,
-    AttributeType.OPEN_CLOSE,
-    AttributeType.OVER_CURRENT_ALARM,
-    AttributeType.OVERLOAD_ALARM,
-    AttributeType.PRESENCE_ALARM,
-    AttributeType.RAIN_FALL,
-    AttributeType.SMOKE_ALARM,
-    AttributeType.SURGE_ALARM,
-    AttributeType.TAMPER_ALARM,
-    AttributeType.VOLTAGE_DROP_ALARM,
-]
-
 
 BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] = {
     AttributeType.BATTERY_LOW_ALARM: BinarySensorEntityDescription(
@@ -132,7 +107,9 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices: AddEntitiesCallback
+    hass: HomeAssistant,
+    config_entry: HomeeConfigEntry,
+    async_add_devices: AddEntitiesCallback,
 ) -> None:
     """Add the homee platform for the binary sensor integration."""
 
