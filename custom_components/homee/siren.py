@@ -31,7 +31,7 @@ async def async_setup_entry(
 
 class HomeeSiren(HomeeEntity, SirenEntity):
     """Representation of a homee siren device."""
-    
+
     _attr_supported_features = SirenEntityFeature.TURN_ON | SirenEntityFeature.TURN_OFF
 
     @property

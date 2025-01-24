@@ -10,6 +10,7 @@ from homeassistant.components.event import (
 )
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import HomeeConfigEntry
 from .entity import HomeeEntity
@@ -17,11 +18,11 @@ from .helpers import migrate_old_unique_ids
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices: AddEntitiesCallback
 ) -> None:
     """Add the homee platform for the event component."""
 
-    devices = []
+    devices: list[HomeeEvent] = []
     for node in config_entry.runtime_data.nodes:
         devices.extend(
             HomeeEvent(attribute, config_entry)
