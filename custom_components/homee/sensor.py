@@ -50,6 +50,7 @@ class HomeeSensorEntityDescription(SensorEntityDescription):
     native_unit_of_measurement_fn: Callable[[str], str | None] = (
         lambda homee_unit: HOMEE_UNIT_TO_HA_UNIT[homee_unit]
     )
+    is_also_number: bool = False
 
 
 SENSOR_DESCRIPTIONS: dict[AttributeType, HomeeSensorEntityDescription] = {
@@ -209,6 +210,12 @@ SENSOR_DESCRIPTIONS: dict[AttributeType, HomeeSensorEntityDescription] = {
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    AttributeType.WAKE_UP_INTERVAL: HomeeSensorEntityDescription(
+        key="wake_up_interval",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
+        is_also_number=True,
+    ),
     AttributeType.WIND_SPEED: HomeeSensorEntityDescription(
         key="wind_speed",
         device_class=SensorDeviceClass.WIND_SPEED,
@@ -284,7 +291,11 @@ async def async_setup_entry(
         devices.extend(
             HomeeSensor(attribute, config_entry, SENSOR_DESCRIPTIONS[attribute.type])
             for attribute in node.attributes
-            if attribute.type in SENSOR_DESCRIPTIONS and not attribute.editable
+            if attribute.type in SENSOR_DESCRIPTIONS
+            and (
+                (not attribute.editable and not SENSOR_DESCRIPTIONS[attribute.type].is_also_number)
+                or (SENSOR_DESCRIPTIONS[attribute.type].is_also_number and attribute.data == "fixed_value")
+            )
         )
 
     if devices:

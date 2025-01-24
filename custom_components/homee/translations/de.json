@@ -266,6 +266,16 @@
                 "name": "Windüberwachung"
             }
         },
+        "select": {
+            "repeater_mode": {
+                "name": "EnOcean Repeater Modus",
+                "state": {
+                    "off": "Aus",
+                    "level1": "Level 1",
+                    "level2": "Level 2"
+                }
+            }
+        },
         "sensor": {
             "brightness_instance": {
                 "name": "Beleuchtungsstärke {instance}"
@@ -366,6 +376,9 @@
             },
             "voltage_instance": {
                 "name": "Spannung {instance}"
+            },
+            "wake_up_interval": {
+                "name": "Aufwachintervall"
             },
             "window_position": {
                 "name": "Fensterstellung",

@@ -1,12 +1,14 @@
 """The homee lock platform."""
 
 import logging
+from typing import Any
 
 from pyHomee.const import AttributeChangedBy, AttributeType
 
 from homeassistant.components.lock import LockEntity
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import HomeeConfigEntry
 from .entity import HomeeEntity
@@ -16,11 +18,11 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
-):
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices: AddEntitiesCallback
+) -> None:
     """Add the homee platform for the lock component."""
 
-    devices = []
+    devices: list[HomeeLock] = []
     for node in config_entry.runtime_data.nodes:
         devices.extend(
             HomeeLock(attribute, config_entry)
@@ -44,9 +46,9 @@ class HomeeLock(HomeeEntity, LockEntity):
         return f"{self._attribute.node_id}-lock-{self._attribute.id}"
 
     @property
-    def is_locked(self) -> int:
+    def is_locked(self) -> bool:
         """Return the current lock state."""
-        return self._attribute.current_value
+        return bool(self._attribute.current_value)
 
     @property
     def changed_by(self) -> str:
@@ -56,10 +58,10 @@ class HomeeLock(HomeeEntity, LockEntity):
         )
         return f"{changed_by_name}-{self._attribute.changed_by_id}"
 
-    async def async_lock(self, **kwargs) -> None:
+    async def async_lock(self, **kwargs: Any) -> None:
         """Lock all or specified locks. A code to lock the lock with may be specified."""
         await self.async_set_value(0)
 
-    async def async_unlock(self, **kwargs) -> None:
+    async def async_unlock(self, **kwargs: Any) -> None:
         """Unlock all or specified locks. A code to unlock the lock with may be specified."""
         await self.async_set_value(1)

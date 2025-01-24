@@ -119,7 +119,7 @@ async def async_setup_entry(
         devices.extend(
             HomeeNumber(attribute, config_entry)
             for attribute in node.attributes
-            if attribute.type in NUMBER_ATTRIBUTES
+            if attribute.type in NUMBER_ATTRIBUTES and attribute.data != "fixed_value"
         )
     if devices:
         await migrate_old_unique_ids(hass, devices, Platform.NUMBER)
@@ -152,6 +152,11 @@ class HomeeNumber(HomeeEntity, NumberEntity):
     def old_unique_id(self) -> str:
         """Return the old not so unique id of the climate entity."""
         return f"{self._attribute.node_id}-number-{self._attribute.id}"
+
+    @property
+    def available(self) -> bool:
+        """Return the availability of the underlying node."""
+        return super().available and self._attribute.editable
 
     @property
     def native_value(self) -> int:

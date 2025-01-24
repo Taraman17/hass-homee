@@ -37,7 +37,6 @@ HOMEE_SWITCH_ATTRIBUTES = [
     AttributeType.PERMANENTLY_OPEN_IMPULSE,
     AttributeType.RESET_METER,
     AttributeType.RESTORE_LAST_KNOWN_STATE,
-    AttributeType.SIREN,
     AttributeType.SWITCH_TYPE,
     AttributeType.VENTILATE_IMPULSE,
     AttributeType.WATCHDOG_ON_OFF,

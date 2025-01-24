@@ -267,6 +267,16 @@
                 "name": "Wind Monitoring State"
             }
         },
+        "select": {
+            "repeater_mode": {
+                "name": "EnOcean repeater mode",
+                "state": {
+                    "off": "Off",
+                    "level1": "Level 1",
+                    "level2": "Level 2"
+                }
+            }
+        },
         "sensor": {
             "brightness_instance": {
                 "name": "Illuminance {instance}"
@@ -367,6 +377,9 @@
             },
             "voltage_instance": {
                 "name": "Voltage {instance}"
+            },
+            "wake_up_interval": {
+                "name": "Wake-Up Interval"
             },
             "window_position": {
                 "name": "Window position",
