@@ -22,6 +22,14 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
         device_class=BinarySensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    AttributeType.CO2ALARM: BinarySensorEntityDescription(
+        key="carbon_dioxide",
+        device_class=BinarySensorDeviceClass.GAS
+    ),
+    AttributeType.FERTILIZE_PLANT_ALARM: BinarySensorEntityDescription(
+        key="fertilize_plant",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+    ),
     AttributeType.FLOOD_ALARM: BinarySensorEntityDescription(
         key="flood",
         device_class=BinarySensorDeviceClass.MOISTURE,
@@ -83,6 +91,11 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
     AttributeType.RAIN_FALL: BinarySensorEntityDescription(
         key="rain",
         device_class=BinarySensorDeviceClass.MOISTURE,
+    ),
+    AttributeType.REPLACE_FILTER_ALARM: BinarySensorEntityDescription(
+        key="replace_filter",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     AttributeType.SMOKE_ALARM: BinarySensorEntityDescription(
         key="smoke",

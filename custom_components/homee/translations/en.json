@@ -1,420 +1,475 @@
 {
-  "config": {
-    "flow_title": "homee {name} ({host})",
-    "abort": {
-      "already_configured": "Device is already configured"
-    },
-    "error": {
-      "cannot_connect": "Failed to connect",
-      "invalid_auth": "Invalid authentication",
-      "unknown": "Unexpected error"
-    },
-    "step": {
-      "user": {
-        "title": "Configure homee",
-        "description": "Manually enter the ip address of the homee you want to connect.",
-        "data": {
-          "host": "Host",
-          "password": "Password",
-          "username": "Username",
-          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
-        }
-      },
-      "zeroconf_confirm": {
-        "title": "Configure homee",
-        "description": "Discovered homee {id} at {host}",
-        "data": {
-          "host": "Host",
-          "password": "Password",
-          "username": "Username",
-          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity."
-        }
-      },
-      "groups": {
-        "title": "Group Configuration",
-        "description": "Configure the groups. You can still change window & door groups later.",
-        "data": {
-          "import_groups": "Import devices in the following groups:",
-          "window_groups": "Groups that contain window sensors:",
-          "door_groups": "Groups that contain door sensors:"
-        }
-      },
-      "reconfigure": {
-        "title": "Reconfigure homee",
-        "description": "Change settings of homee.",
-        "data": {
-          "host": "Host",
-          "password": "Password",
-          "username": "Username",
-          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
-        }
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "description": "Configure the homee integration. You may need to restart Home Assistant to apply the changes.",
-        "data": {
-          "window_groups": "Groups that contain window sensors:",
-          "door_groups": "Groups that contain door sensors:",
-          "add_homee_data": "Add (debug) information about the homee node and attributes to each entity."
-        }
-      }
-    }
-  },
-  "services": {
-    "set_value": {
-      "name": "Set Value",
-      "description": "Set an attribute value of a homee node.",
-      "fields": {
-        "config_entry_id": {
-          "name": "Target Homee",
-          "description": "Homee on which the action will be executed."
+    "config": {
+        "flow_title": "homee {name} ({host})",
+        "abort": {
+            "already_configured": "Device is already configured"
         },
-        "node": {
-          "name": "Node",
-          "description": "The node ID."
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error"
         },
-        "attribute": {
-          "name": "Attribute",
-          "description": "The attribute ID."
-        },
-        "value": {
-          "name": "Value",
-          "description": "The value to set."
-        }
-      }
-    }
-  },
-  "entity": {
-    "alarm_control_panel": {
-      "homee_status": {
-        "name": "Status",
-        "state": {
-          "armed_home": "Home",
-          "armed_night": "Sleeping",
-          "armed_away": "Away",
-          "armed_vacation": "Vacation"
-        }
-      }
-    },
-    "binary_sensor": {
-      "battery_low": {
-        "name": "Battery Low"
-      },
-      "door": {
-        "name": "Door"
-      },
-      "flood": {
-        "name": "Flood Alarm"
-      },
-      "heat": {
-        "name": "Temperature Alarm"
-      },
-      "load_alarm": {
-        "name": "Load Alarm"
-      },
-      "lock": {
-        "name": "Lock"
-      },
-      "maximum": {
-        "name": "Maximum alarm"
-      },
-      "minimum_alarm": {
-        "name": "Minimum alarm"
-      },
-      "malfunction": {
-        "name": "Malfunction Alarm"
-      },
-      "motion": {
-        "name": "Motion"
-      },
-      "opening": {
-        "name": "Opening"
-      },
-      "overcurrent": {
-        "name": "Overcurrent Alarm"
-      },
-      "overload": {
-        "name": "Overload Alarm"
-      },
-      "plug": {
-        "name": "Plug"
-      },
-      "rain": {
-        "name": "Rain"
-      },
-      "smoke": {
-        "name": "Smoke"
-      },
-      "surge": {
-        "name": "Surge Alarm"
-      },
-      "tamper": {
-        "name": "Tamper Alarm"
-      },
-      "voltage_drop": {
-        "name": "Voltage Drop Alarm"
-      },
-      "window": {
-        "name": "Window"
-      }
-    },
-    "climate": {
-      "homee": {
-        "state_attributes": {
-          "preset_mode": {
-            "state": {
-              "manual": "Manual"
+        "step": {
+            "user": {
+                "title": "Configure homee",
+                "description": "Manually enter the ip address of the homee you want to connect.",
+                "data": {
+                    "host": "Host",
+                    "password": "Password",
+                    "username": "Username",
+                    "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
+                }
+            },
+            "zeroconf_confirm": {
+                "title": "Configure homee",
+                "description": "Discovered homee {id} at {host}",
+                "data": {
+                    "host": "Host",
+                    "password": "Password",
+                    "username": "Username",
+                    "add_homee_data": "Add (debug) information about the homee node and attributes to each entity."
+                }
+            },
+            "groups": {
+                "title": "Group Configuration",
+                "description": "Configure the groups. You can still change window & door groups later.",
+                "data": {
+                    "import_groups": "Import devices in the following groups:",
+                    "window_groups": "Groups that contain window sensors:",
+                    "door_groups": "Groups that contain door sensors:"
+                }
+            },
+            "reconfigure": {
+                "title": "Reconfigure homee",
+                "description": "Change settings of homee.",
+                "data": {
+                    "host": "Host",
+                    "password": "Password",
+                    "username": "Username",
+                    "add_homee_data": "Add (debug) information about the homee node and attributes to each entity"
+                }
             }
-          }
         }
-      }
     },
-    "event": {
-      "up_down_remote": {
-        "name": "Up Down Remote",
-        "state_attributes": {
-          "event_type": {
-            "state": {
-              "0": "None",
-              "1": "Up",
-              "2": "Down",
-              "3": "Stop",
-              "4": "Up (long press)",
-              "5": "Down (long press)",
-              "6": "Stop (long press)",
-              "7": "C-Button",
-              "9": "A-Button"
+    "options": {
+        "step": {
+            "init": {
+                "description": "Configure the homee integration. You may need to restart Home Assistant to apply the changes.",
+                "data": {
+                    "window_groups": "Groups that contain window sensors:",
+                    "door_groups": "Groups that contain door sensors:",
+                    "add_homee_data": "Add (debug) information about the homee node and attributes to each entity."
+                }
             }
-          }
         }
-      }
     },
-    "number": {
-      "number_down_position": {
-        "name": "Down Position"
-      },
-      "number_down_slat_position": {
-        "name": "Down Slat Position"
-      },
-      "number_down_time": {
-        "name": "Down-movement duration"
-      },
-      "number_endposition_configuration": {
-        "name": "End position"
-      },
-      "number_motion_alarm_cancelation_delay": {
-        "name": "Motion Alarm Delay"
-      },
-      "number_open_window_detection_sensibility": {
-        "name": "Window Open Sensibility"
-      },
-      "number_polling_interval": {
-        "name": "Polling Interval"
-      },
-      "number_shutter_slat_time": {
-        "name": "Slat Turn Duration"
-      },
-      "number_slat_max_angle": {
-        "name": "Maximum Slat Angle"
-      },
-      "number_slat_min_angle": {
-        "name": "Minimum Slat Angle"
-      },
-      "number_slat_steps": {
-        "name": "Slat Steps"
-      },
-      "number_target_temperature": {
-        "name": "Target Temperature"
-      },
-      "number_temperature_offset": {
-        "name": "Temperature Offset"
-      },
-      "number_up_time": {
-        "name": "Up-movement duration"
-      },
-      "number_valve_position": {
-        "name": "Valve Position"
-      },
-      "number_wake_up_interval": {
-        "name": "Wake-Up Interval"
-      },
-      "number_wind_monitoring_state": {
-        "name": "Wind Monitoring State"
-      }
-    },
-    "sensor": {
-      "brightness_instance": {
-        "name": "Illuminance {instance}"
-      },
-      "current_instance": {
-        "name": "Current {instance}"
-      },
-      "dawn": {
-        "name": "Dawn"
-      },
-      "device_temperature": {
-        "name": "Device temperature"
-      },
-      "energy_instance": {
-        "name": "Energy {instance}"
-      },
-      "level": {
-        "name": "Level"
-      },
-      "link_quality": {
-        "name": "Link quality"
-      },
-      "node_state": {
-        "name": "Node state"
-      },
-      "position": {
-        "name": "Position"
-      },
-      "power_instance": {
-        "name": "Power {instance}"
-      },
-      "rainfall_day": {
-        "name": "Rainfall today"
-      },
-      "rainfall_hour": {
-        "name": "Rainfall last hour"
-      },
-      "total_current": {
-        "name": "Total current"
-      },
-      "total_energy": {
-        "name": "Total energy"
-      },
-      "total_power": {
-        "name": "Total power"
-      },
-      "total_voltage": {
-        "name": "Total voltage"
-      },
-      "up_down": {
-        "name": "State",
-        "state": {
-          "closed": "Closed",
-          "closing": "Closing",
-          "open": "Open",
-          "opening": "Opening",
-          "partial": "Partially open"
+    "services": {
+        "set_value": {
+            "name": "Set Value",
+            "description": "Set an attribute value of a homee node.",
+            "fields": {
+                "config_entry_id": {
+                    "name": "Target Homee",
+                    "description": "Homee on which the action will be executed."
+                },
+                "node": {
+                    "name": "Node",
+                    "description": "The node ID."
+                },
+                "attribute": {
+                    "name": "Attribute",
+                    "description": "The attribute ID."
+                },
+                "value": {
+                    "name": "Value",
+                    "description": "The value to set."
+                }
+            }
         }
-      },
-      "uv": {
-        "name": "Ultraviolet"
-      },
-      "valve_position": {
-        "name": "Valve position"
-      },
-      "voltage_instance": {
-        "name": "Voltage {instance}"
-      },
-      "window_position": {
-        "name": "Window position",
-        "state": {
-          "closed": "Closed",
-          "open": "Open",
-          "tilted": "Tilted"
-        }
-      }
     },
-    "switch": {
-      "automatic_mode_impulse": {
-        "name": "Automatic Mode Impulse"
-      },
-      "briefly_open_impulse": {
-        "name": "Briefly Open Impulse"
-      },
-      "external_binary_input": {
-        "name": "Child Lock"
-      },
-      "identification_mode": {
-        "name": "Identification Mode"
-      },
-      "impulse": {
-        "name": "Impulse"
-      },
-      "impulse_1": {
-        "name": "Impulse 1"
-      },
-      "impulse_2": {
-        "name": "Impulse 2"
-      },
-      "impulse_3": {
-        "name": "Impulse 3"
-      },
-      "impulse_4": {
-        "name": "Impulse 4"
-      },
-      "light_impulse": {
-        "name": "Light Impulse"
-      },
-      "light_impulse_1": {
-        "name": "Light Impulse 1"
-      },
-      "light_impulse_2": {
-        "name": "Light Impulse 2"
-      },
-      "light_impulse_3": {
-        "name": "Light Impulse 3"
-      },
-      "light_impulse_4": {
-        "name": "Light Impulse 4"
-      },
-      "manual_operation": {
-        "name": "Manual Operation"
-      },
-      "motor_rotation": {
-        "name": "Motor ro tation direction"
-      },
-      "open_partial_impulse": {
-        "name": "Open Partial Impulse"
-      },
-      "permanently_open_impulse": {
-        "name": "Permanently Open Impulse"
-      },
-      "reset_meter": {
-        "name": "Reset Meter"
-      },
-      "reset_meter_1": {
-        "name": "Reset Meter 1"
-      },
-      "reset_meter_2": {
-        "name": "Reset Meter 2"
-      },
-      "reset_meter_3": {
-        "name": "Reset Meter 3"
-      },
-      "reset_meter_4": {
-        "name": "Reset Meter 4"
-      },
-      "restore_last_known_state": {
-        "name": "Restore last known state"
-      },
-      "switch_type": {
-        "name": "Switch Type"
-      },
-      "ventilate_ipulse": {
-        "name": "Ventilate Impulse"
-      },
-      "watchdog_on_off": {
-        "name": "Watchdog"
-      }
+    "entity": {
+        "alarm_control_panel": {
+            "homee_status": {
+                "name": "Status",
+                "state": {
+                    "armed_home": "Home",
+                    "armed_night": "Sleeping",
+                    "armed_away": "Away",
+                    "armed_vacation": "Vacation"
+                }
+            }
+        },
+        "binary_sensor": {
+            "battery_low": {
+                "name": "Battery Low"
+            },
+            "carbon_dioxide": {
+                "name": "Carbon dioxide alarm"
+            },
+            "door": {
+                "name": "Door"
+            },
+            "fertilize_plant": {
+                "name": "Fertilize plant alarm"
+            },
+            "flood": {
+                "name": "Flood Alarm"
+            },
+            "heat": {
+                "name": "Temperature Alarm"
+            },
+            "load_alarm": {
+                "name": "Load Alarm"
+            },
+            "lock": {
+                "name": "Lock"
+            },
+            "maximum": {
+                "name": "Maximum alarm"
+            },
+            "minimum_alarm": {
+                "name": "Minimum alarm"
+            },
+            "malfunction": {
+                "name": "Malfunction Alarm"
+            },
+            "motion": {
+                "name": "Motion"
+            },
+            "opening": {
+                "name": "Opening"
+            },
+            "overcurrent": {
+                "name": "Overcurrent Alarm"
+            },
+            "overload": {
+                "name": "Overload Alarm"
+            },
+            "plug": {
+                "name": "Plug"
+            },
+            "rain": {
+                "name": "Rain"
+            },
+            "replace_filter": {
+                "name": "Replace filter alarm"
+            },
+            "smoke": {
+                "name": "Smoke"
+            },
+            "surge": {
+                "name": "Surge Alarm"
+            },
+            "tamper": {
+                "name": "Tamper Alarm"
+            },
+            "voltage_drop": {
+                "name": "Voltage Drop Alarm"
+            },
+            "window": {
+                "name": "Window"
+            }
+        },
+        "climate": {
+            "homee": {
+                "state_attributes": {
+                    "preset_mode": {
+                        "state": {
+                            "manual": "Manual"
+                        }
+                    }
+                }
+            }
+        },
+        "event": {
+            "up_down_remote": {
+                "name": "Up Down Remote",
+                "state_attributes": {
+                    "event_type": {
+                        "state": {
+                            "0": "None",
+                            "1": "Up",
+                            "2": "Down",
+                            "3": "Stop",
+                            "4": "Up (long press)",
+                            "5": "Down (long press)",
+                            "6": "Stop (long press)",
+                            "7": "C-Button",
+                            "9": "A-Button"
+                        }
+                    }
+                }
+            }
+        },
+        "fan": {
+            "homee": {
+                "state_attributes": {
+                    "preset_mode": {
+                        "state": {
+                            "manual": "Manual",
+                            "auto": "Automatic",
+                            "summer": "Summer"
+                        }
+                    }
+                }
+            }
+        },
+        "number": {
+            "number_down_position": {
+                "name": "Down Position"
+            },
+            "number_down_slat_position": {
+                "name": "Down Slat Position"
+            },
+            "number_down_time": {
+                "name": "Down-movement duration"
+            },
+            "number_endposition_configuration": {
+                "name": "End position"
+            },
+            "number_motion_alarm_cancelation_delay": {
+                "name": "Motion Alarm Delay"
+            },
+            "number_open_window_detection_sensibility": {
+                "name": "Window Open Sensibility"
+            },
+            "number_polling_interval": {
+                "name": "Polling Interval"
+            },
+            "number_shutter_slat_time": {
+                "name": "Slat Turn Duration"
+            },
+            "number_slat_max_angle": {
+                "name": "Maximum Slat Angle"
+            },
+            "number_slat_min_angle": {
+                "name": "Minimum Slat Angle"
+            },
+            "number_slat_steps": {
+                "name": "Slat Steps"
+            },
+            "number_target_temperature": {
+                "name": "Target Temperature"
+            },
+            "number_temperature_offset": {
+                "name": "Temperature Offset"
+            },
+            "number_up_time": {
+                "name": "Up-movement duration"
+            },
+            "number_valve_position": {
+                "name": "Valve Position"
+            },
+            "number_wake_up_interval": {
+                "name": "Wake-Up Interval"
+            },
+            "number_wind_monitoring_state": {
+                "name": "Wind Monitoring State"
+            }
+        },
+        "sensor": {
+            "brightness_instance": {
+                "name": "Illuminance {instance}"
+            },
+            "current_instance": {
+                "name": "Current {instance}"
+            },
+            "dawn": {
+                "name": "Dawn"
+            },
+            "device_temperature": {
+                "name": "Device temperature"
+            },
+            "energy_instance": {
+                "name": "Energy {instance}"
+            },
+            "exhaust_motor_revs": {
+                "name": "Exhaust motor speed"
+            },
+            "indoor_humidity": {
+                "name": "Indoor humidity"
+            },
+            "indoor_humidity_instance": {
+                "name": "Indoor humidity {instance}"
+            },
+            "indoor_temperature": {
+                "name": "Indoor temperature"
+            },
+            "indoor_temperature_instance": {
+                "name": "Indoor temperature {instance}"
+            },
+            "intake_motor_revs": {
+                "name": "Intake motor speed"
+            },
+            "level": {
+                "name": "Level"
+            },
+            "link_quality": {
+                "name": "Link quality"
+            },
+            "node_state": {
+                "name": "Node state"
+            },
+            "operating_hours": {
+                "name": "Operating hours"
+            },
+            "outdoor_humidity": {
+                "name": "Outdoor humidity"
+            },
+            "outdoor_humidity_instance": {
+                "name": "Outdoor humidity {instance}"
+            },
+            "outdoor_temperature": {
+                "name": "Outdoor temperature"
+            },
+            "outdoor_temperature_instance": {
+                "name": "Outdoor temperature {instance}"
+            },
+            "position": {
+                "name": "Position"
+            },
+            "power_instance": {
+                "name": "Power {instance}"
+            },
+            "rainfall_day": {
+                "name": "Rainfall today"
+            },
+            "rainfall_hour": {
+                "name": "Rainfall last hour"
+            },
+            "total_current": {
+                "name": "Total current"
+            },
+            "total_energy": {
+                "name": "Total energy"
+            },
+            "total_power": {
+                "name": "Total power"
+            },
+            "total_voltage": {
+                "name": "Total voltage"
+            },
+            "up_down": {
+                "name": "State",
+                "state": {
+                    "closed": "Closed",
+                    "closing": "Closing",
+                    "open": "Open",
+                    "opening": "Opening",
+                    "partial": "Partially open"
+                }
+            },
+            "uv": {
+                "name": "Ultraviolet"
+            },
+            "valve_position": {
+                "name": "Valve position"
+            },
+            "voltage_instance": {
+                "name": "Voltage {instance}"
+            },
+            "window_position": {
+                "name": "Window position",
+                "state": {
+                    "closed": "Closed",
+                    "open": "Open",
+                    "tilted": "Tilted"
+                }
+            }
+        },
+        "switch": {
+            "automatic_mode_impulse": {
+                "name": "Automatic Mode Impulse"
+            },
+            "briefly_open_impulse": {
+                "name": "Briefly Open Impulse"
+            },
+            "external_binary_input": {
+                "name": "Child Lock"
+            },
+            "identification_mode": {
+                "name": "Identification Mode"
+            },
+            "impulse": {
+                "name": "Impulse"
+            },
+            "impulse_1": {
+                "name": "Impulse 1"
+            },
+            "impulse_2": {
+                "name": "Impulse 2"
+            },
+            "impulse_3": {
+                "name": "Impulse 3"
+            },
+            "impulse_4": {
+                "name": "Impulse 4"
+            },
+            "light_impulse": {
+                "name": "Light Impulse"
+            },
+            "light_impulse_1": {
+                "name": "Light Impulse 1"
+            },
+            "light_impulse_2": {
+                "name": "Light Impulse 2"
+            },
+            "light_impulse_3": {
+                "name": "Light Impulse 3"
+            },
+            "light_impulse_4": {
+                "name": "Light Impulse 4"
+            },
+            "manual_operation": {
+                "name": "Manual Operation"
+            },
+            "motor_rotation": {
+                "name": "Motor ro tation direction"
+            },
+            "open_partial_impulse": {
+                "name": "Open Partial Impulse"
+            },
+            "permanently_open_impulse": {
+                "name": "Permanently Open Impulse"
+            },
+            "reset_meter": {
+                "name": "Reset Meter"
+            },
+            "reset_meter_1": {
+                "name": "Reset Meter 1"
+            },
+            "reset_meter_2": {
+                "name": "Reset Meter 2"
+            },
+            "reset_meter_3": {
+                "name": "Reset Meter 3"
+            },
+            "reset_meter_4": {
+                "name": "Reset Meter 4"
+            },
+            "restore_last_known_state": {
+                "name": "Restore last known state"
+            },
+            "switch_type": {
+                "name": "Switch Type"
+            },
+            "ventilate_ipulse": {
+                "name": "Ventilate Impulse"
+            },
+            "watchdog_on_off": {
+                "name": "Watchdog"
+            }
+        }
+    },
+    "exceptions": {
+        "no_integer": {
+            "message": "{service_attr} must be an integer."
+        },
+        "no_float": {
+            "message": "{service_attr} must be a number."
+        },
+        "not_editable": {
+            "message": "{entity} is currently not changeable."
+        }
     }
-  },
-  "exceptions": {
-    "no_integer": {
-      "message": "{service_attr} must be an integer."
-    },
-    "no_float": {
-      "message": "{service_attr} must be a number."
-    },
-    "not_editable": {
-      "message": "{entity} is currently not changeable."
-    }
-  }
 }

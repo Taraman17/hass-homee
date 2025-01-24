@@ -99,6 +99,26 @@ SENSOR_DESCRIPTIONS: dict[AttributeType, HomeeSensorEntityDescription] = {
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    AttributeType.EXHAUST_MOTOR_REVS: HomeeSensorEntityDescription(
+        key="exhaust_motor_revs",
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.INDOOR_RELATIVE_HUMIDITY: HomeeSensorEntityDescription(
+        key="indoor_humidity",
+        device_class=SensorDeviceClass.HUMIDITY,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    AttributeType.INDOOR_TEMPERATURE: HomeeSensorEntityDescription(
+        key="indoor_temperature",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    AttributeType.INTAKE_MOTOR_REVS: HomeeSensorEntityDescription(
+        key="intake_motor_revs",
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
     AttributeType.LEVEL: HomeeSensorEntityDescription(
         key="level",
         device_class=SensorDeviceClass.VOLUME,
@@ -107,6 +127,22 @@ SENSOR_DESCRIPTIONS: dict[AttributeType, HomeeSensorEntityDescription] = {
     AttributeType.LINK_QUALITY: HomeeSensorEntityDescription(
         key="link_quality",
         entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    AttributeType.OPERATING_HOURS: HomeeSensorEntityDescription(
+        key="operating_hours",
+        device_class=SensorDeviceClass.DURATION,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    AttributeType.OUTDOOR_RELATIVE_HUMIDITY: HomeeSensorEntityDescription(
+        key="outdoor_humidity",
+        device_class=SensorDeviceClass.HUMIDITY,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    AttributeType.OUTDOOR_TEMPERATURE: HomeeSensorEntityDescription(
+        key="outdoor_temperature",
+        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     AttributeType.POSITION: HomeeSensorEntityDescription(
