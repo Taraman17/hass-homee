@@ -12,7 +12,7 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import EntityCategory
+from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -25,7 +25,7 @@ from .const import (
     WINDOW_MAP_REVERSED,
 )
 from .entity import HomeeEntity, HomeeNodeEntity
-from .helpers import get_name_for_enum
+from .helpers import get_name_for_enum, migrate_old_unique_ids
 
 
 def get_open_close_value(attribute: HomeeAttribute) -> str | None:
@@ -299,6 +299,7 @@ async def async_setup_entry(
         )
 
     if devices:
+        await migrate_old_unique_ids(hass, devices, Platform.SENSOR)
         async_add_devices(devices)
 
 
