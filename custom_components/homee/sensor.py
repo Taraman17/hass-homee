@@ -358,6 +358,11 @@ class HomeeNodeSensor(HomeeNodeEntity, SensorEntity):
         self._attr_unique_id = f"{self._attr_unique_id}-{description.key}"
 
     @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the node-sensor entity."""
+        return f"{self._node.id}-sensor-{self.entity_description.key}"
+
+    @property
     def native_value(self) -> str | None:
         """Return the sensors value."""
         return self.entity_description.value_fn(self._node)
