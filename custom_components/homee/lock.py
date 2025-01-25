@@ -42,7 +42,7 @@ class HomeeLock(HomeeEntity, LockEntity):
 
     @property
     def old_unique_id(self) -> str:
-        """Return the old not so unique id of the climate entity."""
+        """Return the old not so unique id of the lock entity."""
         return f"{self._attribute.node_id}-lock-{self._attribute.id}"
 
     @property

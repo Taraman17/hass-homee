@@ -126,7 +126,7 @@ class HomeeCover(HomeeNodeEntity, CoverEntity):
 
     @property
     def old_unique_id(self) -> str:
-        """Return the old not so unique id of the climate entity."""
+        """Return the old not so unique id of the cover entity."""
         return f"{self._node.id}-cover"
 
     @property

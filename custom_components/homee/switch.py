@@ -133,7 +133,7 @@ class HomeeSwitch(HomeeEntity, SwitchEntity):
 
     @property
     def old_unique_id(self) -> str:
-        """Return the old not so unique id of the climate entity."""
+        """Return the old not so unique id of the switch entity."""
         return f"{self._attribute.node_id}-switch-{self._attribute.id}"
 
     @property

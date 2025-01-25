@@ -150,7 +150,7 @@ class HomeeNumber(HomeeEntity, NumberEntity):
 
     @property
     def old_unique_id(self) -> str:
-        """Return the old not so unique id of the climate entity."""
+        """Return the old not so unique id of the number entity."""
         return f"{self._attribute.node_id}-number-{self._attribute.id}"
 
     @property

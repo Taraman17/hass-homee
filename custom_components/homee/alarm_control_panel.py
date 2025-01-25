@@ -77,7 +77,7 @@ class HomeeAlarmPanel(HomeeNodeEntity, AlarmControlPanelEntity):
 
     @property
     def old_unique_id(self) -> str:
-        """Return the old not so unique id of the climate entity."""
+        """Return the old not so unique id of the alarm-panel entity."""
         return f"{self._node.id}-alarm_panel-{self._alarm_panel_attribute.id}"
 
     @property

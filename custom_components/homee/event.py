@@ -47,7 +47,7 @@ class HomeeEvent(HomeeEntity, EventEntity):
 
     @property
     def old_unique_id(self) -> str:
-        """Return the old not so unique id of the climate entity."""
+        """Return the old not so unique id of the event entity."""
         return f"{self._attribute.node_id}-event-{self._attribute.id}"
 
     @callback

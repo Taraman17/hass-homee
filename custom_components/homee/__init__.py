@@ -71,7 +71,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         }
     )
 
-    async def async_handle_set_value(call: ServiceCall):
+    async def async_handle_set_value(call: ServiceCall) -> bool:
         """Handle the set value service call."""
 
         if not (
@@ -182,7 +182,7 @@ async def async_remove_config_entry_device(
     model = NodeProfile[device_entry.model.upper()].value
     for node in homee.nodes:
         # 'identifiers' is a set of tuples, so we need to check for the tuple.
-        if ("homee", node.id) in device_entry.identifiers:
+        if ("homee", str(node.id)) in device_entry.identifiers:
             if node.profile == model:
                 # If Node is still present in Homee, don't delete.
                 return False
@@ -223,24 +223,36 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
     if config_entry.version == 2:
         _LOGGER.info("Migrating from version %s", config_entry.version)
 
-        _LOGGER.info("Migrating Config Entry data")
-        new_data = {**config_entry.data}
-        hass.config_entries.async_update_entry(config_entry, data=new_data, version=3)
-        _LOGGER.info("Config Entry successfully migrated.")
-
         _LOGGER.info("Migrating device UIDs.")
         device_registry = dr.async_get(hass)
         device_entries = dr.async_entries_for_config_entry(
             device_registry, config_entry.entry_id
         )
         for device in device_entries:
-            device_registry.async_update_device(
-                device_id=device.id,
-                new_identifiers={
-                    (DOMAIN, f"{config_entry.unique_id}-{device.identifiers[1]}")
-                },
-            )
+            node_id: str = ""
+            for data_tuple in device.identifiers:
+                if data_tuple[0] == DOMAIN:
+                    node_id = data_tuple[1]
+            if node_id == "pymee_home":
+                device_registry.async_update_device(
+                    device_id=device.id,
+                    new_identifiers={
+                        (DOMAIN, f"{config_entry.unique_id}")
+                    },
+                )
+            else:
+                device_registry.async_update_device(
+                    device_id=device.id,
+                    new_identifiers={
+                        (DOMAIN, f"{config_entry.unique_id}-{node_id}")
+                    },
+                )
         _LOGGER.info("Successfully migrated device UIDs")
+
+        _LOGGER.info("Migrating Config Entry data")
+        new_data = {**config_entry.data}
+        hass.config_entries.async_update_entry(config_entry, data=new_data, version=3)
+        _LOGGER.info("Config Entry successfully migrated.")
 
         _LOGGER.info("Migration to v%s successful", config_entry.version)
 
