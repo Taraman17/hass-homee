@@ -178,6 +178,7 @@ SENSOR_DESCRIPTIONS: dict[AttributeType, HomeeSensorEntityDescription] = {
     AttributeType.TOTAL_CURRENT: HomeeSensorEntityDescription(
         key="total_current",
         device_class=SensorDeviceClass.CURRENT,
+        state_class=SensorStateClass.MEASUREMENT
     ),
     AttributeType.TOTAL_CURRENT_ENERGY_USE: HomeeSensorEntityDescription(
         key="total_power",
