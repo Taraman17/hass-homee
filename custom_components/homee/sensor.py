@@ -356,6 +356,7 @@ class HomeeNodeSensor(HomeeNodeEntity, SensorEntity):
         super().__init__(node, entry)
         self.entity_description = description
         self._node = node
+        self._attr_name = description.key
         self._attr_unique_id = f"{self._attr_unique_id}-{description.key}"
 
     @property
