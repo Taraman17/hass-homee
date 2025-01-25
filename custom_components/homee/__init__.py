@@ -54,6 +54,7 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 type HomeeConfigEntry = ConfigEntry[Homee]
 
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the homee component."""
     if DOMAIN not in hass.data:
@@ -220,11 +221,26 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
         _LOGGER.info("Migration to v%s successful", config_entry.version)
 
     if config_entry.version == 2:
-        _LOGGER.debug("Migrating from version %s", config_entry.version)
+        _LOGGER.info("Migrating from version %s", config_entry.version)
 
+        _LOGGER.info("Migrating Config Entry data")
         new_data = {**config_entry.data}
-
         hass.config_entries.async_update_entry(config_entry, data=new_data, version=3)
+        _LOGGER.info("Config Entry successfully migrated.")
+
+        _LOGGER.info("Migrating device UIDs.")
+        device_registry = dr.async_get(hass)
+        device_entries = dr.async_entries_for_config_entry(
+            device_registry, config_entry.entry_id
+        )
+        for device in device_entries:
+            device_registry.async_update_device(
+                device_id=device.id,
+                new_identifiers={
+                    (DOMAIN, f"{config_entry.unique_id}-{device.identifiers[1]}")
+                },
+            )
+        _LOGGER.info("Successfully migrated device UIDs")
 
         _LOGGER.info("Migration to v%s successful", config_entry.version)
 
