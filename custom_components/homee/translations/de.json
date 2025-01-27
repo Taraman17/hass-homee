@@ -1,511 +1,487 @@
 {
-  "config": {
-    "flow_title": "homee {name} ({host})",
-    "abort": {
-      "already_configured": "Gerät ist bereits konfiguriert"
-    },
-    "error": {
-      "cannot_connect": "Verbindung fehlgeschlagen",
-      "invalid_auth": "Ungültige Anmeldedaten",
-      "unknown": "Unerwarteter Fehler"
-    },
-    "step": {
-      "user": {
-        "title": "homee konfigurieren",
-        "description": "Geben Sie manuell die IP-Adresse des homee ein, mit dem Sie eine Verbindung herstellen möchten.",
-        "data": {
-          "host": "Host",
-          "password": "Kennwort",
-          "username": "Benutzer",
-          "all_devices_or_groups": "Wählen Sie aus, welche Geräte importiert werden sollen:",
-          "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
-        }
-      },
-      "zeroconf_confirm": {
-        "title": "homee konfigurieren",
-        "description": "Entdeckt homee {id} unter {host}",
-        "data": {
-          "host": "Host",
-          "password": "Kennwort",
-          "username": "Benutzer",
-          "all_devices_or_groups": "Wählen Sie aus, welche Geräte importiert werden sollen:",
-          "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
-        }
-      },
-      "groups": {
-        "title": "Gruppen-Konfiguration",
-        "description": "Konfigurieren Sie die Gruppen. Sie können Fenster- und Türgruppen auch später noch ändern.",
-        "data": {
-          "import_groups": "Importieren Sie Geräte in die folgenden Gruppen:",
-          "window_groups": "Gruppen, die Fenstersensoren enthalten:",
-          "door_groups": "Gruppen, die Türsensoren enthalten:"
-        }
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "description": "Konfigurieren Sie die Homee-Integration. Möglicherweise müssen Sie Home Assistant neu starten, um die Änderungen zu übernehmen.",
-        "data": {
-          "window_groups": "Gruppen, die Fenstersensoren enthalten:",
-          "door_groups": "Gruppen, die Türsensoren enthalten:",
-          "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
-        }
-      }
-    }
-  },
-  "selector": {
-    "all_devices_or_groups": {
-      "options": {
-        "all": "Alle Geräte",
-        "groups": "Nur Geräte aus den im nächsten Schritt ausgewählten Gruppen."
-      }
-    }
-  },
-  "services": {
-    "set_value": {
-      "name": "Wert einstellen",
-      "description": "Attributwert eines homee-Knotens setzen.",
-      "fields": {
-        "node": {
-          "name": "Node",
-          "description": "node id."
+    "config": {
+        "flow_title": "homee {name} ({host})",
+        "abort": {
+            "already_configured": "Gerät ist bereits konfiguriert"
         },
-        "attribute": {
-          "name": "Attribut",
-          "description": "Attribut id."
+        "error": {
+            "cannot_connect": "Verbindung fehlgeschlagen",
+            "invalid_auth": "Ungültige Anmeldedaten",
+            "unknown": "Unerwarteter Fehler"
         },
-        "value": {
-          "name": "Wert",
-          "description": "Der einzustellende Wert."
-        }
-      }
-    },
-    "update_entity": {
-      "name": "Entität aktualisieren",
-      "description": "Anforderung zur Aktualisierung der Werte einer Entität."
-    }
-  },
-  "entity": {
-    "alarm_control_panel": {
-      "homee_status": {
-        "name": "Status",
-        "state": {
-          "armed_home": "Zuhause",
-          "armed_night": "Nacht",
-          "armed_away": "Abwesend",
-          "armed_vacation": "Urlaub"
-        }
-      }
-    },
-    "binary_sensor": {
-      "battery_low_sensor": {
-        "name": "Batterie schwach"
-      },
-      "door_sensor": {
-        "name": "Tür"
-      },
-      "flood_sensor": {
-        "name": "Überflutungsalarm"
-      },
-      "heat_sensor": {
-        "name": "Temperaturalarm"
-      },
-      "load_alarm_sensor": {
-        "name": "Verbraucheralarm"
-      },
-      "lock_sensor": {
-        "name": "Schloss"
-      },
-      "malfunction_sensor": {
-        "name": "Fehleralarm"
-      },
-      "motion_sensor": {
-        "name": "Bewegung"
-      },
-      "opening_sensor": {
-        "name": "Opening"
-      },
-      "overcurrent_sensor": {
-        "name": "Überstromalarm"
-      },
-      "overload_sensor": {
-        "name": "Überlastungsalarm"
-      },
-      "plug_sensor": {
-        "name": "Steckdose"
-      },
-      "rain_sensor": {
-        "name": "Regen"
-      },
-      "smoke_sensor": {
-        "name": "Rauchalarm"
-      },
-      "surge_sensor": {
-        "name": "Kurzschlussalarm"
-      },
-      "tamper_sensor": {
-        "name": "Manipulationsalarm"
-      },
-      "voltage_drop_sensor": {
-        "name": "Spannungsabfallalarm"
-      },
-      "window_sensor": {
-        "name": "Fenster"
-      }
-    },
-    "climate": {
-      "homee": {
-        "state_attributes": {
-          "preset_mode": {
-            "state": {
-              "manual": "Manuell"
+        "step": {
+            "user": {
+                "title": "homee konfigurieren",
+                "description": "Geben Sie manuell die IP-Adresse des homee ein, mit dem Sie eine Verbindung herstellen möchten.",
+                "data": {
+                    "host": "Host",
+                    "password": "Kennwort",
+                    "username": "Benutzer",
+                    "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
+                }
+            },
+            "zeroconf_confirm": {
+                "title": "homee konfigurieren",
+                "description": "Entdeckt homee {id} unter {host}",
+                "data": {
+                    "host": "Host",
+                    "password": "Kennwort",
+                    "username": "Benutzer",
+                    "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
+                }
+            },
+            "groups": {
+                "title": "Gruppen-Konfiguration",
+                "description": "Konfigurieren Sie die Gruppen. Sie können Fenster- und Türgruppen auch später noch ändern.",
+                "data": {
+                    "window_groups": "Gruppen, die Fenstersensoren enthalten:",
+                    "door_groups": "Gruppen, die Türsensoren enthalten:"
+                }
+            },
+            "reconfigure": {
+                "title": "homee rekonfigurieren",
+                "description": "Ändern sie die Einstellungen für ihren homee.",
+                "data": {
+                    "host": "Host",
+                    "password": "Kennwort",
+                    "username": "Benutzer",
+                    "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
+                }
             }
-          }
         }
-      }
     },
-    "event": {
-      "up_down_remote": {
-        "name": "Up Down Remote",
-        "state_attributes": {
-          "event_type": {
-            "state": {
-              "0": "Keines",
-              "1": "Hoch",
-              "2": "Runter",
-              "3": "Stop",
-              "4": "Hoch (halten)",
-              "5": "Runter (halten)",
-              "6": "Stop (halten)",
-              "7": "C-Taste",
-              "9": "A-Taste"
+    "options": {
+        "step": {
+            "init": {
+                "description": "Konfigurieren Sie die Homee-Integration. Möglicherweise müssen Sie Home Assistant neu starten, um die Änderungen zu übernehmen.",
+                "data": {
+                    "window_groups": "Gruppen, die Fenstersensoren enthalten:",
+                    "door_groups": "Gruppen, die Türsensoren enthalten:",
+                    "add_homee_data": "Debug-Informationen für homee Geräte und Attribute aktivieren."
+                }
             }
-          }
         }
-      }
     },
-    "number": {
-      "number_down_position": {
-        "name": "Untere Position"
-      },
-      "number_down_slat_position": {
-        "name": "Down Slat Position"
-      },
-      "number_down_time": {
-        "name": "Dauer Runterfahren"
-      },
-      "number_endposition_configuration": {
-        "name": "Endposition"
-      },
-      "number_motion_alarm_cancelation_delay": {
-        "name": "Bewegungsmelder Verzögerung"
-      },
-      "number_open_window_detection_sensibility": {
-        "name": "Fenster Offen Empfindlichkeit"
-      },
-      "number_polling_interval": {
-        "name": "Polling Intervall"
-      },
-      "number_shutter_slat_time": {
-        "name": "Lamellendrehzeit"
-      },
-      "number_slat_max_angle": {
-        "name": "Maximaler Lamellenwinkel"
-      },
-      "number_slat_min_angle": {
-        "name": "Minimaler Lamellenwinkel"
-      },
-      "number_slat_steps": {
-        "name": "Lamellenstufen"
-      },
-      "number_target_temperature": {
-        "name": "Zieltemperatur"
-      },
-      "number_temperature_offset": {
-        "name": "Temperatur Offset"
-      },
-      "number_up_time": {
-        "name": "Dauer Hochfahren"
-      },
-      "number_valve_position": {
-        "name": "Ventilöffnung"
-      },
-      "number_wake_up_interval": {
-        "name": "Aufwachintervall"
-      },
-      "number_wind_monitoring_state": {
-        "name": "Windüberwachung"
-      }
+    "services": {
+        "set_value": {
+            "name": "Wert einstellen",
+            "description": "Attributwert eines homee-Knotens setzen.",
+            "fields": {
+                "config_entry_id": {
+                    "name": "Ziel-Homee",
+                    "description": "Homee auf dem die Aktion ausgeführt wird."
+                },
+                "node": {
+                    "name": "Node",
+                    "description": "Node ID."
+                },
+                "attribute": {
+                    "name": "Attribut",
+                    "description": "Attribut ID."
+                },
+                "value": {
+                    "name": "Wert",
+                    "description": "Der einzustellende Wert."
+                }
+            }
+        }
     },
-    "sensor": {
-      "battery_sensor": {
-        "name": "Batterie"
-      },
-      "brightness_sensor": {
-        "name": "Beleuchtungsstärke"
-      },
-      "brightness_sensor_1": {
-        "name": "Beleuchtungsstärke 1"
-      },
-      "brightness_sensor_2": {
-        "name": "Beleuchtungsstärke 2"
-      },
-      "brightness_sensor_3": {
-        "name": "Beleuchtungsstärke 3"
-      },
-      "brightness_sensor_4": {
-        "name": "Beleuchtungsstärke 4"
-      },
-      "button_state_sensor": {
-        "name": "Schalterstellung"
-      },
-      "button_state_sensor_1": {
-        "name": "Schalterstellung 1"
-      },
-      "button_state_sensor_2": {
-        "name": "Schalterstellung 2"
-      },
-      "button_state_sensor_3": {
-        "name": "Schalterstellung 3"
-      },
-      "button_state_sensor_4": {
-        "name": "Schalterstellung 4"
-      },
-      "current_sensor": {
-        "name": "Stromstärke"
-      },
-      "current_sensor_1": {
-        "name": "Stromstärke 1"
-      },
-      "current_sensor_2": {
-        "name": "Stromstärke 2"
-      },
-      "current_sensor_3": {
-        "name": "Stromstärke 3"
-      },
-      "current_sensor_4": {
-        "name": "Stromstärke 4"
-      },
-      "dawn_sensor": {
-        "name": "Dämmerung"
-      },
-      "device_temperature_sensor": {
-        "name": "Gerätetemperatur"
-      },
-      "energy_sensor": {
-        "name": "Energie"
-      },
-      "energy_sensor_1": {
-        "name": "Energie 1"
-      },
-      "energy_sensor_2": {
-        "name": "Energie 2"
-      },
-      "energy_sensor_3": {
-        "name": "Energie 3"
-      },
-      "energy_sensor_4": {
-        "name": "Energie 4"
-      },
-      "relative_humidity_sensor": {
-        "name": "Relative Luftfeuchte"
-      },
-      "link_quality_sensor": {
-        "name": "Signalstärke"
-      },
-      "node_sensor_protocol": {
-        "name": "Node Protokoll"
-      },
-      "node_sensor_state": {
-        "name": "Node Status"
-      },
-      "position_sensor": {
-        "name": "Position"
-      },
-      "power_sensor": {
-        "name": "Leistung"
-      },
-      "power_sensor_1": {
-        "name": "Leistung 1"
-      },
-      "power_sensor_2": {
-        "name": "Leistung 2"
-      },
-      "power_sensor_3": {
-        "name": "Leistung 3"
-      },
-      "power_sensor_4": {
-        "name": "Leistung 4"
-      },
-      "rainfall_hour_sensor": {
-        "name": "Niederschlag Letzte Stunde"
-      },
-      "rainfall_day_sensor": {
-        "name": "Niederschlag Heute"
-      },
-      "temperature_sensor": {
-        "name": "Temperatur"
-      },
-      "total_current_sensor": {
-        "name": "Gesamt Stromstärke"
-      },
-      "total_energy_sensor": {
-        "name": "Gesamt Energie"
-      },
-      "total_power_sensor": {
-        "name": "Gesamt Leistung"
-      },
-      "total_voltage_sensor": {
-        "name": "Gesamt Spannung"
-      },
-      "up_down_sensor": {
-        "name": "Zustand",
-        "state": {
-          "0": "Offen",
-          "1": "Geschlossen",
-          "2": "Teilgeöffnet",
-          "3": "Öffnet",
-          "4": "Schließt"
+    "entity": {
+        "alarm_control_panel": {
+            "homee_status": {
+                "name": "Status",
+                "state": {
+                    "armed_home": "Zuhause",
+                    "armed_night": "Nacht",
+                    "armed_away": "Abwesend",
+                    "armed_vacation": "Urlaub"
+                }
+            }
+        },
+        "binary_sensor": {
+            "battery_low": {
+                "name": "Batterie schwach"
+            },
+            "carbon_dioxide": {
+                "name": "Kohlendioxidalarm"
+            },
+            "door": {
+                "name": "Tür"
+            },
+            "fertilize_plant": {
+                "name": "Düngeralarm"
+            },
+            "flood": {
+                "name": "Überflutungsalarm"
+            },
+            "heat": {
+                "name": "Temperaturalarm"
+            },
+            "load_alarm": {
+                "name": "Verbraucheralarm"
+            },
+            "lock": {
+                "name": "Schloss"
+            },
+            "maximum": {
+                "name": "Maximumalarm"
+            },
+            "minimum_alarm": {
+                "name": "Minimumalarm"
+            },
+            "malfunction": {
+                "name": "Fehleralarm"
+            },
+            "motion": {
+                "name": "Bewegung"
+            },
+            "opening": {
+                "name": "Opening"
+            },
+            "overcurrent": {
+                "name": "Überstromalarm"
+            },
+            "overload": {
+                "name": "Überlastungsalarm"
+            },
+            "plug": {
+                "name": "Steckdose"
+            },
+            "rain": {
+                "name": "Regen"
+            },
+            "replace_filter": {
+                "name": "Filtertauschalarm"
+            },
+            "smoke": {
+                "name": "Rauchalarm"
+            },
+            "surge": {
+                "name": "Kurzschlussalarm"
+            },
+            "tamper": {
+                "name": "Manipulationsalarm"
+            },
+            "voltage_drop": {
+                "name": "Spannungsabfallalarm"
+            },
+            "window": {
+                "name": "Fenster"
+            }
+        },
+        "climate": {
+            "homee": {
+                "state_attributes": {
+                    "preset_mode": {
+                        "state": {
+                            "manual": "Manuell"
+                        }
+                    }
+                }
+            }
+        },
+        "event": {
+            "up_down_remote": {
+                "name": "Up Down Remote",
+                "state_attributes": {
+                    "event_type": {
+                        "state": {
+                            "0": "Keines",
+                            "1": "Hoch",
+                            "2": "Runter",
+                            "3": "Stop",
+                            "4": "Hoch (halten)",
+                            "5": "Runter (halten)",
+                            "6": "Stop (halten)",
+                            "7": "C-Taste",
+                            "9": "A-Taste"
+                        }
+                    }
+                }
+            }
+        },
+        "fan": {
+            "homee": {
+                "state_attributes": {
+                    "preset_mode": {
+                        "state": {
+                            "manual": "Manuell",
+                            "auto": "Automatik",
+                            "summer": "Sommer"
+                        }
+                    }
+                }
+            }
+        },
+        "number": {
+            "number_down_position": {
+                "name": "Untere Position"
+            },
+            "number_down_slat_position": {
+                "name": "Down Slat Position"
+            },
+            "number_down_time": {
+                "name": "Dauer Runterfahren"
+            },
+            "number_endposition_configuration": {
+                "name": "Endposition"
+            },
+            "number_motion_alarm_cancelation_delay": {
+                "name": "Bewegungsmelder Verzögerung"
+            },
+            "number_open_window_detection_sensibility": {
+                "name": "Fenster Offen Empfindlichkeit"
+            },
+            "number_polling_interval": {
+                "name": "Polling Intervall"
+            },
+            "number_shutter_slat_time": {
+                "name": "Lamellendrehzeit"
+            },
+            "number_slat_max_angle": {
+                "name": "Maximaler Lamellenwinkel"
+            },
+            "number_slat_min_angle": {
+                "name": "Minimaler Lamellenwinkel"
+            },
+            "number_slat_steps": {
+                "name": "Lamellenstufen"
+            },
+            "number_target_temperature": {
+                "name": "Zieltemperatur"
+            },
+            "number_temperature_offset": {
+                "name": "Temperatur Offset"
+            },
+            "number_up_time": {
+                "name": "Dauer Hochfahren"
+            },
+            "number_valve_position": {
+                "name": "Ventilöffnung"
+            },
+            "number_wake_up_interval": {
+                "name": "Aufwachintervall"
+            },
+            "number_wind_monitoring_state": {
+                "name": "Windüberwachung"
+            }
+        },
+        "select": {
+            "repeater_mode": {
+                "name": "EnOcean Repeater Modus",
+                "state": {
+                    "off": "Aus",
+                    "level1": "Level 1",
+                    "level2": "Level 2"
+                }
+            }
+        },
+        "sensor": {
+            "brightness_instance": {
+                "name": "Beleuchtungsstärke {instance}"
+            },
+            "current_instance": {
+                "name": "Stromstärke {instance}"
+            },
+            "dawn": {
+                "name": "Dämmerung"
+            },
+            "device_temperature": {
+                "name": "Gerätetemperatur"
+            },
+            "energy_instance": {
+                "name": "Energie {instance}"
+            },
+            "exhaust_motor_revs": {
+                "name": "Abluftmotordrehzahl"
+            },
+            "indoor_humidity": {
+                "name": "Innenluftfeuchtigkeit"
+            },
+            "indoor_humidity_instance": {
+                "name": "Innenluftfeuchtigkeit {instance}"
+            },
+            "indoor_temperature": {
+                "name": "Innentemperatur"
+            },
+            "indoor_temperature_instance": {
+                "name": "Innentemperatur {instance}"
+            },
+            "intake_motor_revs": {
+                "name": "Zuluftmotordrehzahl"
+            },
+            "level": {
+                "name": "Füllstand"
+            },
+            "link_quality": {
+                "name": "Signalstärke"
+            },
+            "node_sstate": {
+                "name": "Node Status"
+            },
+            "operating_hours": {
+                "name": "Betriebsstunden"
+            },
+            "outdoor_humidity": {
+                "name": "Außenluftfeuchtigkeit"
+            },
+            "outdoor_humidity_instance": {
+                "name": "Außenluftfeuchtigkeit {instance}"
+            },
+            "outdoor_temperature": {
+                "name": "Außentemperatur"
+            },
+            "outdoor_temperature_instance": {
+                "name": "Außentemperatur {instance}"
+            },
+            "position": {
+                "name": "Position"
+            },
+            "power_instance": {
+                "name": "Leistung {instance}"
+            },
+            "rainfall_hour": {
+                "name": "Niederschlag letzte Stunde"
+            },
+            "rainfall_day": {
+                "name": "Niederschlag heute"
+            },
+            "total_current": {
+                "name": "Gesamtstromstärke"
+            },
+            "total_energy": {
+                "name": "Gesamtenergie"
+            },
+            "total_power": {
+                "name": "Gesamtleistung"
+            },
+            "total_voltage": {
+                "name": "Gesamtspannung"
+            },
+            "up_down": {
+                "name": "Status",
+                "state": {
+                    "open": "Offen",
+                    "closed": "Geschlossen",
+                    "partial": "Teilweise offen",
+                    "opening": "Öffnet",
+                    "closing": "Schließt"
+                }
+            },
+            "uv": {
+                "name": "UV Strahlung"
+            },
+            "valve_position": {
+                "name": "Ventilöffnung"
+            },
+            "voltage_instance": {
+                "name": "Spannung {instance}"
+            },
+            "wake_up_interval": {
+                "name": "Aufwachintervall"
+            },
+            "window_position": {
+                "name": "Fensterstellung",
+                "state": {
+                    "0": "Geschlossen",
+                    "1": "Offen",
+                    "2": "Gekippt"
+                }
+            }
+        },
+        "switch": {
+            "automatic_mode_impulse": {
+                "name": "Automatikmodus Impuls"
+            },
+            "briefly_open_impulse": {
+                "name": "Kurzzeitig öffnen Impuls"
+            },
+            "external_binary_input": {
+                "name": "Kindersicherung"
+            },
+            "identification_mode": {
+                "name": "Erkennungsmodus"
+            },
+            "impulse": {
+                "name": "Impuls"
+            },
+            "impulse_1": {
+                "name": "Impuls 1"
+            },
+            "impulse_2": {
+                "name": "Impuls 2"
+            },
+            "impulse_3": {
+                "name": "Impuls 3"
+            },
+            "impulse_4": {
+                "name": "Impuls 4"
+            },
+            "light_impulse": {
+                "name": "Licht Impuls"
+            },
+            "light_impulse_1": {
+                "name": "Licht Impuls 1"
+            },
+            "light_impulse_2": {
+                "name": "Licht Impuls 2"
+            },
+            "light_impulse_3": {
+                "name": "Licht Impuls 3"
+            },
+            "light_impulse_4": {
+                "name": "Licht Impuls 4"
+            },
+            "manual_operation": {
+                "name": "Handbetrieb"
+            },
+            "motor_rotation": {
+                "name": "Motor Drehrichtung"
+            },
+            "open_partial_impulse": {
+                "name": "Teilweise öffnen Impuls"
+            },
+            "permanently_open_impulse": {
+                "name": "Dauerhaft geöffnet Impuls"
+            },
+            "reset_meter": {
+                "name": "Messwerte zurücksetzen"
+            },
+            "reset_meter_1": {
+                "name": "Messwerte zurücksetzen 1"
+            },
+            "reset_meter_2": {
+                "name": "Messwerte zurücksetzen 2"
+            },
+            "reset_meter_3": {
+                "name": "Messwerte zurücksetzen 3"
+            },
+            "reset_meter_4": {
+                "name": "Messwerte zurücksetzen 4"
+            },
+            "restore_last_known_state": {
+                "name": "Letzten Status wiederherstellen"
+            },
+            "switch_type": {
+                "name": "Schaltertyp"
+            },
+            "ventilate_ipulse": {
+                "name": "Belüften Impuls"
+            },
+            "watchdog_on_off": {
+                "name": "Watchdog"
+            }
         }
-      },
-      "up_down_sensor_rev": {
-        "name": "State",
-        "state": {
-          "0": "Geschlossen",
-          "1": "Offen",
-          "2": "Teilgeöffnet",
-          "3": "Schließt",
-          "4": "Öffnet"
-        }
-      },
-      "uv_sensor": {
-        "name": "UV Strahlung"
-      },
-      "valve_position_sensor": {
-        "name": "Ventilöffnung"
-      },
-      "voltage_sensor": {
-        "name": "Spannung"
-      },
-      "voltage_sensor_1": {
-        "name": "Spannung 1"
-      },
-      "voltage_sensor_2": {
-        "name": "Spannung 2"
-      },
-      "voltage_sensor_3": {
-        "name": "Spannung 3"
-      },
-      "voltage_sensor_4": {
-        "name": "Spannung 4"
-      },
-      "wind_speed_sensor": {
-        "name": "Windgeschwindigkeit"
-      },
-      "window_position_sensor": {
-        "name": "Window Position",
-        "state": {
-          "0": "Geschlossen",
-          "1": "Offen",
-          "2": "Gekippt"
-        }
-      }
     },
-    "switch": {
-      "automatic_mode_impulse": {
-        "name": "Automatikmodus Impuls"
-      },
-      "briefly_open_impulse": {
-        "name": "Kurzzeitig öffnen Impuls"
-      },
-      "external_binary_input": {
-        "name": "Kindersicherung"
-      },
-      "identification_mode": {
-        "name": "Erkennungsmodus"
-      },
-      "impulse": {
-        "name": "Impuls"
-      },
-      "impulse_1": {
-        "name": "Impuls 1"
-      },
-      "impulse_2": {
-        "name": "Impuls 2"
-      },
-      "impulse_3": {
-        "name": "Impuls 3"
-      },
-      "impulse_4": {
-        "name": "Impuls 4"
-      },
-      "light_impulse": {
-        "name": "Licht Impuls"
-      },
-      "light_impulse_1": {
-        "name": "Licht Impuls 1"
-      },
-      "light_impulse_2": {
-        "name": "Licht Impuls 2"
-      },
-      "light_impulse_3": {
-        "name": "Licht Impuls 3"
-      },
-      "light_impulse_4": {
-        "name": "Licht Impuls 4"
-      },
-      "manual_operation": {
-        "name": "Handbetrieb"
-      },
-      "motor_rotation": {
-        "name": "Motor Drehrichtung"
-      },
-      "open_partial_impulse": {
-        "name": "Teilweise öffnen Impuls"
-      },
-      "permanently_open_impulse": {
-        "name": "Dauerhaft geöffnet Impuls"
-      },
-      "reset_meter": {
-        "name": "Messwerte zurücksetzen"
-      },
-      "reset_meter_1": {
-        "name": "Messwerte zurücksetzen 1"
-      },
-      "reset_meter_2": {
-        "name": "Messwerte zurücksetzen 2"
-      },
-      "reset_meter_3": {
-        "name": "Messwerte zurücksetzen 3"
-      },
-      "reset_meter_4": {
-        "name": "Messwerte zurücksetzen 4"
-      },
-      "restore_last_known_state": {
-        "name": "Letzten Status wiederherstellen"
-      },
-      "switch_type": {
-        "name": "Schaltertyp"
-      },
-      "ventilate_ipulse": {
-        "name": "Belüften Impuls"
-      },
-      "watchdog_on_off": {
-        "name": "Watchdog"
-      }
+    "exceptions": {
+        "no_integer": {
+            "message": "{service_attr} muss eine Ganzzahl sein."
+        },
+        "no_float": {
+            "message": "{service_attr} muss eine Zahl sein."
+        },
+        "not_editable": {
+            "message": "{entity} kann zur Zeit nicht verändert werden."
+        }
     }
-  },
-  "exceptions": {
-    "no_integer": {
-      "message": "{service_attr} muss eine Ganzzahl sein."
-    },
-    "no_float": {
-      "message": "{service_attr} muss eine Zahl sein."
-    },
-    "not_editable": {
-      "message": "{entity} kann zur Zeit nicht verändert werden."
-    }
-  }
 }

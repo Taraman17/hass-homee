@@ -1,16 +1,17 @@
 """The homee number platform."""
 
 from pyHomee.const import AttributeType
-from pyHomee.model import HomeeAttribute, HomeeNode
+from pyHomee.model import HomeeAttribute
 
 from homeassistant.components.number import NumberDeviceClass, NumberEntity
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import EntityCategory
+from homeassistant.const import EntityCategory, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 
-from . import HomeeNodeEntity, helpers
+from . import HomeeConfigEntry
 from .const import DOMAIN
+from .entity import HomeeEntity
+from .helpers import migrate_old_unique_ids
 
 NUMBER_ATTRIBUTES = {
     AttributeType.CURRENT_VALVE_POSITION,
@@ -108,83 +109,82 @@ def get_device_properties(attribute: HomeeAttribute):
     return (device_class, translation_key, entity_category)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices
+):
     """Add the homee platform for the number components."""
 
     devices = []
-    for node in helpers.get_imported_nodes(hass, config_entry):
+    for node in config_entry.runtime_data.nodes:
         devices.extend(
-            HomeeNumber(node, config_entry, attribute)
+            HomeeNumber(attribute, config_entry)
             for attribute in node.attributes
-            if attribute.type in NUMBER_ATTRIBUTES
+            if attribute.type in NUMBER_ATTRIBUTES and attribute.data != "fixed_value"
         )
     if devices:
+        await migrate_old_unique_ids(hass, devices, Platform.NUMBER)
         async_add_devices(devices)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a config entry."""
-    return True
-
-
-class HomeeNumber(HomeeNodeEntity, NumberEntity):
+class HomeeNumber(HomeeEntity, NumberEntity):
     """Representation of a homee number."""
-
-    _attr_has_entity_name = True
 
     def __init__(
         self,
-        node: HomeeNode,
-        entry: ConfigEntry,
-        number_attribute: HomeeAttribute = None,
+        attribute: HomeeAttribute,
+        entry: HomeeConfigEntry,
     ) -> None:
         """Initialize a homee number entity."""
-        HomeeNodeEntity.__init__(self, node, self, entry)
-        self._number = number_attribute
+        super().__init__(attribute, entry)
         (
             self._attr_device_class,
             self._attr_translation_key,
             self._attr_entity_category,
-        ) = get_device_properties(number_attribute)
-        self._attr_native_min_value = number_attribute.minimum
-        self._attr_native_max_value = number_attribute.maximum
-        self._attr_native_step = number_attribute.step_value
+        ) = get_device_properties(attribute)
+        self._attr_native_min_value = attribute.minimum
+        self._attr_native_max_value = attribute.maximum
+        self._attr_native_step = attribute.step_value
 
         if self.translation_key is None:
             self._attr_name = None
 
-        self._attr_unique_id = f"{self._node.id}-number-{self._number.id}"
+    @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the number entity."""
+        return f"{self._attribute.node_id}-number-{self._attribute.id}"
 
     @property
     def available(self) -> bool:
-        """Return if entity is available."""
-        return self._number.editable
+        """Return the availability of the underlying node."""
+        return super().available and self._attribute.editable
 
     @property
-    def native_value(self):
+    def native_value(self) -> int:
         """Return the native value of the sensor."""
         # TODO: If HA supports klx as unit, remove.
-        if self._number.unit == "klx":
-            return self._number.current_value * 1000
+        if self._attribute.unit == "klx":
+            return self._attribute.current_value * 1000
 
-        return self._number.current_value
+        return self._attribute.current_value
 
     @property
-    def native_unit_of_measurement(self):
+    def native_unit_of_measurement(self) -> str:
         """Return the native unit of the number entity."""
-        if self._number.unit == "n/a":
+        if self._attribute.unit == "n/a":
             return None
 
         # TODO: If HA supports klx as unit, remove.
-        if self._number.unit == "klx":
+        if self._attribute.unit == "klx":
             return "lx"
 
-        return self._number.unit
+        return self._attribute.unit
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
-        if self._number.editable:
-            await self.async_set_value_by_id(self._number.id, value)
+        if self._attribute.editable:
+            await self._entry.runtime_data.set_value(
+                self._attribute.node_id, self._attribute.id, value
+            )
         else:
             raise ServiceValidationError(
                 translation_domain=DOMAIN,

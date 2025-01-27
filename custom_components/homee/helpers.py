@@ -1,54 +1,41 @@
 """Helper functions for the homee custom component."""
 
+from enum import IntEnum
 import logging
+from typing import Any
 
-from pyHomee import Homee
-from pyHomee.model import HomeeNode
-
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 
-from .const import CONF_ALL_DEVICES, CONF_GROUPS, CONF_IMPORT_GROUPS, DOMAIN
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def get_imported_nodes(
-    hass: HomeAssistant, config_entry: ConfigEntry
-) -> list[HomeeNode]:
-    """Get a list of nodes that should be imported."""
-    homee: Homee = hass.data[DOMAIN][config_entry.entry_id]
-    if config_entry.options[CONF_ALL_DEVICES]:
-        return homee.nodes
-
-    all_groups = [str(g.id) for g in homee.groups]
-
-    # Resolve the configured group ids to actual groups
-    groups = [
-        homee.get_group_by_id(int(g))
-        for g in config_entry.options[CONF_GROUPS].get(CONF_IMPORT_GROUPS, all_groups)
-    ]
-
-    # Add all nodes from the groups in a list
-    # Make sure each node is only added once
-    nodes: list[HomeeNode] = []
-    for group in groups:
-        for node in group.nodes:
-            if node not in nodes:
-                nodes.append(node)
-
-    # Always add homee itself to the nodes.
-    nodes.append(homee.get_node_by_id(-1))
-
-    return nodes
-
-
-def get_name_for_enum(att_class, att_id):
+def get_name_for_enum(att_class: type[IntEnum], att_id: int) -> str | None:
     """Return the enum item name for a given integer."""
     try:
-        attribute_name = att_class(att_id).name
+        item = att_class(att_id)
     except ValueError:
         _LOGGER.warning("Value %s does not exist in %s", att_id, att_class.__name__)
-        return "Unknown"
+        return None
+    return item.name.lower()
 
-    return attribute_name
+
+async def migrate_old_unique_ids(
+    hass: HomeAssistant, devices: list[Any], platform: str
+) -> None:
+    """Migrate uids for upcoming HA core integration."""
+    registry = er.async_get(hass)
+    for device in devices:
+        old_entity_id = registry.async_get_entity_id(
+            platform, DOMAIN, device.old_unique_id
+        )
+        updated_unique_id = device.unique_id
+        if old_entity_id is not None and updated_unique_id is not None:
+            _LOGGER.debug(
+                "Migrating unique_id from [%s] to [%s]",
+                device.old_unique_id,
+                device.unique_id,
+            )
+            registry.async_update_entity(old_entity_id, new_unique_id=updated_unique_id)

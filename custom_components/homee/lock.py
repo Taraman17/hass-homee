@@ -1,71 +1,67 @@
 """The homee lock platform."""
 
 import logging
+from typing import Any
 
 from pyHomee.const import AttributeChangedBy, AttributeType
-from pyHomee.model import HomeeAttribute, HomeeNode
 
 from homeassistant.components.lock import LockEntity
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from . import HomeeNodeEntity
-from .helpers import get_name_for_enum, get_imported_nodes
+from . import HomeeConfigEntry
+from .entity import HomeeEntity
+from .helpers import get_name_for_enum, migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_devices):
+async def async_setup_entry(
+    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices: AddEntitiesCallback
+) -> None:
     """Add the homee platform for the lock component."""
 
-    devices = []
-    for node in get_imported_nodes(hass, config_entry):
+    devices: list[HomeeLock] = []
+    for node in config_entry.runtime_data.nodes:
         devices.extend(
-            HomeeLock(node, config_entry, attribute)
+            HomeeLock(attribute, config_entry)
             for attribute in node.attributes
             if (attribute.type == AttributeType.LOCK_STATE and attribute.editable)
         )
     if devices:
+        await migrate_old_unique_ids(hass, devices, Platform.LOCK)
         async_add_devices(devices)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload a config entry."""
-    return True
-
-
-class HomeeLock(HomeeNodeEntity, LockEntity):
+class HomeeLock(HomeeEntity, LockEntity):
     """Representation of a homee lock."""
 
     _attr_has_entity_name = True
     _attr_name = None
 
-    def __init__(
-        self,
-        node: HomeeNode,
-        entry: ConfigEntry,
-        lock_attribute: HomeeAttribute = None,
-    ) -> None:
-        """Initialize a homee switch entity."""
-        HomeeNodeEntity.__init__(self, node, self, entry)
-        self._lock = lock_attribute
-        self._switch_index = lock_attribute.instance
-        self._attr_unique_id = f"{self._node.id}-lock-{self._lock.id}"
+    @property
+    def old_unique_id(self) -> str:
+        """Return the old not so unique id of the lock entity."""
+        return f"{self._attribute.node_id}-lock-{self._attribute.id}"
 
     @property
-    def is_locked(self) -> int:
+    def is_locked(self) -> bool:
         """Return the current lock state."""
-        return self._lock.current_value
+        return bool(self._attribute.current_value)
 
     @property
     def changed_by(self) -> str:
         """Return by what the lock was last changed."""
-        return f"{get_name_for_enum(AttributeChangedBy, self._lock.changed_by)}-{self._lock.changed_by_id}"
+        changed_by_name = get_name_for_enum(
+            AttributeChangedBy, self._attribute.changed_by
+        )
+        return f"{changed_by_name}-{self._attribute.changed_by_id}"
 
-    async def async_lock(self, **kwargs):
-        """Lock all or specified locks. A code to lock the lock with may optionally be specified."""
-        await self.async_set_value_by_id(self._lock.id, 0)
+    async def async_lock(self, **kwargs: Any) -> None:
+        """Lock all or specified locks. A code to lock the lock with may be specified."""
+        await self.async_set_value(0)
 
-    async def async_unlock(self, **kwargs):
-        """Unlock all or specified locks. A code to unlock the lock with may optionally be specified."""
-        await self.async_set_value_by_id(self._lock.id, 1)
+    async def async_unlock(self, **kwargs: Any) -> None:
+        """Unlock all or specified locks. A code to unlock the lock with may be specified."""
+        await self.async_set_value(1)
