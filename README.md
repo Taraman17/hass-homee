@@ -19,6 +19,7 @@ Based on the intial work of [FreshlyBrewedCode]
 Integration is in HACS Default Repositories now!
 
 ## :warning: Moving Homee integration into HA Core
+
 I'm in the process of making this integration a part of Homeassistant Core. The first step will be made with **HA 2025.02**. At this point not all functionality will be transferred, so please keepo using this integration for the time being.
 You will see a warning in HA:
 ![grafik](https://github.com/user-attachments/assets/bc825b13-7a69-4a50-b9c7-b57ffb84067a)
@@ -77,25 +78,19 @@ When all functionality is ported to HA Core, steps for migration will be added h
 
 As of now this integration has support for a few devices only. If you have Homee devices, that are not discovered or not working correctly, open an issue and do the following to provide a log:
 
-1. Add following lines to configuration.yaml to enable info logging for hass-homee:
+1. In HA choose "Settings -> Devices & services -> Homee" and enable Debug logging. (Last option in then menu on the left.)
+2. With the three dot menu on the right reload the integration
 
-```
-logger:
-  default: warn
-  logs:
-    custom_components.homee: info
-```
-
-2. Restart Home Assistant.
-3. Go to "Settings->System->Logs" and show complete logs.
-4. Look for lines containing "INFO (MainThread) \[custom_components.homee]" and copy them
+   <img src="https://github.com/user-attachments/assets/45503b4f-c613-44aa-9b0e-b1c00f8ce196" width=200>
+3. Disable debug logging again and the download of the log will be triggered.
+4. Look for lines containing `<Date/Time> INFO (MainThread) [custom_components.homee] Found node ...` and copy them
 5. Open an issue describing the device and paste the logs in the corresponding section
 
 ## Contributions are welcome!
 
 If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
 
-Home Assistant encourages developers of integrations to use a separate python package that handles the communication between Home Assistant and the different devices (i.e. python api/backend). This integration uses [pymee](https://github.com/FreshlyBrewedCode/pymee) to connect and communicate with the homee websocket api. For some features it may be necessary to make changes to pymee first.
+Home Assistant encourages developers of integrations to use a separate python package that handles the communication between Home Assistant and the different devices (i.e. python api/backend). This integration uses [pyHomee](https://github.com/Taraman17/pyHomee) to connect and communicate with the homee websocket api. For some features it may be necessary to make changes to pyHomee first.
 
 ---
 
