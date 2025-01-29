@@ -29,6 +29,8 @@ class HomeeEntity(Entity):
                 (DOMAIN, f"{entry.runtime_data.settings.uid}-{attribute.node_id}")
             }
         )
+        if attribute.name != "":
+            self._attr_name = attribute.name
 
         self._host_connected = entry.runtime_data.connected
 
