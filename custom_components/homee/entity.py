@@ -46,7 +46,12 @@ class HomeeEntity(Entity):
     @property
     def available(self) -> bool:
         """Return the availability of the underlying node."""
-        return (self._attribute.state == AttributeState.NORMAL) and self._host_connected
+        node = self._entry.runtime_data.get_node_by_id(self._attribute.node_id)
+        return (
+            (self._attribute.state == AttributeState.NORMAL)
+            and self._host_connected
+            and node.state == NodeState.AVAILABLE
+        )
 
     async def async_set_value(self, value: float) -> None:
         """Set an attribute value on the homee node."""
