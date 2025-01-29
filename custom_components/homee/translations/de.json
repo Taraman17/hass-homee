@@ -280,6 +280,12 @@
             "brightness_instance": {
                 "name": "Beleuchtungsstärke {instance}"
             },
+            "button_state": {
+                "name": "Schalterstellung"
+            },
+            "button_state_instance": {
+                "name": "Schalterstellung {instance}"
+            },
             "current_instance": {
                 "name": "Stromstärke {instance}"
             },

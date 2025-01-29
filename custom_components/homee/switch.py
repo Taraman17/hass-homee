@@ -76,7 +76,7 @@ def get_device_class(
     """Determine the device class a homee node based on the node profile."""
     homee = entry.runtime_data
     node = homee.get_node_by_id(attribute.node_id)
-    if node.profile in HOMEE_PLUG_PROFILES:
+    if node.profile in HOMEE_PLUG_PROFILES and attribute.type == AttributeType.ON_OFF:
         return SwitchDeviceClass.OUTLET
 
     return SwitchDeviceClass.SWITCH
