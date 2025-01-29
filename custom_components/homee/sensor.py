@@ -65,6 +65,10 @@ SENSOR_DESCRIPTIONS: dict[AttributeType, HomeeSensorEntityDescription] = {
         entity_category=EntityCategory.DIAGNOSTIC,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    AttributeType.BUTTON_STATE: HomeeSensorEntityDescription(
+        key="button_state",
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     AttributeType.BRIGHTNESS: HomeeSensorEntityDescription(
         key="brightness",
         device_class=SensorDeviceClass.ILLUMINANCE,
@@ -178,7 +182,7 @@ SENSOR_DESCRIPTIONS: dict[AttributeType, HomeeSensorEntityDescription] = {
     AttributeType.TOTAL_CURRENT: HomeeSensorEntityDescription(
         key="total_current",
         device_class=SensorDeviceClass.CURRENT,
-        state_class=SensorStateClass.MEASUREMENT
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     AttributeType.TOTAL_CURRENT_ENERGY_USE: HomeeSensorEntityDescription(
         key="total_power",
@@ -294,8 +298,14 @@ async def async_setup_entry(
             for attribute in node.attributes
             if attribute.type in SENSOR_DESCRIPTIONS
             and (
-                (not attribute.editable and not SENSOR_DESCRIPTIONS[attribute.type].is_also_number)
-                or (SENSOR_DESCRIPTIONS[attribute.type].is_also_number and attribute.data == "fixed_value")
+                (
+                    not attribute.editable
+                    and not SENSOR_DESCRIPTIONS[attribute.type].is_also_number
+                )
+                or (
+                    SENSOR_DESCRIPTIONS[attribute.type].is_also_number
+                    and attribute.data == "fixed_value"
+                )
             )
         )
 
