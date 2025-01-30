@@ -22,13 +22,14 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
         device_class=BinarySensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    AttributeType.BLACKOUT_ALARM: BinarySensorEntityDescription(
+        key="blackout_alarm",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
     AttributeType.CO2ALARM: BinarySensorEntityDescription(
         key="carbon_dioxide",
         device_class=BinarySensorDeviceClass.GAS
-    ),
-    AttributeType.FERTILIZE_PLANT_ALARM: BinarySensorEntityDescription(
-        key="fertilize_plant",
-        device_class=BinarySensorDeviceClass.PROBLEM,
     ),
     AttributeType.FLOOD_ALARM: BinarySensorEntityDescription(
         key="flood",
@@ -39,6 +40,11 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
         device_class=BinarySensorDeviceClass.HEAT,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    AttributeType.LEAK_ALARM: BinarySensorEntityDescription(
+        key="leak_alarm",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
     AttributeType.LOAD_ALARM: BinarySensorEntityDescription(
         key="load_alarm",
         entity_category=EntityCategory.DIAGNOSTIC,
@@ -46,6 +52,11 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
     AttributeType.LOCK_STATE: BinarySensorEntityDescription(
         key="lock",
         device_class=BinarySensorDeviceClass.LOCK,
+    ),
+    AttributeType.LOW_TEMPERATURE_ALARM: BinarySensorEntityDescription(
+        key="low_temperature_alarm",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     AttributeType.MALFUNCTION_ALARM: BinarySensorEntityDescription(
         key="malfunction",
@@ -65,6 +76,11 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
     AttributeType.MOTION_ALARM: BinarySensorEntityDescription(
         key="motion",
         device_class=BinarySensorDeviceClass.MOTION,
+    ),
+    AttributeType.MOTOR_BLOCKED_ALARM: BinarySensorEntityDescription(
+        key="motor_blocked_alarm",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     AttributeType.ON_OFF: BinarySensorEntityDescription(
         key="plug",
@@ -88,6 +104,11 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
         key="motion",
         device_class=BinarySensorDeviceClass.MOTION,
     ),
+    AttributeType.POWER_SUPPLY_ALARM: BinarySensorEntityDescription(
+        key="power_supply_alarm",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
     AttributeType.RAIN_FALL: BinarySensorEntityDescription(
         key="rain",
         device_class=BinarySensorDeviceClass.MOISTURE,
@@ -100,6 +121,11 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
     AttributeType.SMOKE_ALARM: BinarySensorEntityDescription(
         key="smoke",
         device_class=BinarySensorDeviceClass.SMOKE,
+    ),
+    AttributeType.STORAGE_ALARM: BinarySensorEntityDescription(
+        key="storage_alarm",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     AttributeType.SURGE_ALARM: BinarySensorEntityDescription(
         key="surge",
@@ -116,6 +142,11 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    AttributeType.WATER_ALARM: BinarySensorEntityDescription(
+        key="water_alarm",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    )
 }
 
 
