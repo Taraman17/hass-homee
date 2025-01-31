@@ -1,10 +1,11 @@
 """The Homee fan platform."""
 
+from typing import Any
+
 from dataclasses import dataclass
 import math
 from pyHomee.const import AttributeType, NodeProfile
 from pyHomee.model import HomeeAttribute, HomeeNode
-from typing import Any
 
 from homeassistant.components.fan import (
     FanEntity,
@@ -80,8 +81,12 @@ class HomeeFan(HomeeNodeEntity, FanEntity):
         """Return the supported features based on preset_mode."""
         features = FanEntityFeature.PRESET_MODE
 
-        if self.preset_mode == "manual":
-            features |= FanEntityFeature.SET_SPEED | FanEntityFeature.TURN_OFF
+        if self.preset_mode != "auto":
+            features |= (
+                FanEntityFeature.SET_SPEED
+                | FanEntityFeature.TURN_ON
+                | FanEntityFeature.TURN_OFF
+            )
 
         return features
 
@@ -139,9 +144,22 @@ class HomeeFan(HomeeNodeEntity, FanEntity):
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the fan off."""
-        if (
-            self._speed_attribute is not None
-            and self._speed_attribute.editable
-            and FanEntityFeature.TURN_OFF in self.supported_features
-        ):
+        if self._speed_attribute is not None and self._speed_attribute.editable:
             await self.async_set_value(self._speed_attribute, 0)
+
+    async def async_turn_on(
+        self,
+        percentage: int | None = None,
+        preset_mode: str | None = None,
+        **kwargs: Any,
+    ) -> None:
+        """Turn the fan on."""
+        if preset_mode:
+            self.set_preset_mode(preset_mode)
+
+        if percentage is None:
+            percentage = ranged_value_to_percentage(
+                self.entity_description.speed_range, self._speed_attribute.last_value
+            )
+
+        self.set_percentage(percentage)
