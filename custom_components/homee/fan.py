@@ -121,25 +121,15 @@ class HomeeFan(HomeeNodeEntity, FanEntity):
     def preset_mode(self) -> str | None:
         """Return the mode from the float state."""
         if self._mode_attribute is not None:
-            preset_modes_map = {
-                0.0: "manual",
-                1.0: "auto",
-                2.0: "summer",
-            }
-            return preset_modes_map.get(self._mode_attribute.current_value)
+            return self.preset_modes[int(self._mode_attribute.current_value)]
 
         return None
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set the preset mode of the fan."""
         if self._mode_attribute is not None:
-            preset_modes_map = {
-                "manual": 0,
-                "auto": 1,
-                "summer": 2,
-            }
             await self.async_set_value(
-                self._mode_attribute, preset_modes_map[preset_mode]
+                self._mode_attribute, self.preset_modes.index(preset_mode)
             )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
@@ -155,11 +145,11 @@ class HomeeFan(HomeeNodeEntity, FanEntity):
     ) -> None:
         """Turn the fan on."""
         if preset_mode:
-            self.set_preset_mode(preset_mode)
+            await self.async_set_preset_mode(preset_mode)
 
         if percentage is None:
             percentage = ranged_value_to_percentage(
                 self.entity_description.speed_range, self._speed_attribute.last_value
             )
 
-        self.set_percentage(percentage)
+        await self.async_set_percentage(percentage)
