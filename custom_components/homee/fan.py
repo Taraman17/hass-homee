@@ -1,10 +1,11 @@
 """The Homee fan platform."""
 
+from typing import Any
+
 from dataclasses import dataclass
 import math
 from pyHomee.const import AttributeType, NodeProfile
 from pyHomee.model import HomeeAttribute, HomeeNode
-from typing import Any
 
 from homeassistant.components.fan import (
     FanEntity,
@@ -80,8 +81,12 @@ class HomeeFan(HomeeNodeEntity, FanEntity):
         """Return the supported features based on preset_mode."""
         features = FanEntityFeature.PRESET_MODE
 
-        if self.preset_mode == "manual":
-            features |= FanEntityFeature.SET_SPEED | FanEntityFeature.TURN_OFF
+        if self.preset_mode != "auto":
+            features |= (
+                FanEntityFeature.SET_SPEED
+                | FanEntityFeature.TURN_ON
+                | FanEntityFeature.TURN_OFF
+            )
 
         return features
 
@@ -116,32 +121,35 @@ class HomeeFan(HomeeNodeEntity, FanEntity):
     def preset_mode(self) -> str | None:
         """Return the mode from the float state."""
         if self._mode_attribute is not None:
-            preset_modes_map = {
-                0.0: "manual",
-                1.0: "auto",
-                2.0: "summer",
-            }
-            return preset_modes_map.get(self._mode_attribute.current_value)
+            return self.preset_modes[int(self._mode_attribute.current_value)]
 
         return None
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set the preset mode of the fan."""
         if self._mode_attribute is not None:
-            preset_modes_map = {
-                "manual": 0,
-                "auto": 1,
-                "summer": 2,
-            }
             await self.async_set_value(
-                self._mode_attribute, preset_modes_map[preset_mode]
+                self._mode_attribute, self.preset_modes.index(preset_mode)
             )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the fan off."""
-        if (
-            self._speed_attribute is not None
-            and self._speed_attribute.editable
-            and FanEntityFeature.TURN_OFF in self.supported_features
-        ):
+        if self._speed_attribute is not None and self._speed_attribute.editable:
             await self.async_set_value(self._speed_attribute, 0)
+
+    async def async_turn_on(
+        self,
+        percentage: int | None = None,
+        preset_mode: str | None = None,
+        **kwargs: Any,
+    ) -> None:
+        """Turn the fan on."""
+        if preset_mode:
+            await self.async_set_preset_mode(preset_mode)
+
+        if percentage is None:
+            percentage = ranged_value_to_percentage(
+                self.entity_description.speed_range, self._speed_attribute.last_value
+            )
+
+        await self.async_set_percentage(percentage)
