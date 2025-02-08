@@ -3,6 +3,7 @@
 from pyHomee.const import NodeProfile
 
 from homeassistant.const import (
+    DEGREE,
     LIGHT_LUX,
     PERCENTAGE,
     REVOLUTIONS_PER_MINUTE,
@@ -10,10 +11,12 @@ from homeassistant.const import (
     UnitOfElectricPotential,
     UnitOfEnergy,
     UnitOfPower,
+    UnitOfPrecipitationDepth,
     UnitOfSpeed,
     UnitOfTemperature,
     UnitOfTime,
     UnitOfVolume,
+    UnitOfVolumetricFlux,
 )
 
 # General
@@ -34,6 +37,7 @@ HOMEE_UNIT_TO_HA_UNIT = {
     "W": UnitOfPower.WATT,
     "m/s": UnitOfSpeed.METERS_PER_SECOND,
     "km/h": UnitOfSpeed.KILOMETERS_PER_HOUR,
+    "°": DEGREE,
     "°F": UnitOfTemperature.FAHRENHEIT,
     "°C": UnitOfTemperature.CELSIUS,
     "K": UnitOfTemperature.KELVIN,
@@ -41,6 +45,8 @@ HOMEE_UNIT_TO_HA_UNIT = {
     "min": UnitOfTime.MINUTES,
     "h": UnitOfTime.HOURS,
     "L": UnitOfVolume.LITERS,
+    "mm/h": UnitOfVolumetricFlux.MILLIMETERS_PER_HOUR,
+    "mm": UnitOfPrecipitationDepth.MILLIMETERS,
 }
 OPEN_CLOSE_MAP = {
     0.0: "open",
