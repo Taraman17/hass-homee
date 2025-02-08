@@ -483,7 +483,7 @@
       "switch_type": {
         "name": "Schaltertyp"
       },
-      "ventilate_ipulse": {
+      "ventilate_impulse": {
         "name": "Belüften Impuls"
       },
       "watchdog_on_off": {

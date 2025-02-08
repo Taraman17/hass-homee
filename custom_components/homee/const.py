@@ -53,7 +53,7 @@ OPEN_CLOSE_MAP_REVERSED = {
     0.0: "closed",
     1.0: "open",
     2.0: "partial",
-    3.0: "cosing",
+    3.0: "closing",
     4.0: "opening",
 }
 WINDOW_MAP = {

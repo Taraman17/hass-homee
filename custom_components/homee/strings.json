@@ -493,7 +493,7 @@
       "switch_type": {
         "name": "Switch type"
       },
-      "ventilate_ipulse": {
+      "ventilate_impulse": {
         "name": "Ventilate impulse"
       },
       "watchdog_on_off": {
