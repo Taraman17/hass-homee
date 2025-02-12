@@ -90,7 +90,6 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
         await homee.set_value(node, attribute, value)
 
-    _LOGGER.warning("Setting up set_value service.")
     hass.services.async_register(
         DOMAIN, SERVICE_SET_VALUE, async_handle_set_value, SET_VALUE_SCHEMA
     )
