@@ -46,11 +46,19 @@ class HomeeEntity(Entity):
         )
 
     @property
+    def extra_state_attributes(self) -> dict | None:
+        """Add entity state."""
+        return {"Attribute state": self._attribute.state}
+
+    @property
     def available(self) -> bool:
         """Return the availability of the underlying node."""
         node = self._entry.runtime_data.get_node_by_id(self._attribute.node_id)
         return (
-            (self._attribute.state == AttributeState.NORMAL)
+            (
+                self._attribute.state
+                in [AttributeState.NORMAL, AttributeState.WAITING_FOR_ACKNOWLEDGE]
+            )
             and self._host_connected
             and node.state == NodeState.AVAILABLE
         )

@@ -40,6 +40,16 @@ def get_window_value(attribute: HomeeAttribute) -> str | None:
     return vals.get(attribute.current_value)
 
 
+def get_brightness_value(attribute: HomeeAttribute) -> str:
+    """Return the value for a brightness sensor."""
+    if attribute.unit == "klx":
+        return attribute.current_value * 1000
+    if attribute.unit == "%":
+        return attribute.current_value * 500
+
+    return attribute.current_value
+
+
 @dataclass(frozen=True, kw_only=True)
 class HomeeSensorEntityDescription(SensorEntityDescription):
     """A class that describes Homee sensor entities."""
@@ -73,11 +83,8 @@ SENSOR_DESCRIPTIONS: dict[AttributeType, HomeeSensorEntityDescription] = {
         key="brightness",
         device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=(
-            lambda attribute: attribute.current_value * 1000
-            if attribute.unit == "klx"
-            else attribute.current_value
-        ),
+        value_fn=get_brightness_value,
+        native_unit_of_measurement_fn=lambda unit: "lx",
     ),
     AttributeType.CURRENT: HomeeSensorEntityDescription(
         key="current",
@@ -127,7 +134,7 @@ SENSOR_DESCRIPTIONS: dict[AttributeType, HomeeSensorEntityDescription] = {
     AttributeType.LEVEL: HomeeSensorEntityDescription(
         key="level",
         device_class=SensorDeviceClass.VOLUME,
-        state_class=SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.TOTAL,
     ),
     AttributeType.LINK_QUALITY: HomeeSensorEntityDescription(
         key="link_quality",
@@ -157,17 +164,17 @@ SENSOR_DESCRIPTIONS: dict[AttributeType, HomeeSensorEntityDescription] = {
     AttributeType.RAINFALL_INTENSITY: HomeeSensorEntityDescription(
         key="precipitation_intensity",
         device_class=SensorDeviceClass.PRECIPITATION_INTENSITY,
-        state_class=SensorStateClass.MEASUREMENT
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     AttributeType.RAIN_FALL_LAST_HOUR: HomeeSensorEntityDescription(
         key="rainfall_hour",
         device_class=SensorDeviceClass.PRECIPITATION,
-        state_class=SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.TOTAL,
     ),
     AttributeType.RAIN_FALL_TODAY: HomeeSensorEntityDescription(
         key="rainfall_day",
         device_class=SensorDeviceClass.PRECIPITATION,
-        state_class=SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     AttributeType.RELATIVE_HUMIDITY: HomeeSensorEntityDescription(
         key="humidity",

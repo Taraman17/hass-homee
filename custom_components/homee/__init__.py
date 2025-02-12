@@ -90,6 +90,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
         await homee.set_value(node, attribute, value)
 
+    _LOGGER.warning("Setting up set_value service.")
     hass.services.async_register(
         DOMAIN, SERVICE_SET_VALUE, async_handle_set_value, SET_VALUE_SCHEMA
     )
@@ -173,15 +174,12 @@ async def async_unload_entry(hass: HomeAssistant, entry: HomeeConfigEntry) -> bo
         # Schedule homee disconnect
         homee.disconnect()
 
-        # Remove services
-        hass.services.async_remove(DOMAIN, SERVICE_SET_VALUE)
-
     return unload_ok
 
 
 async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload homee integration after config change."""
-    await hass.config_entries.async_reload(entry.entry_id)
+    await hass.config_entries.async_schedule_reload(entry.entry_id)
 
 
 async def async_remove_config_entry_device(
