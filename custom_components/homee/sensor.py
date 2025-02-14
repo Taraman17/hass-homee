@@ -40,7 +40,7 @@ def get_window_value(attribute: HomeeAttribute) -> str | None:
     return vals.get(attribute.current_value)
 
 
-def get_brightness_value(attribute: HomeeAttribute) -> str:
+def get_brightness_value(attribute: HomeeAttribute) -> float:
     """Return the value for a brightness sensor."""
     if attribute.unit == "klx":
         return attribute.current_value * 1000
