@@ -45,14 +45,25 @@ class HomeeEvent(HomeeEntity, EventEntity):
         has_entity_name=True,
     )
 
+    async def async_added_to_hass(self) -> None:
+        """Add the homee attribute entity to home assistant."""
+        self.async_on_remove(
+            self._attribute.add_on_changed_listener(self._event_triggered)
+        )
+        self.async_on_remove(
+            self._entry.runtime_data.add_connection_listener(
+                self._on_connection_changed
+            )
+        )
+
     @property
     def old_unique_id(self) -> str:
         """Return the old not so unique id of the event entity."""
         return f"{self._attribute.node_id}-event-{self._attribute.id}"
 
     @callback
-    def _async_handle_event(self, event: HomeeAttribute) -> None:
+    def _event_triggered(self, event: HomeeAttribute) -> None:
         """Handle a homee event."""
         if event.type == AttributeType.UP_DOWN_REMOTE:
             self._trigger_event(str(int(event.current_value)))
-            self.async_write_ha_state()
+            self.schedule_update_ha_state()

@@ -141,7 +141,7 @@ class HomeeLight(HomeeNodeEntity, LightEntity):
         super().__init__(node, entry)
         self._attr_supported_color_modes = get_supported_color_modes(self)
         self._attr_color_mode = get_color_mode(self._attr_supported_color_modes)
-        self._on_off_attr: HomeeAttribute | None = light.get(AttributeType.ON_OFF)
+        self._on_off_attr: HomeeAttribute = light[AttributeType.ON_OFF]
         self._dimmer_attr: HomeeAttribute | None = light.get(
             AttributeType.DIMMING_LEVEL
         )
