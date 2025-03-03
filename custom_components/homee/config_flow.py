@@ -122,26 +122,16 @@ class HomeeConfigFlow(ConfigFlow, domain=DOMAIN):
         """Handle the reconfigure flow."""
         errors = {}
         reconfigure_entry = self._get_reconfigure_entry()
-        data = reconfigure_entry.data.copy()
+        new_data = reconfigure_entry.data.copy()
         suggested_values = {
-            CONF_HOST: data.get(CONF_HOST),
-            CONF_USERNAME: data.get(CONF_USERNAME),
-            CONF_PASSWORD: data.get(CONF_PASSWORD),
+            CONF_HOST: new_data.get(CONF_HOST),
+            CONF_USERNAME: new_data.get(CONF_USERNAME),
+            CONF_PASSWORD: new_data.get(CONF_PASSWORD),
         }
 
         if user_input:
             try:
                 self.homee = await validate_and_connect(self.hass, user_input)
-                await self.async_set_unique_id(self.homee.settings.uid)
-
-                data[CONF_HOST] = user_input.get(CONF_HOST)
-                data[CONF_USERNAME] = user_input.get(CONF_USERNAME)
-                data[CONF_PASSWORD] = user_input.get(CONF_PASSWORD)
-
-                _LOGGER.info("Updated homee entry with ID %s", self.homee.settings.uid)
-                return self.async_update_reload_and_abort(
-                    reconfigure_entry, data=data
-                )
             except CannotConnect:
                 errors["base"] = "cannot_connect"
             except InvalidAuth:
@@ -149,6 +139,17 @@ class HomeeConfigFlow(ConfigFlow, domain=DOMAIN):
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
+            else:
+                await self.async_set_unique_id(self.homee.settings.uid)
+
+                new_data[CONF_HOST] = user_input.get(CONF_HOST)
+                new_data[CONF_USERNAME] = user_input.get(CONF_USERNAME)
+                new_data[CONF_PASSWORD] = user_input.get(CONF_PASSWORD)
+
+                _LOGGER.info("Updated homee entry with ID %s", self.homee.settings.uid)
+                return self.async_update_reload_and_abort(
+                    reconfigure_entry, data=new_data
+                )
 
         return self.async_show_form(
             step_id="reconfigure",

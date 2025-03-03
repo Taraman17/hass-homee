@@ -2,14 +2,14 @@
 
 import logging
 
-from pyHomee import Homee
+from pyHomee import Homee, HomeeAuthFailedException, HomeeConnectionFailedException
 from pyHomee.const import NodeProfile
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant, ServiceCall, callback
-from homeassistant.exceptions import ServiceValidationError
+from homeassistant.exceptions import ConfigEntryNotReady, ServiceValidationError
 from homeassistant.helpers import (
     config_validation as cv,
     device_registry as dr,
@@ -112,6 +112,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: HomeeConfigEntry) -> boo
 
     # Start the homee websocket connection as a new task
     # and wait until we are connected
+    try:
+        await homee.get_access_token()
+    except HomeeConnectionFailedException as exc:
+        raise ConfigEntryNotReady(
+            f"Connection to Homee failed: {exc.__cause__}"
+        ) from exc
+    except HomeeAuthFailedException as exc:
+        raise ConfigEntryNotReady(
+            f"Authentication to Homee failed: {exc.__cause__}"
+        ) from exc
+
     hass.loop.create_task(homee.run())
     await homee.wait_until_connected()
 
@@ -243,16 +254,12 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
             if node_id == "pymee_home":
                 device_registry.async_update_device(
                     device_id=device.id,
-                    new_identifiers={
-                        (DOMAIN, f"{config_entry.unique_id}")
-                    },
+                    new_identifiers={(DOMAIN, f"{config_entry.unique_id}")},
                 )
             else:
                 device_registry.async_update_device(
                     device_id=device.id,
-                    new_identifiers={
-                        (DOMAIN, f"{config_entry.unique_id}-{node_id}")
-                    },
+                    new_identifiers={(DOMAIN, f"{config_entry.unique_id}-{node_id}")},
                 )
         _LOGGER.info("Successfully migrated device UIDs")
 
