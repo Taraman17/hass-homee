@@ -16,6 +16,8 @@ from .helpers import get_name_for_enum, migrate_old_unique_ids
 
 _LOGGER = logging.getLogger(__name__)
 
+PARALLEL_UPDATES = 0
+
 HOMEE_PLUG_PROFILES = [
     NodeProfile.ON_OFF_PLUG,
     NodeProfile.METERING_PLUG,

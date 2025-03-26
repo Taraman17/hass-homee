@@ -16,6 +16,8 @@ from . import HomeeConfigEntry
 from .entity import HomeeEntity
 from .helpers import migrate_old_unique_ids
 
+PARALLEL_UPDATES = 0
+
 BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] = {
     AttributeType.BATTERY_LOW_ALARM: BinarySensorEntityDescription(
         key="battery_low",
@@ -28,8 +30,7 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     AttributeType.CO2ALARM: BinarySensorEntityDescription(
-        key="carbon_dioxide",
-        device_class=BinarySensorDeviceClass.GAS
+        key="carbon_dioxide", device_class=BinarySensorDeviceClass.GAS
     ),
     AttributeType.FLOOD_ALARM: BinarySensorEntityDescription(
         key="flood",
@@ -146,7 +147,7 @@ BINARY_SENSOR_DESCRIPTIONS: dict[AttributeType, BinarySensorEntityDescription] =
         key="water_alarm",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_category=EntityCategory.DIAGNOSTIC,
-    )
+    ),
 }
 
 

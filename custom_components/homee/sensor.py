@@ -27,6 +27,8 @@ from .const import (
 from .entity import HomeeEntity, HomeeNodeEntity
 from .helpers import get_name_for_enum, migrate_old_unique_ids
 
+PARALLEL_UPDATES = 0
+
 
 def get_open_close_value(attribute: HomeeAttribute) -> str | None:
     """Return the open/close value."""

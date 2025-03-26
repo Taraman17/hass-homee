@@ -10,6 +10,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import HomeeConfigEntry
 from .entity import HomeeEntity
 
+PARALLEL_UPDATES = 0
+
 SELECT_DESCRIPTIONS: dict[AttributeType, SelectEntityDescription] = {
     AttributeType.REPEATER_MODE: SelectEntityDescription(
         key="repeater_mode",
@@ -34,6 +36,7 @@ async def async_setup_entry(
         )
     if devices:
         async_add_devices(devices)
+
 
 class HomeeSelect(HomeeEntity, SelectEntity):
     """Representation of a homee select device."""

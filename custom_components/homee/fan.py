@@ -24,6 +24,8 @@ from . import HomeeConfigEntry
 from .const import DOMAIN
 from .entity import HomeeNodeEntity
 
+PARALLEL_UPDATES = 0
+
 
 @dataclass(frozen=True, kw_only=True)
 class HomeeFanEntityDescription(FanEntityDescription):

@@ -225,6 +225,11 @@
         }
       }
     },
+    "light": {
+      "light_instance": {
+        "name": "Licht {instance}"
+      }
+    },
     "number": {
       "number_down_position": {
         "name": "Untere Position"

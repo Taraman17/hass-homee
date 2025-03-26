@@ -16,9 +16,13 @@ from . import HomeeConfigEntry
 from .entity import HomeeEntity
 from .helpers import migrate_old_unique_ids
 
+PARALLEL_UPDATES = 0
+
 
 async def async_setup_entry(
-    hass: HomeAssistant, config_entry: HomeeConfigEntry, async_add_devices: AddEntitiesCallback
+    hass: HomeAssistant,
+    config_entry: HomeeConfigEntry,
+    async_add_devices: AddEntitiesCallback,
 ) -> None:
     """Add the homee platform for the event component."""
 
