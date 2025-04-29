@@ -71,7 +71,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         }
     )
 
-    async def async_handle_set_value(call: ServiceCall) -> bool:
+    async def async_handle_set_value(call: ServiceCall) -> None:
         """Handle the set value service call."""
 
         if not (
@@ -189,7 +189,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: HomeeConfigEntry) -> bo
 
 async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload homee integration after config change."""
-    await hass.config_entries.async_schedule_reload(entry.entry_id)
+    hass.config_entries.async_schedule_reload(entry.entry_id)
 
 
 async def async_remove_config_entry_device(

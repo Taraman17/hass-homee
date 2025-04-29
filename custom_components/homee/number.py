@@ -13,6 +13,8 @@ from .const import DOMAIN
 from .entity import HomeeEntity
 from .helpers import migrate_old_unique_ids
 
+PARALLEL_UPDATES = 0
+
 NUMBER_ATTRIBUTES = {
     AttributeType.CURRENT_VALVE_POSITION,
     AttributeType.DOWN_POSITION,

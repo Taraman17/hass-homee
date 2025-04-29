@@ -1,7 +1,5 @@
 """The homee alarm control panel platform."""
 
-import logging
-
 from pyHomee.const import AttributeType
 from pyHomee.model import HomeeAttribute, HomeeNode
 
@@ -18,7 +16,7 @@ from . import HomeeConfigEntry
 from .entity import HomeeNodeEntity
 from .helpers import migrate_old_unique_ids
 
-_LOGGER = logging.getLogger(__name__)
+PARALLEL_UPDATES = 0
 
 
 def get_features(attribute: HomeeAttribute) -> AlarmControlPanelEntityFeature:

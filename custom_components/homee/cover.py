@@ -1,6 +1,5 @@
 """The homee cover platform."""
 
-import logging
 from typing import Any, cast
 
 from pyHomee.const import AttributeType, NodeProfile
@@ -21,7 +20,7 @@ from . import HomeeConfigEntry
 from .entity import HomeeNodeEntity
 from .helpers import migrate_old_unique_ids
 
-_LOGGER = logging.getLogger(__name__)
+PARALLEL_UPDATES = 0
 
 OPEN_CLOSE_ATTRIBUTES = [
     AttributeType.OPEN_CLOSE,

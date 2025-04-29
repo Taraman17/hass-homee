@@ -1,6 +1,5 @@
 """The homee lock platform."""
 
-import logging
 from typing import Any
 
 from pyHomee.const import AttributeChangedBy, AttributeType
@@ -14,7 +13,7 @@ from . import HomeeConfigEntry
 from .entity import HomeeEntity
 from .helpers import get_name_for_enum, migrate_old_unique_ids
 
-_LOGGER = logging.getLogger(__name__)
+PARALLEL_UPDATES = 0
 
 
 async def async_setup_entry(
@@ -37,7 +36,6 @@ async def async_setup_entry(
 class HomeeLock(HomeeEntity, LockEntity):
     """Representation of a homee lock."""
 
-    _attr_has_entity_name = True
     _attr_name = None
 
     @property
@@ -48,20 +46,36 @@ class HomeeLock(HomeeEntity, LockEntity):
     @property
     def is_locked(self) -> bool:
         """Return the current lock state."""
-        return bool(self._attribute.current_value)
+        return self._attribute.current_value == 1.0
+
+    @property
+    def is_locking(self) -> bool:
+        """Return if lock is locking."""
+        return self._attribute.target_value > self._attribute.current_value
+
+    @property
+    def is_unlocking(self) -> bool:
+        """Return if lock is unlocking."""
+        return self._attribute.target_value < self._attribute.current_value
 
     @property
     def changed_by(self) -> str:
-        """Return by what the lock was last changed."""
+        """Return by whom or what the lock was last changed."""
+        changed_id = str(self._attribute.changed_by_id)
         changed_by_name = get_name_for_enum(
             AttributeChangedBy, self._attribute.changed_by
         )
-        return f"{changed_by_name}-{self._attribute.changed_by_id}"
+        if self._attribute.changed_by == AttributeChangedBy.USER:
+            changed_id = self._entry.runtime_data.get_user_by_id(
+                self._attribute.changed_by_id
+            ).username
+
+        return f"{changed_by_name}-{changed_id}"
 
     async def async_lock(self, **kwargs: Any) -> None:
         """Lock all or specified locks. A code to lock the lock with may be specified."""
-        await self.async_set_value(0)
+        await self.async_set_value(1)
 
     async def async_unlock(self, **kwargs: Any) -> None:
         """Unlock all or specified locks. A code to unlock the lock with may be specified."""
-        await self.async_set_value(1)
+        await self.async_set_value(0)
