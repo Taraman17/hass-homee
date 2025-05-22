@@ -93,7 +93,7 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
         if ClimateEntityFeature.TURN_OFF in self.supported_features and (
             self._heating_mode is not None
         ):
-            if self._heating_mode.current_value == 0:
+            if self._heating_mode.current_value == 0 + self._heating_mode.minimum:
                 return HVACMode.OFF
 
         return HVACMode.HEAT
@@ -101,7 +101,10 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     @property
     def hvac_action(self) -> HVACAction:
         """Return the hvac action."""
-        if self._heating_mode is not None and self._heating_mode.current_value == 0:
+        if (
+            self._heating_mode is not None
+            and self._heating_mode.current_value == 0 + self._heating_mode.minimum
+        ):
             return HVACAction.OFF
 
         if (
@@ -120,10 +123,12 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
         if (
             ClimateEntityFeature.PRESET_MODE in self.supported_features
             and self._heating_mode is not None
-            and self._heating_mode.current_value > 0
+            and self._heating_mode.current_value > 0 + self._heating_mode.minimum
         ):
             assert self._attr_preset_modes is not None
-            return self._attr_preset_modes[int(self._heating_mode.current_value) - 1]
+            return self._attr_preset_modes[
+                int(self._heating_mode.current_value - self._heating_mode.minimum) - 1
+            ]
 
         return PRESET_NONE
 
@@ -155,34 +160,41 @@ class HomeeClimate(HomeeNodeEntity, ClimateEntity):
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Set new target hvac mode."""
         # Currently only HEAT and OFF are supported.
-        if self._heating_mode is not None:
-            await self.async_set_value(
-                self._heating_mode, float(hvac_mode == HVACMode.HEAT)
-            )
+        assert self._heating_mode is not None
+        await self.async_set_value(
+            self._heating_mode,
+            float(hvac_mode == HVACMode.HEAT) + self._heating_mode.minimum,
+        )
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set new target preset mode."""
-        if self._heating_mode is not None:
-            assert self._attr_preset_modes is not None
-            await self.async_set_value(
-                self._heating_mode, self._attr_preset_modes.index(preset_mode) + 1
-            )
+        assert self._heating_mode is not None and self._attr_preset_modes is not None
+        await self.async_set_value(
+            self._heating_mode,
+            self._attr_preset_modes.index(preset_mode) + self._heating_mode.minimum + 1,
+        )
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
         """Set new target temperature."""
         assert self._target_temp is not None
         if ATTR_TEMPERATURE in kwargs:
-            await self.async_set_value(self._target_temp, kwargs[ATTR_TEMPERATURE])
+            await self.async_set_value(
+                self._target_temp, kwargs[ATTR_TEMPERATURE]
+            )
 
     async def async_turn_on(self) -> None:
         """Turn the entity on."""
-        if self._heating_mode is not None:
-            await self.async_set_value(self._heating_mode, 1)
+        assert self._heating_mode is not None
+        await self.async_set_value(
+            self._heating_mode, 1 + self._heating_mode.minimum
+        )
 
     async def async_turn_off(self) -> None:
         """Turn the entity on."""
-        if self._heating_mode is not None:
-            await self.async_set_value(self._heating_mode, 0)
+        assert self._heating_mode is not None
+        await self.async_set_value(
+            self._heating_mode, 0 + self._heating_mode.minimum
+        )
 
 
 def get_climate_features(
@@ -202,7 +214,10 @@ def get_climate_features(
         if attribute.maximum > 1:
             # Node supports more modes than off and heating.
             features |= ClimateEntityFeature.PRESET_MODE
-            preset_modes.extend([PRESET_ECO, PRESET_BOOST, PRESET_MANUAL])
+            if attribute.maximum < 5:
+                preset_modes.extend([PRESET_ECO, PRESET_BOOST, PRESET_MANUAL])
+            else:
+                preset_modes.extend([PRESET_ECO])
 
     if len(preset_modes) > 0:
         preset_modes.insert(0, PRESET_NONE)

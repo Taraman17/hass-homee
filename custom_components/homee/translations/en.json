@@ -238,6 +238,18 @@
       }
     },
     "number": {
+      "number_button_brightness_active": {
+        "name": "Button brightness (active)"
+      },
+      "number_button_brightness_dimmed": {
+        "name": "Button brightness (dimmed)"
+      },
+      "number_display_brightness_active": {
+        "name": "Display brightness (active)"
+      },
+      "number_display_brightness_dimmed": {
+        "name": "Display brightness (dimmed)"
+      },
       "number_down_position": {
         "name": "Down Position"
       },
@@ -249,6 +261,12 @@
       },
       "number_endposition_configuration": {
         "name": "End position"
+      },
+      "number_external_temperature_offset": {
+        "name": "External temperature offset"
+      },
+      "number_floor_temperature_offset": {
+        "name": "Floor temperature offset"
       },
       "number_motion_alarm_cancelation_delay": {
         "name": "Motion Alarm Delay"
@@ -277,6 +295,9 @@
       "number_temperature_offset": {
         "name": "Temperature Offset"
       },
+      "number_temperature_report_interval": {
+        "name": "Temperature report interval"
+      },
       "number_up_time": {
         "name": "Up-movement duration"
       },
@@ -291,6 +312,13 @@
       }
     },
     "select": {
+      "display_temperature_selection": {
+        "name": "Displayed temperature",
+        "state": {
+          "selected": "target",
+          "current": "measured"
+        }
+      },
       "repeater_mode": {
         "name": "EnOcean repeater mode",
         "state": {
@@ -324,6 +352,12 @@
       },
       "exhaust_motor_revs": {
         "name": "Exhaust motor speed"
+      },
+      "external_temperature": {
+        "name": "External temperature"
+      },
+      "floor_temperature": {
+        "name": "Floor temperature"
       },
       "indoor_humidity": {
         "name": "Indoor humidity"

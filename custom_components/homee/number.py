@@ -16,11 +16,17 @@ from .helpers import migrate_old_unique_ids
 PARALLEL_UPDATES = 0
 
 NUMBER_ATTRIBUTES = {
+    AttributeType.BUTTON_BRIGHTNESS_ACTIVE,
+    AttributeType.BUTTON_BRIGHTNESS_DIMMED,
+    AttributeType.DISPLAY_BRIGHTNESS_ACTIVE,
+    AttributeType.DISPLAY_BRIGHTNESS_DIMMED,
     AttributeType.CURRENT_VALVE_POSITION,
     AttributeType.DOWN_POSITION,
     AttributeType.DOWN_SLAT_POSITION,
     AttributeType.DOWN_TIME,
     AttributeType.ENDPOSITION_CONFIGURATION,
+    AttributeType.EXTERNAL_TEMPERATURE_OFFSET,
+    AttributeType.FLOOR_TEMPERATURE_OFFSET,
     AttributeType.MOTION_ALARM_CANCELATION_DELAY,
     AttributeType.OPEN_WINDOW_DETECTION_SENSIBILITY,
     AttributeType.POLLING_INTERVAL,
@@ -28,6 +34,7 @@ NUMBER_ATTRIBUTES = {
     AttributeType.SLAT_MAX_ANGLE,
     AttributeType.SLAT_MIN_ANGLE,
     AttributeType.SLAT_STEPS,
+    AttributeType.TEMPERATURE_OFFSET,
     AttributeType.TEMPERATURE_OFFSET,
     AttributeType.UP_TIME,
     AttributeType.WAKE_UP_INTERVAL,
@@ -44,6 +51,22 @@ def get_device_properties(attribute: HomeeAttribute):
     if attribute.type == AttributeType.CURRENT_VALVE_POSITION:
         translation_key = "number_valve_position"
 
+    if attribute.type == AttributeType.BUTTON_BRIGHTNESS_ACTIVE:
+        translation_key = "number_button_brightness_active"
+        entity_category = EntityCategory.CONFIG
+
+    if attribute.type == AttributeType.BUTTON_BRIGHTNESS_DIMMED:
+        translation_key = "number_button_brightness_dimmed"
+        entity_category = EntityCategory.CONFIG
+
+    if attribute.type == AttributeType.DISPLAY_BRIGHTNESS_ACTIVE:
+        translation_key = "number_display_brightness_active"
+        entity_category = EntityCategory.CONFIG
+
+    if attribute.type == AttributeType.DISPLAY_BRIGHTNESS_DIMMED:
+        translation_key = "number_display_brightness_dimmed"
+        entity_category = EntityCategory.CONFIG
+
     if attribute.type == AttributeType.DOWN_POSITION:
         translation_key = "number_down_position"
         entity_category = EntityCategory.CONFIG
@@ -59,6 +82,14 @@ def get_device_properties(attribute: HomeeAttribute):
 
     if attribute.type == AttributeType.ENDPOSITION_CONFIGURATION:
         translation_key = "number_endposition_configuration"
+        entity_category = EntityCategory.CONFIG
+
+    if attribute.type == AttributeType.EXTERNAL_TEMPERATURE_OFFSET:
+        translation_key = "number_external_temperature_offset"
+        entity_category = EntityCategory.CONFIG
+
+    if attribute.type == AttributeType.FLOOR_TEMPERATURE_OFFSET:
+        translation_key = "number_floor_temperature_offset"
         entity_category = EntityCategory.CONFIG
 
     if attribute.type == AttributeType.MOTION_ALARM_CANCELATION_DELAY:
@@ -93,6 +124,11 @@ def get_device_properties(attribute: HomeeAttribute):
     if attribute.type == AttributeType.TEMPERATURE_OFFSET:
         device_class = NumberDeviceClass.TEMPERATURE
         translation_key = "number_temperature_offset"
+        entity_category = EntityCategory.CONFIG
+
+    if attribute.type == AttributeType.TEMPERATURE_REPORT_INTERVAL:
+        device_class = NumberDeviceClass.DURATION
+        translation_key = "number_temperature_report_interval"
         entity_category = EntityCategory.CONFIG
 
     if attribute.type == AttributeType.UP_TIME:
@@ -165,15 +201,15 @@ class HomeeNumber(HomeeEntity, NumberEntity):
         """Return the native value of the sensor."""
         # TODO: If HA supports klx as unit, remove.
         if self._attribute.unit == "klx":
-            return self._attribute.current_value * 1000
+            return int(self._attribute.current_value) * 1000
 
-        return self._attribute.current_value
+        return int(self._attribute.current_value)
 
     @property
     def native_unit_of_measurement(self) -> str:
         """Return the native unit of the number entity."""
         if self._attribute.unit == "n/a":
-            return None
+            return ""
 
         # TODO: If HA supports klx as unit, remove.
         if self._attribute.unit == "klx":
@@ -191,5 +227,5 @@ class HomeeNumber(HomeeEntity, NumberEntity):
             raise ServiceValidationError(
                 translation_domain=DOMAIN,
                 translation_key="not_editable",
-                translation_placeholders={"entity": self.name},
+                translation_placeholders={"entity": str(self.name)},
             )
