@@ -231,6 +231,18 @@
       }
     },
     "number": {
+      "number_button_brightness_active": {
+        "name": "Tastenhelligkeit (aktiv)"
+      },
+      "number_button_brightness_dimmed": {
+        "name": "Tastenhelligkeit (gedimmt)"
+      },
+      "number_display_brightness_active": {
+        "name": "Bildschirmhelligkeit (aktiv)"
+      },
+      "number_display_brightness_dimmed": {
+        "name": "Bildschirmhelligkeit (gedimmt)"
+      },
       "number_down_position": {
         "name": "Untere Position"
       },
@@ -242,6 +254,12 @@
       },
       "number_endposition_configuration": {
         "name": "Endposition"
+      },
+      "number_external_temperature_offset": {
+        "name": "Externe Temperatur Versatz"
+      },
+      "number_floor_temperature_offset": {
+        "name": "Bodentemperatur Versatz"
       },
       "number_motion_alarm_cancelation_delay": {
         "name": "Bewegungsmelder Verzögerung"
@@ -270,6 +288,9 @@
       "number_temperature_offset": {
         "name": "Temperatur Offset"
       },
+      "number_temperature_report_interval": {
+        "name": "Temperaturmeldeintervall"
+      },
       "number_up_time": {
         "name": "Dauer Hochfahren"
       },
@@ -284,6 +305,13 @@
       }
     },
     "select": {
+      "display_temperature_selection": {
+        "name": "Angezeigte Temperatur",
+        "state": {
+          "selected": "Solltemperatur",
+          "current": "Isttemperatur"
+        }
+      },
       "repeater_mode": {
         "name": "EnOcean Repeater Modus",
         "state": {
@@ -317,6 +345,12 @@
       },
       "exhaust_motor_revs": {
         "name": "Abluftmotordrehzahl"
+      },
+      "external_temperature": {
+        "name": "Externe Temperatur"
+      },
+      "floor_temperature": {
+        "name": "Bodentemperatur"
       },
       "indoor_humidity": {
         "name": "Innenluftfeuchtigkeit"

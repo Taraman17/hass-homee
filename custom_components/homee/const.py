@@ -119,4 +119,5 @@ CONF_WINDOW_GROUPS = "window_groups"
 CONF_DOOR_GROUPS = "door_groups"
 
 # Climate Presets
+PRESET_COMFORT = "comfort"
 PRESET_MANUAL = "manual"

@@ -4,8 +4,9 @@ from pyHomee.const import AttributeType
 from pyHomee.model import HomeeAttribute
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import HomeeConfigEntry
 from .entity import HomeeEntity
@@ -13,9 +14,15 @@ from .entity import HomeeEntity
 PARALLEL_UPDATES = 0
 
 SELECT_DESCRIPTIONS: dict[AttributeType, SelectEntityDescription] = {
+    AttributeType.DISPLAY_TEMPERATURE_SELECTION: SelectEntityDescription(
+        key="display_temperature_selection",
+        options=["selected", "current"],
+        entity_category=EntityCategory.CONFIG,
+    ),
     AttributeType.REPEATER_MODE: SelectEntityDescription(
         key="repeater_mode",
         options=["off", "level1", "level2"],
+        entity_category=EntityCategory.CONFIG,
     ),
 }
 
@@ -23,19 +30,16 @@ SELECT_DESCRIPTIONS: dict[AttributeType, SelectEntityDescription] = {
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: HomeeConfigEntry,
-    async_add_devices: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Add the homee platform for the cover integration."""
 
-    devices: list[HomeeSelect] = []
-    for node in config_entry.runtime_data.nodes:
-        devices.extend(
-            HomeeSelect(attribute, config_entry, SELECT_DESCRIPTIONS[attribute.type])
-            for attribute in node.attributes
-            if attribute.type in SELECT_DESCRIPTIONS and not attribute.editable
-        )
-    if devices:
-        async_add_devices(devices)
+    async_add_entities(
+        HomeeSelect(attribute, config_entry, SELECT_DESCRIPTIONS[attribute.type])
+        for node in config_entry.runtime_data.nodes
+        for attribute in node.attributes
+        if attribute.type in SELECT_DESCRIPTIONS and attribute.editable
+    )
 
 
 class HomeeSelect(HomeeEntity, SelectEntity):
@@ -50,8 +54,8 @@ class HomeeSelect(HomeeEntity, SelectEntity):
         """Initialize a homee sensor entity."""
         super().__init__(attribute, entry)
         self.entity_description = description
-        if description.options:
-            self._attr_options = description.options
+        assert description.options is not None
+        self._attr_options = description.options
         self._attr_translation_key = description.key
 
     @property
