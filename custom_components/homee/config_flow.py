@@ -61,7 +61,7 @@ async def validate_and_connect(hass: core.HomeAssistant, data) -> Homee:
 class HomeeConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for homee."""
 
-    VERSION = 3
+    VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
     homee: Homee
 
