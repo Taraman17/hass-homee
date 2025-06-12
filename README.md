@@ -20,7 +20,7 @@ Please use the built-in integration, as this one is not actively developed any m
 V4.0.0 is the final version.
 
 ## Migration
-With the latest version installed, you can just uninstall this integration via HACS, using the "three dot menu" of the integration:
+With the latest version installed and HA rebooted, you can just uninstall this integration via HACS, using the "three dot menu" of the integration:
 ![HACS Menu](image.png)
 
 After a reboot, HA will be using the built-in integration.
