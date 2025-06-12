@@ -109,15 +109,6 @@ LIGHT_PROFILES = [
     NodeProfile.WIFI_ON_OFF_DIMMABLE_METERING_SWITCH,
 ]
 
-# Options
-CONF_INITIAL_OPTIONS = "initial_options"
-CONF_ALL_DEVICES = "all_devices_or_groups"
-CONF_ADD_HOMEE_DATA = "add_homee_data"
-CONF_GROUPS = "groups"
-CONF_IMPORT_GROUPS = "import_groups"
-CONF_WINDOW_GROUPS = "window_groups"
-CONF_DOOR_GROUPS = "door_groups"
-
 # Climate Presets
 PRESET_COMFORT = "comfort"
 PRESET_MANUAL = "manual"
