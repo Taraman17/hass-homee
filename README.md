@@ -16,8 +16,20 @@ Based on the intial work of [FreshlyBrewedCode]
 
 # Homee is now part of Home Assistant Core!
 
-Please use the built in integration, as this one is not actively developed any more.
+Please use the built-in integration, as this one is not actively developed any more.
 V4.0.0 is the final version.
+
+## Migration
+With the latest version installed, you can just uninstall this integration via HACS, using the "three dot menu" of the integration:
+![HACS Menu](image.png)
+
+After a reboot, HA will be using the built-in integration.
+
+## :warning: Breaking changes
+
+While integrating into core, I had to change a lot of code to meet Home Assistants code quality requirements and standards. This leads to some entities changing type and leaving the old ones unavailable. Please check release notes for further information.
+
+## Wiki
 
 I will continue the Wiki, to track the status of device support.
 
